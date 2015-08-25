@@ -27,7 +27,7 @@ import android.widget.TextView;
 /**
  * This is the About activity in the dashboard application.
  * It displays some text and provides a way to get back to the home activity.
- *
+ * my comments
  */
 
 public class AboutActivity extends Activity 
