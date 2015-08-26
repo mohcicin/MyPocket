@@ -418,7 +418,7 @@ public class HomeActivity extends Activity
 			break;
 		case R.id.home_btn_prise_cmd : 
 
-			if(compte.getPermissionbl() != 0 || "PRE-VENDEURS".equals(compte.getProfile().toLowerCase())){
+			if("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) || (compte.getPermissionbl() != 0 || "vendeur".equals(compte.getProfile().toLowerCase()))){
 				List<com.dolibarrmaroc.com.models.AlertDialog> alertc2 = new ArrayList<>();
 				Intent intentc1 = new Intent(getApplicationContext(), CatalogeActivity.class); //CatalogeActivity.class  //CmdViewActivity
 				intentc1.putExtra("user", compte);
@@ -593,8 +593,9 @@ public class HomeActivity extends Activity
 							
 							CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 1);
 							
-						}else{
-							//
+						}else if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
+							nclt = 1;
+							nprod = 1;
 						}
 						
 						
@@ -608,19 +609,21 @@ public class HomeActivity extends Activity
 					if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase())){
 						nclt = myoffline.LoadClients("").size();
 						nprod = myoffline.LoadCategorieList("").size();
-						
+						Log.e("in prof ","pre_vendeur");
 					}else if(compte.getProfile().toLowerCase().equals("vendeur")){
 						nclt = myoffline.LoadClients("").size();
 						nprod = myoffline.LoadProduits("").size();
+						Log.e("in prof ","vendeur");
 					}else if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
 						nclt = 1;
 						nprod = 1;
+						Log.e("in prof ","adm mag");
 					}
 					
 				}
 			}
 
-			Log.e("start ","start cnx task");
+			Log.e("start ","start cnx task "+nclt+" c###p "+nprod);
 
 
 
@@ -642,13 +645,15 @@ public class HomeActivity extends Activity
 					//wakelock.release();
 
 					if(nprod == 0){
-						msg += getResources().getString(R.string.caus26)+"\n";
+						msg += getResources().getString(R.string.caus26)+"\n \n";
 					}
 
 					if(nclt == 0){
-						msg += getResources().getString(R.string.caus27)+"\n";
+						msg += getResources().getString(R.string.caus27)+"\n \n";
 					}
 
+					msg += getResources().getString(R.string.caus28)+"\n";
+					
 					int k =0;
 					if(nclt == 0 || nprod == 0 ){
 						alertPrdClt(msg);

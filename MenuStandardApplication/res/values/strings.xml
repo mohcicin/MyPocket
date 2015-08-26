@@ -322,6 +322,7 @@
     <string name="caus25">Recherche sur une mise à jour</string>
     <string name="caus26">Vous ne disposez pas des produits pour le moment. Veuillez contacter votre adminisatrateur pour vous associer à un entrepot</string>
     <string name="caus27">Vous ne disposez pas des clients pour le moment.</string>
+    <string name="caus28">Effectuer une synchronisation manuel dans le menu de synchronisation</string>
     <string name="title_activity_settingsynchro">Configuration hors ligne</string>
     <string name="data_clean">Suppression des données</string>
     <string name="msg_wait_sys">Veuillez ne pas interrompre la connexion internet</string>

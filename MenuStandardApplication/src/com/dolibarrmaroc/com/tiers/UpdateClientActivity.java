@@ -662,8 +662,7 @@ public class UpdateClientActivity extends Activity implements OnClickListener,On
 							new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 							UpdateClientActivity.this.finish();
-							Intent intent = new Intent(UpdateClientActivity.this,ConnexionActivity.class);
-							startActivity(intent);
+							onClickHome(LayoutInflater.from(UpdateClientActivity.this).inflate(R.layout.activity_update_client, null));
 						}
 					}
 							);

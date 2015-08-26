@@ -223,20 +223,24 @@ public class CommercialDaoMysql implements CommercialDao{
 		
         nameValuePairs.add(new BasicNameValuePair("latitude",p.getLatitude()+""));
         nameValuePairs.add(new BasicNameValuePair("longitude",p.getLangitude()+""));
+        
+        Log.e("Insertion params", nameValuePairs.toString());
 		
 		String json = parser.makeHttpRequest(urlData, "POST", nameValuePairs);
 		
-		Log.d("Insertion Message", json);
+		Log.e("Insertion Message", json);
+		String stfomat = json.substring(json.indexOf("{"),json.lastIndexOf("}")+1);
 		String retour = "";
 		
 		try {
-			JSONObject obj = new JSONObject(json);
+			JSONObject obj = new JSONObject(stfomat);
 			JSONArray arr = obj.getJSONArray("message");
 			int k =arr.length() - 1;
 			retour = arr.getString(k);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			retour = "Error Survenue lors d'insertion, réssayer plus tard !!";
 		}
 		
 		Log.e("Retour ",retour);

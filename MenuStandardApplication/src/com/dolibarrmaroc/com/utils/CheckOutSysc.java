@@ -343,9 +343,31 @@ public class CheckOutSysc implements Serializable{
 						List<Categorie> lscats = checkOutCatalogueProduit(categorie, compte);
 
 						products = new ArrayList<>();
+						
+						HashMap<Integer, Produit> psres = new HashMap<>();
+						
 						products = myoffline.LoadProduits("");
+						
+						Log.e("products ",products+" <<<");
 						if(products != null){
 						
+							if(products.size() == 0){
+								for (int i = 0; i < lscats.size(); i++) {
+									for (int j = 0; j < lscats.get(i).getProducts().size(); j++) {
+										psres.put(lscats.get(i).getProducts().get(j).getId(), lscats.get(i).getProducts().get(j));
+									}
+								}
+								
+								if(psres.size() != 0){
+									for(Integer pp:psres.keySet()){
+										products.add(psres.get(pp));
+									}
+								}
+								
+								Log.e("products size ",products.size()+" <<<");
+								myoffline.shynchronizeProduits(products);
+							
+							}
 							for (int i = 0; i < products.size(); i++) {
 								for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {
 									//Log.e(products.get(i).getId()+"",sv.getAllProduits().get(j).getRef());

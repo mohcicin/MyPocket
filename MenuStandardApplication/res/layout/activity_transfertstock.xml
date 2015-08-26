@@ -171,77 +171,67 @@
             
         </LinearLayout>
         
-    <LinearLayout 
+    <LinearLayout
         android:id="@+id/linearLayout4sx"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-           	android:layout_below="@+id/linearLayout4" 
-           	android:layout_alignParentBottom="true"
-		       android:layout_centerHorizontal="true" 
-		       android:orientation="vertical"
-            >
-        
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+       
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical" >
+
         <LinearLayout
-		        android:layout_width="match_parent"
-		        android:layout_height="52dp"
-		        android:id="@+id/lt5"
-		        android:layout_alignParentBottom="true"
-		       android:layout_centerHorizontal="true" 
-		        >
-		
-		    <Button
-		        android:id="@+id/gotransfertstck"
-		        android:layout_width="match_parent"
-		        android:layout_height="50dp"
-		        android:layout_marginLeft="5px"
-		        android:layout_marginRight="5px"
-		        android:background="@drawable/round_corner_drawable"
-		        android:text="@string/btn_mvmstck" />
+            android:id="@+id/lt5"
+            android:layout_width="match_parent"
+            android:layout_height="52dp" >
 
-    		</LinearLayout>
-    
+            <Button
+                android:id="@+id/gotransfertstck"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="5px"
+                android:layout_marginRight="5px"
+                android:background="@drawable/round_corner_drawable"
+                android:text="@string/btn_mvmstck" />
+        </LinearLayout>
 
-		<LinearLayout
-		        android:layout_width="match_parent"
-		        android:layout_height="52dp"
-		         android:id="@+id/lt6"
-		         android:layout_below="@+id/lt5"
-		         android:layout_alignParentBottom="true"
-		       android:layout_centerHorizontal="true" 
-		        >
-		
-		         <Button
-		            android:id="@+id/transfertstck"
-		            android:layout_width="match_parent"
-		            android:layout_height="50dp"
-		            android:layout_marginLeft="5px"
-		            android:layout_marginRight="5px"
-		            android:background="@drawable/round_corner_drawable"
-		            android:text="@string/btn_mvmstckgo" />
-		    </LinearLayout>
-		
-		<LinearLayout
-		        android:layout_width="match_parent"
-		        android:layout_height="52dp"
-		         android:id="@+id/lt7"
-		         android:layout_below="@+id/lt6"
-		         android:layout_alignParentBottom="true"
-		       android:layout_centerHorizontal="true" 
-		        >
-		
-		         <Button
-		            android:id="@+id/transfertstckall"
-		            android:layout_width="match_parent"
-		            android:layout_height="50dp"
-		            android:layout_marginLeft="5px"
-		            android:layout_marginRight="5px"
-		            android:background="@drawable/round_corner_drawable"
-		            android:text="@string/btn_mvmstckall" />
-		    </LinearLayout>
-        
-        
+        <LinearLayout
+            android:id="@+id/lt6"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_below="@+id/lt5" >
+
+            <Button
+                android:id="@+id/transfertstck"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="5px"
+                android:layout_marginRight="5px"
+                android:background="@drawable/round_corner_drawable"
+                android:text="@string/btn_mvmstckgo" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lt7"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_below="@+id/lt6" >
+
+            <Button
+                android:id="@+id/transfertstckall"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="5px"
+                android:layout_marginRight="5px"
+                android:background="@drawable/round_corner_drawable"
+                android:text="@string/btn_mvmstckall" />
+        </LinearLayout>
     </LinearLayout>
-        
-		
 
 </RelativeLayout>
