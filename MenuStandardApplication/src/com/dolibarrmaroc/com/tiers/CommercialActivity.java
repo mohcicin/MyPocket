@@ -464,7 +464,7 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 			if (v.getId() == R.id.comm_etape) {
 				
 				//checkRequiredFields();
-				if(email.toString().length() == 0 || email.toString().equals("")){
+				if(email.getText().toString().length() == 0 || email.getText().toString().equals("")){
 					
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(new Date()); 
@@ -669,6 +669,8 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 									((EditText)view).setText("");
 								}
 							}
+							
+							onClickHome(LayoutInflater.from(CommercialActivity.this).inflate(R.layout.activity_commercial, null));
 						}
 					});
 					localBuilder.setNegativeButton("Quitter ",
@@ -705,6 +707,7 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 			}else{
 				database = new DatabaseHandler(getApplicationContext());
 				client.setId((int)database.addrow("clt"));
+				
 				resu = myoffline.shynchronizeProspection(client,compte);
 			}
 
@@ -753,6 +756,8 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 									((EditText)view).setText("");
 								}
 							}
+							
+							onClickHome(LayoutInflater.from(CommercialActivity.this).inflate(R.layout.activity_commercial, null));
 						}
 					});
 					localBuilder.setNegativeButton("Quitter ",
@@ -938,8 +943,9 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 			myoffline = new Offlineimpl(getApplicationContext());
 			
 			List<String> req = myoffline.LoadProspect("").getLsrequired();
+			Log.e("req >> ",req.toString());
 		
-			if(!req.contains("email"))req.add("email");
+			//if(!req.contains("email"))req.add("email");
 			if(!req.contains("name"))req.add("name");
 			
 	        for (int i = 0; i < req.size(); i++) {

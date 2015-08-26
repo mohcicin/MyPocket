@@ -327,6 +327,8 @@ public class Offlineimpl implements ioffline {
 		} catch (Exception e) {
 			// TODO: handle exception
 			Log.e("load produits et promotion",e.getMessage()  +" << ");
+			list = new ArrayList<Produit>();
+			
 		}
 		return list;
 	}
@@ -2033,7 +2035,7 @@ public class Offlineimpl implements ioffline {
 		if(tmp.size() > 0){
 			for (int i = 0; i < tmp.size(); i++) {
 				cl.add(tmp.get(i));
-				Log.e("clt >>> ",cl.toString());
+				//Log.e("clt >>> ",cl.toString());
 			}
 		}
 		
@@ -3445,7 +3447,11 @@ public class Offlineimpl implements ioffline {
 				}
 				
 			}
-			myo2.put(new Prospection(), invps);
+			
+			if(invps.size() != 0){
+				myo2.put(new Prospection(), invps);	
+			}
+			
 			
 			res.put("ps", myo);
 			res.put("all", myo2);
@@ -3541,7 +3547,6 @@ public class Offlineimpl implements ioffline {
 		String cl ="";
 		String fc ="";
 		try {
-			
 			if(out.size() > 0){
 				for(Prospection ps:out.keySet() ){
 					
@@ -3553,13 +3558,19 @@ public class Offlineimpl implements ioffline {
 					List<Commande> cmds = new ArrayList<>();
 					cmds = cmd_ps.get(ps);
 					
-					if(cmds != null) cmds = new ArrayList<>();
+					
+					if(cmds == null) cmds = new ArrayList<>();
+					
+					if(invo == null) invo = new ArrayList<>();
+					
 					
 					
 					cl = managerclient.insert(cp, ps);
+					
+					
 					if(cl != null && !cl.equals("-1")){
-							
 						for (int i = 0; i < invo.size(); i++) {
+							Log.e("in invo "," >> ");
 							HashMap<String, Remises> rs = new HashMap<>();
 							List<MyProdRemise> mpr = new ArrayList<>();
 							
@@ -3679,7 +3690,7 @@ public class Offlineimpl implements ioffline {
 									MyGpsInvoice gp = checkGpsInvoice(ci.getInvoice());
 									mygps.add(gp);
 									
-								//	Log.e("in invoice add with reglement ",e.getMessage()  +" << ");
+									Log.e("in invoice add with reglement ",e.getMessage()  +" << ");
 									
 								}
 						}
@@ -3696,7 +3707,6 @@ public class Offlineimpl implements ioffline {
 								lscmds.add(cmds.get(j));
 							}
 						}
-						
 						
 					}else{
 						lspros.add(ps);
@@ -3725,6 +3735,8 @@ public class Offlineimpl implements ioffline {
 						}
 					}
 					
+					
+					
 				}
 				
 				data = new DataErreur(lspros, lsinvo, lsreg);
@@ -3734,6 +3746,7 @@ public class Offlineimpl implements ioffline {
 			 
 		} catch (Exception e) {
 			// TODO: handle exception
+			Log.e("exception send out pros wih cmd fact ",e.getMessage()+ "  ");
 		}
 		return data;
 	}
@@ -3822,7 +3835,7 @@ public class Offlineimpl implements ioffline {
 			DataErreur dataeror1 = new DataErreur();
 			DataErreur dataeror2 = new DataErreur();
 			DataErreur dataeror3 = new DataErreur();
-			
+		
 			HashMap<String, HashMap<Prospection, List<Myinvoice>>> data = chargerInvoice_prospect(compte);
 			
 			HashMap<String, HashMap<Prospection, List<Commande>>> data_cmd = chargerCmd_prospect(compte);
@@ -4814,6 +4827,7 @@ public class Offlineimpl implements ioffline {
 		List<Prospection> tmp = LoadProspection("");
 		
 		
+		
 		HashMap<Prospection, List<Commande>> myo = new HashMap<>();
 		HashMap<Prospection, List<Commande>> myo2 = new HashMap<>();
 		
@@ -4849,7 +4863,11 @@ public class Offlineimpl implements ioffline {
 				}
 				
 			}
-			myo2.put(new Prospection(), invps);
+			
+			if(invps.size() != 0){
+				myo2.put(new Prospection(), invps);
+			}
+			
 			
 			res.put("ps", myo);
 			res.put("all", myo2);
@@ -5499,6 +5517,7 @@ public class Offlineimpl implements ioffline {
 
 		}catch(Exception e){
 			Log.e("load deniede data error",e.getMessage()  +" << ");
+			list = new ArrayList<String>();
 		}
 		return list;
 	}

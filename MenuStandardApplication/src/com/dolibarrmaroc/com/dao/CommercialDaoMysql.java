@@ -173,6 +173,7 @@ public class CommercialDaoMysql implements CommercialDao{
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 		}
 		
 		

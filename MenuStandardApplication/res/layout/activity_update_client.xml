@@ -23,25 +23,28 @@
 
         </LinearLayout>
 
-    <AutoCompleteTextView
-        android:id="@+id/clientspinner"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="5px"
-        android:layout_marginRight="5px"
-        android:layout_weight="0.00"
-        android:completionThreshold="1"
-        android:dropDownHeight="150dp"
-        android:dropDownVerticalOffset="5dp"
-        android:dropDownWidth="wrap_content"
-        android:ems="10"
-        android:gravity="center"
-        android:hint="--Select Client--"
-        android:imeOptions="actionNext"
-        android:inputType="textAutoComplete|textAutoCorrect"
-        android:layout_below="@+id/l1"
-        android:singleLine="true"
-        android:windowSoftInputMode="stateHidden|adjustPan" />
+    
+    <com.karouani.cicin.widget.CustomAutoCompleteView
+            android:id="@+id/clientspinner"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="5px"
+            android:layout_marginRight="5px"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.00"
+            android:completionThreshold="1"
+            android:dropDownHeight="150dp"
+            android:dropDownVerticalOffset="5dp"
+            android:dropDownWidth="wrap_content"
+            android:ems="10"
+            android:focusable="true"
+            android:gravity="center"
+            android:hint="--Select Client--"
+            android:imeOptions="actionNext"
+            android:inputType="textAutoComplete|textAutoCorrect"
+            android:layout_below="@+id/l1"
+            android:singleLine="true"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
 
     <ScrollView
         android:id="@+id/scrollView1"

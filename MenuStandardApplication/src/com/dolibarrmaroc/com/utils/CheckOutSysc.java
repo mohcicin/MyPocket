@@ -336,30 +336,41 @@ public class CheckOutSysc implements Serializable{
 						
 					break;
 				case 4:
-					if(compte.getPermissionbl() == 1){
+					//if(compte.getPermissionbl() == 1){
+						
+						nbprod =0;
 
 						List<Categorie> lscats = checkOutCatalogueProduit(categorie, compte);
 
 						products = new ArrayList<>();
 						products = myoffline.LoadProduits("");
-						for (int i = 0; i < products.size(); i++) {
-							for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {
-								//Log.e(products.get(i).getId()+"",sv.getAllProduits().get(j).getRef());
-								if(Integer.parseInt(sv.getAllProduits(-1).get(j).getRef()) == products.get(i).getId()){
-									products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduits(-1).get(j).getQteDispo());
-								}
-							}
-						}
-
-						for (int j = 0; j < lscats.size(); j++) {
-							for (int i = 0; i < lscats.get(j).getProducts().size(); i++) {
-								for (int k = 0; k < products.size(); k++) {
-									if(lscats.get(j).getProducts().get(i).getId() == products.get(k).getId()){
-										lscats.get(j).getProducts().get(i).setQteDispo(products.get(k).getQteDispo());
+						if(products != null){
+						
+							for (int i = 0; i < products.size(); i++) {
+								for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {
+									//Log.e(products.get(i).getId()+"",sv.getAllProduits().get(j).getRef());
+									if(Integer.parseInt(sv.getAllProduits(-1).get(j).getRef()) == products.get(i).getId()){
+										products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduits(-1).get(j).getQteDispo());
 									}
 								}
 							}
+							
+							
+							for (int j = 0; j < lscats.size(); j++) {
+								for (int i = 0; i < lscats.get(j).getProducts().size(); i++) {
+									for (int k = 0; k < products.size(); k++) {
+										if(lscats.get(j).getProducts().get(i).getId() == products.get(k).getId()){
+											lscats.get(j).getProducts().get(i).setQteDispo(products.get(k).getQteDispo());
+										}
+									}
+								}
+								
+								nbprod += lscats.get(j).getProducts().size();
+							}
 						}
+						
+
+						
 
 						if(lscats.size() > 0){
 							checkInCatalogueProduit(myoffline, lscats, compte);
@@ -367,7 +378,7 @@ public class CheckOutSysc implements Serializable{
 
 						checkInCommandeview(myoffline, checkOutCommandes(managercmd, compte), compte);
 
-					}
+					//}
 					break;
 					
 				case 5:
@@ -425,7 +436,10 @@ public class CheckOutSysc implements Serializable{
 				
 				break;
 
-			default:
+			case 1:
+				
+				checkInClientSecteur(myoffline, checkOutClientSecteur(vendeurManager, compte), compte);
+				
 				break;
 			}
 		} catch (Exception e) {

@@ -500,10 +500,7 @@ public class TransfertstockActivity extends Activity implements OnClickListener,
 	
 	@Override
 	public void onBackPressed() {
-		Intent intent = new Intent(this, ConnexionActivity.class);
-		intent.putExtra("user", compte);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		startActivity(intent);
+		onClickHome(LayoutInflater.from(TransfertstockActivity.this).inflate(R.layout.activity_transfertstock, null));
 		TransfertstockActivity.this.finish();
 	}
 	
@@ -543,10 +540,7 @@ public class TransfertstockActivity extends Activity implements OnClickListener,
 			public void onClick(DialogInterface d, int which) {
 				d.dismiss();
 				
-				Intent intent = new Intent(TransfertstockActivity.this, ConnexionActivity.class);
-				intent.putExtra("user", compte);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-				startActivity(intent);
+				onClickHome(LayoutInflater.from(TransfertstockActivity.this).inflate(R.layout.activity_transfertstock, null));
 				TransfertstockActivity.this.finish();
 				return;
 			}

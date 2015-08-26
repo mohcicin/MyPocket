@@ -13,6 +13,7 @@ import com.dolibarrmaroc.com.business.CommandeManager;
 import com.dolibarrmaroc.com.business.CommercialManager;
 import com.dolibarrmaroc.com.business.PayementManager;
 import com.dolibarrmaroc.com.business.VendeurManager;
+import com.dolibarrmaroc.com.commercial.VendeurActivity;
 import com.dolibarrmaroc.com.dao.CategorieDao;
 import com.dolibarrmaroc.com.dao.CategorieDaoMysql;
 import com.dolibarrmaroc.com.dashboard.HomeActivity;
@@ -31,6 +32,9 @@ import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
 import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
 import com.dolibarrmaroc.com.utils.VendeurManagerFactory;
+import com.karouani.cicin.widget.AutocompleteCustomArrayAdapter;
+import com.karouani.cicin.widget.CustomAutoCompleteTextChangedListener;
+import com.karouani.cicin.widget.CustomAutoCompleteView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -47,7 +51,9 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.StrictMode;
 import android.os.PowerManager.WakeLock;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -134,7 +140,10 @@ public class UpdateClientActivity extends Activity implements OnClickListener,On
 
 	private List<EditText> maVue;
 	//private Spinner clientspinner,proSpinner;
-	private AutoCompleteTextView clientspinner;
+	public CustomAutoCompleteView clientspinner;
+	public ArrayAdapter<String> myAdapter;
+	public String[] values;
+	
 	private List<String> listclt;
 	//Asynchrone avec connexion 
 	private ProgressDialog dialog;
@@ -203,7 +212,7 @@ public class UpdateClientActivity extends Activity implements OnClickListener,On
 			}
 
 
-			clientspinner =  (AutoCompleteTextView) findViewById(R.id.clientspinner);
+			clientspinner =  (CustomAutoCompleteView) findViewById(R.id.clientspinner);
 			scroll = (LinearLayout) findViewById(R.id.malineaire);
 
 			//name = (EditText) findViewById(R.id.comm_nom);
@@ -263,15 +272,19 @@ public class UpdateClientActivity extends Activity implements OnClickListener,On
 
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long arg3) {
-					String selected = (String) parent.getItemAtPosition(position);
+						int position, long id) {
+					String selected = clientspinner.getSelected(parent, view, position, id);
+					//String selected = (String) parent.getItemAtPosition(position);
 					client = new Prospection();
+					
+					/*
 					clientspinner.showDropDown();
 
 					final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromInputMethod(parent.getWindowToken(), 0);
 
 					clientspinner.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
+					*/
 
 					for (int i = 0; i < clients.size(); i++) {
 						if (selected.equals(clients.get(i).getName())) {
@@ -344,6 +357,32 @@ public class UpdateClientActivity extends Activity implements OnClickListener,On
 					
 				}
 			});
+			
+			clientspinner.addTextChangedListener(new TextWatcher() {
+				
+				@Override
+				public void onTextChanged(CharSequence s, int start, int before, int count) {
+					// TODO Auto-generated method stub
+					CustomAutoCompleteTextChangedListener txt = new CustomAutoCompleteTextChangedListener(UpdateClientActivity.this,R.layout.list_view_row,listclt);
+
+					myAdapter = txt.onTextChanged(s, start, before, count);
+					myAdapter.notifyDataSetChanged();
+					clientspinner.setAdapter(myAdapter);
+				}
+				
+				@Override
+				public void beforeTextChanged(CharSequence s, int start, int count,
+						int after) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void afterTextChanged(Editable s) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 
 
 		} catch (Exception e) {
@@ -385,7 +424,7 @@ public class UpdateClientActivity extends Activity implements OnClickListener,On
 					for (int i = 0; i < clients.size(); i++) {
 						listclt.add(clients.get(i).getName());
 					}
-					addItemsOnSpinner(clientspinner,listclt);
+					addItemsOnSpinnerClt(clientspinner,listclt);
 					
 					addItemsOnSpinner(ville,lscity);
 				}
@@ -399,6 +438,18 @@ public class UpdateClientActivity extends Activity implements OnClickListener,On
 	}
 
 	public void addItemsOnSpinner(AutoCompleteTextView clientspinner2,List<String> list) {
+
+		values= new String[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			values[i] = list.get(i);
+		}
+		
+		
+		myAdapter = new AutocompleteCustomArrayAdapter(UpdateClientActivity.this, R.layout.list_view_row, values);
+		clientspinner2.setAdapter(myAdapter);
+	}
+	
+	public void addItemsOnSpinnerClt(AutoCompleteTextView clientspinner2,List<String> list) {
 
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, list);
@@ -491,10 +542,9 @@ public class UpdateClientActivity extends Activity implements OnClickListener,On
 
 	@Override
 	public void onClick(View v) {
+		
 
-		if("".equals(maVue != null) ||
-				"".equals(tel.getText().toString())
-				){
+		if("".equals(maVue != null)){ // ||"".equals(tel.getText().toString())
 			Toast.makeText(UpdateClientActivity.this, "Tous les champs sont Obligatoir", Toast.LENGTH_LONG).show();
 		}
 		else{

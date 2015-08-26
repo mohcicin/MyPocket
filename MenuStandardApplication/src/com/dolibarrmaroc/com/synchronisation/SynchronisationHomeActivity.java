@@ -109,7 +109,7 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 			btn1.setVisibility(View.GONE);
 			btn2.setVisibility(View.GONE);
 			btn4.setVisibility(View.GONE);
-		}else{
+		}else if(compte.getPermissionbl() == 0){
 			btn3.setVisibility(View.GONE);
 		}
 		

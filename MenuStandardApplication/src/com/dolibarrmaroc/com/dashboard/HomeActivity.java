@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dolibarrmaroc.com.AboutActivity;
 import com.dolibarrmaroc.com.ConnexionActivity;
 import com.dolibarrmaroc.com.R;
 import com.dolibarrmaroc.com.R.id;
@@ -141,10 +142,14 @@ public class HomeActivity extends Activity
 
 		Log.e("Compte User ",compte.toString());
 		vendeurManager = VendeurManagerFactory.getClientManager();
+		myoffline = new Offlineimpl(getApplicationContext());
+		
+		//Log.e(">>> cl",myoffline.LoadProspection("").toString());
+		//Log.e(">> clts ",myoffline.chargerInvoice_prospect(compte).toString());
 
 		if(CheckOutNet.isNetworkConnected(getApplicationContext())){
 
-			myoffline = new Offlineimpl(getApplicationContext());
+			
 
 			/*
 			if(myoffline.checkAvailableofflinestorage() > 0){
@@ -321,7 +326,7 @@ public class HomeActivity extends Activity
 			break;
 		case R.id.home_btn_livraison :
 			//startActivity (new Intent(getApplicationContext(), VendeurActivity.class));
-			if(compte.getPermissionbl() == 0){
+			if(compte.getPermissionbl() == 0 || "vendeur".equals(compte.getProfile().toLowerCase())){
 				List<com.dolibarrmaroc.com.models.AlertDialog> alertfc2 = new ArrayList<>();
 				Intent intentfc1 = new Intent(getApplicationContext(), VendeurActivity.class); //CatalogeActivity.class  //CmdViewActivity
 				intentfc1.putExtra("user", compte);
@@ -368,7 +373,7 @@ public class HomeActivity extends Activity
 			//startActivity (new Intent(getApplicationContext(), F5Activity.class));
 
 
-			if(compte.getPermission() != 0 && compte.getPermissionbl() == 0){
+			if(compte.getPermission() != 0 && "vendeur".equals(compte.getProfile().toLowerCase())){
 				List<com.dolibarrmaroc.com.models.AlertDialog> alerts = new ArrayList<>();
 				Intent intentX = new Intent(getApplicationContext(), CommercialActivity.class); //CatalogeActivity.class  //CmdViewActivity
 				intentX.putExtra("user", compte);
@@ -395,14 +400,17 @@ public class HomeActivity extends Activity
 				intents1.putExtra("user", compte);
 				com.dolibarrmaroc.com.models.AlertDialog creates1 = new com.dolibarrmaroc.com.models.AlertDialog(intents1, getString(R.string.title_activity_transfertstock), "warehouse_worker");
 				alerts2.add(creates1);
+			}else{
+				Intent intents2 = new Intent(getApplicationContext(), TransfertvirtualstockActivity.class);
+				intents2.putExtra("user", compte);
+				intents2.putExtra("cmd", "0");
+				com.dolibarrmaroc.com.models.AlertDialog updates2 = new com.dolibarrmaroc.com.models.AlertDialog(intents2, getString(R.string.title_activity_transfertvirtualstock), "warehouse_put");
+				alerts2.add(updates2);
 			}
-			Intent intents2 = new Intent(getApplicationContext(), TransfertvirtualstockActivity.class);
-			intents2.putExtra("user", compte);
-			intents2.putExtra("cmd", "0");
-			com.dolibarrmaroc.com.models.AlertDialog updates2 = new com.dolibarrmaroc.com.models.AlertDialog(intents2, getString(R.string.title_activity_transfertvirtualstock), "warehouse_put");
+			
 
 
-			alerts2.add(updates2);
+			
 			new AlertDialogList(HomeActivity.this, alerts2).show();
 
 
@@ -410,7 +418,7 @@ public class HomeActivity extends Activity
 			break;
 		case R.id.home_btn_prise_cmd : 
 
-			if(compte.getPermissionbl() != 0){
+			if(compte.getPermissionbl() != 0 || "PRE-VENDEURS".equals(compte.getProfile().toLowerCase())){
 				List<com.dolibarrmaroc.com.models.AlertDialog> alertc2 = new ArrayList<>();
 				Intent intentc1 = new Intent(getApplicationContext(), CatalogeActivity.class); //CatalogeActivity.class  //CmdViewActivity
 				intentc1.putExtra("user", compte);
@@ -563,17 +571,32 @@ public class HomeActivity extends Activity
 			}else{
 
 				int vsv = sv.getSyc();
-				Log.e("is alreadey sysc ",vsv+"");
+				Log.e("is alreadey sysc ",vsv+" ## "+compte.getProfile());
 				if(vsv == 1){
 					if(CheckOutNet.isNetworkConnected(HomeActivity.this)){
 						HashMap<String, Integer> res = new HashMap<>();
-						res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 0,manager);
-
-						CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 0);
-
 						
-						nprod = res.get("prod");
-						nclt = res.get("clt");
+						if(compte.getProfile().toLowerCase().equals("vendeur")){
+							res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 0,manager);
+
+							CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 0);
+
+							
+							nprod = res.get("prod");
+							nclt = res.get("clt");
+						}else if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase())){
+							res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,manager);
+							nclt = res.get("clt");
+							
+							res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 4,manager);
+							nprod = res.get("prod");
+							
+							CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 1);
+							
+						}else{
+							//
+						}
+						
 						
 						
 						new DeniedDataDaoMysql().sendMyErrorData(myoffline.LoadDenided(""), compte);
@@ -581,8 +604,19 @@ public class HomeActivity extends Activity
 						myoffline.CleanAllDeniededData();
 					}
 				}else{
-					nprod = myoffline.LoadClients("").size();
-					nclt = myoffline.LoadProduits("").size();
+					
+					if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase())){
+						nclt = myoffline.LoadClients("").size();
+						nprod = myoffline.LoadCategorieList("").size();
+						
+					}else if(compte.getProfile().toLowerCase().equals("vendeur")){
+						nclt = myoffline.LoadClients("").size();
+						nprod = myoffline.LoadProduits("").size();
+					}else if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
+						nclt = 1;
+						nprod = 1;
+					}
+					
 				}
 			}
 
@@ -802,5 +836,11 @@ public class HomeActivity extends Activity
 			btn5.setEnabled(false);
 			btn8.setEnabled(false);
 		}
+	}
+	
+	public void onClickAbout (View v){
+		Intent intent = new Intent(this, AboutActivity.class);
+		intent.putExtra("user", compte);
+		startActivity (intent);
 	}
 } // end class
