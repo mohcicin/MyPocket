@@ -857,7 +857,6 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 			if(data != null){
 				if(!data.getErreur().equals("-100")){
 					daoGps.insertData(gps,imei,num,battery,compte,data.getErreur());
-					
 					database = new DatabaseHandler(getApplicationContext());
 
 					numChek = numchek.getText().toString();

@@ -45,6 +45,7 @@ import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
 import com.dolibarrmaroc.com.utils.FactureManagerFactory;
 import com.dolibarrmaroc.com.utils.MouvementManagerFactory;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
+import com.dolibarrmaroc.com.utils.ServiceDao;
 import com.dolibarrmaroc.com.utils.TinyDB;
 import com.dolibarrmaroc.com.utils.VendeurManagerFactory;
 import com.dolibarrmaroc.com.dashboard.HomeActivity;
@@ -61,12 +62,15 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources.NotFoundException;
 import android.opengl.Visibility;
 import android.os.AsyncTask;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.sax.TextElementListener;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -121,7 +125,10 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 	private List<Produit> produitsFacture,prdsvient;
 	private int nmb,nmbproducts;
 	private String totalttc,totalht;
+	
 	private GpsTracker gps;
+	private ServiceDao daoGps;
+	
 	private String idclt;
 	private Compte compte;
 
@@ -1095,6 +1102,15 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 				
 				data = cmdmanager.insertCommande(produitsFacture, idclt, compte, remise);
 				
+				daoGps = new ServiceDao();
+				
+				TelephonyManager tManager = (TelephonyManager)FactureActivity.this.getSystemService(Context.TELEPHONY_SERVICE);
+				IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+				Intent batteryStatus = FactureActivity.this.registerReceiver(null, ifilter);
+				int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+				int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+				daoGps.insertDataCmd(gps,tManager.getDeviceId(),tManager.getLine1Number(),(level / (float)scale)*100 + "",compte,cmdmanager.GetNumCommande());
 				
 				VendeurManager vendeurManager = VendeurManagerFactory.getClientManager();
 				PayementManager payemn = PayementManagerFactory.getPayementFactory();
@@ -1200,6 +1216,14 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 			cmd.setCompte(compte);
 			
 			data = myofline.shynchornizeCmd(cmd);
+			
+			TelephonyManager tManager = (TelephonyManager)FactureActivity.this.getSystemService(Context.TELEPHONY_SERVICE);
+			IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+			Intent batteryStatus = FactureActivity.this.registerReceiver(null, ifilter);
+			int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+			int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+			
+			myofline.shynchronizeGpsInvoice(new MyGpsInvoice(gps,tManager.getDeviceId(),tManager.getLine1Number(),(level / (float)scale)*100 + "",compte,s+""));
 			
 			/*
 			HashMap<String, HashMap<Prospection, List<Commande>>> data_cmd = myofline.chargerCmd_prospect(compte);

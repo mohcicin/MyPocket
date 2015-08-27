@@ -3699,7 +3699,7 @@ public class Offlineimpl implements ioffline {
 							cmds.get(j).setClt(cl);
 							try {
 								Commande cd = SendCommande(cmds.get(j), cp) ;
-								if(cd == null){
+								if(cd != null){
 									lscmds.add(cd);
 								}
 							} catch (Exception e) {
@@ -4784,6 +4784,7 @@ public class Offlineimpl implements ioffline {
 		try {
 			
 		//	Log.e("cmd cpt" ,cmd.getCompte().toString()+"");
+			ServiceDao daoGps = new ServiceDao();
 			String res = cmdmanager.insertCommande(cmd.getProds(), cmd.getClt(), cp, cmd.getRemises());
 			
 			if(!res.equals("ko")){
@@ -4795,6 +4796,12 @@ public class Offlineimpl implements ioffline {
 				 
 				 if((res.equals("10") || Integer.parseInt(res) == 10) ){ //&& nbln  == 0
 					 data = null;
+					 
+					 	MyGpsInvoice gp = checkGpsInvoice(cmd.getRef());
+					 	if(gp != null){
+					 		String s = daoGps.insertDataCmd(gp.getGps(),gp.getImei(),gp.getNum(),gp.getBattery(),gp.getC(),cmdmanager.GetNumCommande());
+					 	}
+						
 				 }else { //if(nbln != 0)
 					/*
 					 JSONArray js = json.getJSONArray("error_lines");

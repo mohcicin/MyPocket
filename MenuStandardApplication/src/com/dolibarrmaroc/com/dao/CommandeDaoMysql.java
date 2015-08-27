@@ -17,6 +17,7 @@ import android.util.Log;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Commandeview;
 import com.dolibarrmaroc.com.models.Compte;
+import com.dolibarrmaroc.com.models.FactureGps;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Remises;
 import com.dolibarrmaroc.com.utils.JSONParser;
@@ -28,7 +29,12 @@ public class CommandeDaoMysql implements CommandeDao {
 	private static final String save = URL.URL+"createcmd.php";
 	
 	private static final String cmdtofc = URL.URL+"cmdtofacture.php";
+	
+	private static final String cmdgps = URL.URL+"getCmdDataGps.php";
+	
 	private JSONParser parser ;
+	
+	private String numcmd ="";
 
 	public CommandeDaoMysql() {
 		super();
@@ -210,6 +216,8 @@ public class CommandeDaoMysql implements CommandeDao {
 			JSONObject obj = new JSONObject(stfomat);
 			
 			stfomat = obj.getString("code");
+			
+			numcmd = obj.getString("cmdnum");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -248,6 +256,67 @@ public class CommandeDaoMysql implements CommandeDao {
 		}
 
 		return res;
+	}
+
+	@Override
+	public String GetNumCommande() {
+		// TODO Auto-generated method stub
+		return numcmd;
+	}
+	
+	
+	@Override
+	public List<FactureGps> charger_commandes_gps(Compte c,String imei) {
+		// TODO Auto-generated method stub
+		
+
+		List<FactureGps> list = new ArrayList<>();
+	
+		
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		nameValuePairs.add(new BasicNameValuePair("username",c.getLogin()));//c.getLogin()
+		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
+		if(imei == null){
+			imei = "-1";
+		}
+		nameValuePairs.add(new BasicNameValuePair("imei",imei));
+
+		Log.e("send cmd gps ",nameValuePairs.toString());
+
+		try {
+			String json = parser.makeHttpRequest(cmdgps, "POST", nameValuePairs);
+			String stfomat = json.substring(json.indexOf("["),json.lastIndexOf("]")+1);
+
+
+				
+			Log.e("Facture GPS", stfomat );
+
+			
+				JSONArray jArray = new JSONArray(stfomat);
+
+				for(int i=0;i<jArray.length();i++){
+					JSONObject jb = jArray.getJSONObject(i);
+					
+					FactureGps fact = new FactureGps();
+					
+					fact.setId(jb.getInt("id"));
+					fact.setLat(jb.getString("lat"));
+					fact.setLng(jb.getString("lng"));
+					fact.setNumero(jb.getString("facture"));
+					
+					
+					list.add(fact);
+					
+				}
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Log.e("json insert commande",e.getMessage() +" << ");
+			list = new ArrayList<>();
+		}
+
+		return list;
 	}
 	
 

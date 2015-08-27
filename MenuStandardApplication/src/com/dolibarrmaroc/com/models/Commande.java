@@ -16,6 +16,7 @@ public class Commande implements Serializable{
 	private List<Produit> prods;
 	private Map<String, Remises> remises;
 	private Compte compte;
+	private String doliref;
 	public Commande() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -84,6 +85,12 @@ public class Commande implements Serializable{
 	}
 	public void setCompte(Compte compte) {
 		this.compte = compte;
+	}
+	public String getDoliref() {
+		return doliref;
+	}
+	public void setDoliref(String doliref) {
+		this.doliref = doliref;
 	}
 	
 	

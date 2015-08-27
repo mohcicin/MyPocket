@@ -25,7 +25,7 @@
     <string name="title_about">A propos de nous</string>
     <string name="title_home">Home</string>
     <string name="title_search">Search</string>
-    <string name="title_feature1">Feature 1</string>
+    <string name="title_feature1">Localisation GPS</string>
     <string name="title_feature2">Feature 2</string>
     <string name="title_feature3">Feature 3</string>
     <string name="title_feature4">Feature 4</string>
@@ -482,5 +482,11 @@
     <string name="syscl9">Cette option n\'est pas disponible pour le moment</string>
     <string name="syscl10">Vous ne disposer pas des droits pour passer des factures et effectuer des payements</string>
     <string name="title_activity_synchronisation_home">Accueil de synchronisation</string>
+    
+    
+    <!-- maps data  -->
+    <string name="mapstitle1">Factures operation</string>
+    <string name="mapstitle2">Clients operation</string>
+    <string name="mapstitle3">Commandes operation</string>
 
 </resources>

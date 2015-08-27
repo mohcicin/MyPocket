@@ -7,6 +7,7 @@ import com.dolibarrmaroc.com.dao.CommandeDao;
 import com.dolibarrmaroc.com.dao.CommandeDaoMysql;
 import com.dolibarrmaroc.com.models.Commandeview;
 import com.dolibarrmaroc.com.models.Compte;
+import com.dolibarrmaroc.com.models.FactureGps;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Remises;
 
@@ -32,6 +33,16 @@ public class DefaultCommandeManager implements CommandeManager {
 	public String CmdToFacture(Commandeview cv, Compte cp) {
 		// TODO Auto-generated method stub
 		return dao.CmdToFacture(cv,cp);
+	}
+	@Override
+	public String GetNumCommande() {
+		// TODO Auto-generated method stub
+		return dao.GetNumCommande();
+	}
+	@Override
+	public List<FactureGps> charger_commandes_gps(Compte c, String imei) {
+		// TODO Auto-generated method stub
+		return dao.charger_commandes_gps(c, imei);
 	}
 
 }

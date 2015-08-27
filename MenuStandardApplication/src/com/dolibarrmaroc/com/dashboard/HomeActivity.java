@@ -447,10 +447,33 @@ public class HomeActivity extends Activity
 			break;
 		case R.id.home_btn_maps : 
 
-			if(CheckOutNet.isNetworkConnected(getApplicationContext())){
-				Intent photosIntent = new Intent(this, MainActivity.class);
-				photosIntent.putExtra("user", compte);
-				startActivity(photosIntent);
+			if(CheckOutNet.isNetworkConnected(HomeActivity.this)){
+				
+				List<com.dolibarrmaroc.com.models.AlertDialog> alerts = new ArrayList<>();
+				Intent intentX = new Intent(getApplicationContext(), MainActivity.class); //CatalogeActivity.class  //CmdViewActivity
+				intentX.putExtra("user", compte);
+				intentX.putExtra("type", "1");
+				com.dolibarrmaroc.com.models.AlertDialog create = new com.dolibarrmaroc.com.models.AlertDialog(intentX, getString(R.string.mapstitle2), "customers");
+
+				Intent intentY = new Intent(getApplicationContext(), MainActivity.class);
+				intentY.putExtra("user", compte);
+				intentY.putExtra("type", "2");
+				com.dolibarrmaroc.com.models.AlertDialog update = new com.dolibarrmaroc.com.models.AlertDialog(intentY,  getString(R.string.mapstitle1), "invoice_see");
+				
+				if(("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) && compte.getPermissionbl() != 0) || (compte.getPermissionbl() != 0 && "vendeur".equals(compte.getProfile().toLowerCase()))){
+					Intent intentZ = new Intent(getApplicationContext(), MainActivity.class);
+					intentZ.putExtra("user", compte);
+					intentZ.putExtra("type", "3");
+					com.dolibarrmaroc.com.models.AlertDialog updateZ = new com.dolibarrmaroc.com.models.AlertDialog(intentZ,  getString(R.string.mapstitle3), "invoice_see");
+					alerts.add(updateZ);
+				}
+			
+
+				alerts.add(create);
+				alerts.add(update);
+				
+				new AlertDialogList(HomeActivity.this, alerts).show();
+				
 			}else{
 				alertmaps();
 			}

@@ -10,16 +10,19 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.StrictMode;
+import android.telephony.TelephonyManager;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.Menu;
@@ -65,11 +68,15 @@ import com.dolibarrmaroc.com.R.id;
 import com.dolibarrmaroc.com.R.layout;
 import com.dolibarrmaroc.com.R.menu;
 import com.dolibarrmaroc.com.R.string;
+import com.dolibarrmaroc.com.business.CommandeManager;
 import com.dolibarrmaroc.com.business.FactureManager;
 import com.dolibarrmaroc.com.business.VendeurManager;
+import com.dolibarrmaroc.com.commercial.FactureActivity;
+import com.dolibarrmaroc.com.dashboard.HomeActivity;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.FactureGps;
+import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
 import com.dolibarrmaroc.com.utils.FactureManagerFactory;
 import com.dolibarrmaroc.com.utils.ForcerActivationGps;
 import com.dolibarrmaroc.com.utils.MyLocationListener;
@@ -82,20 +89,22 @@ ConnectionCallbacks,
 OnConnectionFailedListener,
 LocationListener,
 OnMyLocationButtonClickListener,DCACallBack{
-	
+
 	//FOrcer Activation GPS
 	private ForcerActivationGps forcer;
-	
+
 	/*************************** Variables ******************************************************/
 	//Declaration Objet
 	private VendeurManager vendeurManager;
 	private FactureManager factureManager;
+	private CommandeManager cmdmanager;
 
 	private Compte compte;
+	private FactureGps cmd;
 	private FactureGps facture;
 	private Client client;
 	private Client clientLocation;
-	
+
 	//INTERFACTE UI
 	private Button factbtn;
 	private Button clientbtn;
@@ -105,7 +114,9 @@ OnMyLocationButtonClickListener,DCACallBack{
 	//Spinner Remplissage
 	private List<String> listclt;
 	private List<String> listfact;
+	private List<String> listcmd;
 	private List<FactureGps> factures;
+	private List<FactureGps> cmds;
 	private List<Client> clients;
 
 	//Asynchrone avec connexion 
@@ -124,16 +135,18 @@ OnMyLocationButtonClickListener,DCACallBack{
 			.setFastestInterval(16)    // 16ms = 60fps
 			.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-	private LatLng myPosition;
+	private LatLng myPosition = new LatLng(0, 0);
 	private UiSettings mUiSettings;
 
 	private List<MarkerOptions> mesPositions;
 	private LatLng myfact,myClient;
 
 	private WakeLock wakelock;
-	
+
 	private int zoom = 11;
-	
+
+	private int type =-1;
+
 	/*************************** METHOD ******************************************************/
 
 	public MainActivity() {
@@ -142,11 +155,14 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 		listclt = new ArrayList<String>();
 		listfact = new ArrayList<String>();
+		listcmd = new ArrayList<>();
 
 		factures = new ArrayList<>();
 		clients = new ArrayList<>();
+		cmds = new ArrayList<>();
 
 		facture = new FactureGps();
+		cmd = new FactureGps();
 		client = new Client();
 
 		mesPositions = new ArrayList<>();
@@ -191,40 +207,42 @@ OnMyLocationButtonClickListener,DCACallBack{
 				//mUiSettings = map.getUiSettings();
 
 				getGpsApplicationAlert();
-				
+
 				/*
 				if (map == null) {
 					Toast.makeText(this, "Google Maps not available", 
 							Toast.LENGTH_LONG).show();
 				}
-				*/
-				
-				SupportMapFragment mapFragment =
-			            (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+				 */
 
-			    if (savedInstanceState == null) {
-			        // First incarnation of this activity.
-			        mapFragment.setRetainInstance(true);
-			    } else {
-			        // Reincarnated activity. The obtained map is the same map instance in the previous
-			        // activity life cycle. There is no need to reinitialize it.
-			        map = mapFragment.getMap();
-			    }
-			    setUpMapIfNeeded();
-			    
+				SupportMapFragment mapFragment =
+						(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+				if (savedInstanceState == null) {
+					// First incarnation of this activity.
+					mapFragment.setRetainInstance(true);
+				} else {
+					// Reincarnated activity. The obtained map is the same map instance in the previous
+					// activity life cycle. There is no need to reinitialize it.
+					map = mapFragment.getMap();
+				}
+				setUpMapIfNeeded();
+
 				Bundle objetbunble  = this.getIntent().getExtras();
 
 				if (objetbunble != null) {
 					compte = (Compte) getIntent().getSerializableExtra("user");
-
+					type = Integer.parseInt(getIntent().getStringExtra("type"));
 				}
-				
+
 				/*
 				clientbtn = (Button) findViewById(R.id.pointerClt);
 				factbtn = (Button) findViewById(R.id.pointerFact);
 				clientbtn.setOnClickListener(this);
 				factbtn.setOnClickListener(this);
-				*/
+				 */
+
+				myHomDialog();
 
 			}else{
 				erreurNetwork();
@@ -376,8 +394,8 @@ OnMyLocationButtonClickListener,DCACallBack{
 			map.animateCamera(CameraUpdateFactory.newCameraPosition(
 					cameraPosition));
 		}
-		*/
-		
+		 */
+
 	}
 
 	/**
@@ -418,17 +436,55 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 		@Override
 		protected String doInBackground(Void... arg0) {
-			factures = factureManager.listFacture(compte);
+			
+			Log.e("this type act ",type+" ");
+			switch (type) {
+			case 1:
+				clients = new ArrayList<>();
+				listclt = new ArrayList<String>();
+				
+				clients = vendeurManager.selectAllClient(compte);
+				for (int i = 0; i < clients.size(); i++) {
+					listclt.add(clients.get(i).getName());
+				}
+				
+				break;
 
-			for (int i = 0; i < factures.size(); i++) {
-				FactureGps f = new FactureGps();
-				f = factures.get(i);
-				listfact.add(f.getNumero());
-			}
+			case 2:
+				factures = new ArrayList<>();
+				listfact = new ArrayList<String>();
+				
+				factures = factureManager.listFacture(compte);
 
-			clients = vendeurManager.selectAllClient(compte);
-			for (int i = 0; i < clients.size(); i++) {
-				listclt.add(clients.get(i).getName());
+				for (int i = 0; i < factures.size(); i++) {
+					FactureGps f = new FactureGps();
+					f = factures.get(i);
+					listfact.add(f.getNumero());
+				}
+				break;
+
+			case 3:
+				listcmd = new ArrayList<>();
+				cmds = new ArrayList<>();
+				
+				cmdmanager = CommandeManagerFactory.getManager();
+				TelephonyManager tManager = (TelephonyManager)MainActivity.this.getSystemService(Context.TELEPHONY_SERVICE);
+				cmds = cmdmanager.charger_commandes_gps(compte, tManager.getDeviceId());
+				
+				String tmp="";
+				
+				
+				for (int i = 0; i < cmds.size(); i++) {
+					FactureGps f = new FactureGps();
+					f = cmds.get(i);
+					if(f.getNumero().contains("(")){
+						tmp = f.getNumero().replace("(", "");
+						tmp = tmp.replace(")", "");
+						f.setNumero(tmp);
+					}
+					listcmd.add(f.getNumero());
+				}
+				break;
 			}
 			return "success";
 		}
@@ -442,6 +498,7 @@ OnMyLocationButtonClickListener,DCACallBack{
 			try {
 				if (dialog.isShowing()){
 					dialog.dismiss();
+					myHomDialog();
 				}
 
 			} catch (Exception e) {
@@ -477,22 +534,22 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 			Log.i("Clients ", clients.toString());
 			Log.d("List pour spinner ", listclt.toString());
-			
+
 			Button annul = (Button) dialogbtnclt.findViewById(R.id.annulershowme); 
 			annul.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					dialogbtnclt.dismiss();
 				}
 			});
-			
+
 			dialogbtnclt.show();
 
 		}else if(v.getId() == R.id.pointerFact){
 			//facturespinner= (Spinner) dialogbtnfact.findViewById(R.id.facturepointer);
 			factcomplete = (AutoCompleteTextView) dialogbtnfact.findViewById(R.id.facturepointer);
-			
+
 			if(!factcomplete.hasFocus()){
 				hideSoftKeyboard();
 			}
@@ -542,7 +599,7 @@ OnMyLocationButtonClickListener,DCACallBack{
 					}else{
 						myfact = myPosition;
 					}
-					
+
 
 					CameraPosition cameraPosition = new CameraPosition.Builder()
 					.target(myfact)
@@ -556,10 +613,10 @@ OnMyLocationButtonClickListener,DCACallBack{
 							.icon(BitmapDescriptorFactory.defaultMarker(
 									BitmapDescriptorFactory.HUE_YELLOW));
 					/*
-					 *	map.addMarker(markMe);
-					 */
+	 *	map.addMarker(markMe);
+	 */
 
-		/*
+	/*
 					mesPositions.add(markMe);
 					clearMap(map);
 
@@ -573,13 +630,13 @@ OnMyLocationButtonClickListener,DCACallBack{
 				@Override
 				public void onClick(View arg0) {
 					//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-					
+
 					if(Double.parseDouble(facture.getLat()) > 0){
 						myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
 					}else{
 						myfact = myPosition;
 					}
-					
+
 					CameraPosition cameraPosition = new CameraPosition.Builder()
 					.target(myfact)
 					.zoom(6)// Sets the zoom
@@ -592,10 +649,10 @@ OnMyLocationButtonClickListener,DCACallBack{
 							.icon(BitmapDescriptorFactory.defaultMarker(
 									BitmapDescriptorFactory.HUE_YELLOW));
 					/*
-					 *	map.addMarker(markMe);
-					 */
+	 *	map.addMarker(markMe);
+	 */
 
-/*
+	/*
 					mesPositions.add(markMe);
 					clearMap(map);
 
@@ -603,10 +660,10 @@ OnMyLocationButtonClickListener,DCACallBack{
 					dialogbtnfact.dismiss();
 				}
 			});
-			
+
 			Button annul = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
 			annul.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					dialogbtnfact.dismiss();
@@ -615,7 +672,7 @@ OnMyLocationButtonClickListener,DCACallBack{
 			dialogbtnfact.show();
 		}
 	}
-*/
+	 */
 	public void clearMap(GoogleMap myMap){
 		myMap.clear();
 
@@ -662,21 +719,21 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 			Log.i("Clients ", clients.toString());
 			Log.d("List pour spinner ", listclt.toString());
-			
+
 			Button annul = (Button) dialogbtnclt.findViewById(R.id.annulershowme); 
 			annul.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					dialogbtnclt.dismiss();
 				}
 			});
-			
+
 			clientspinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 				@Override
 				public void onItemSelected(AdapterView<?> parent, View arg1,int pos, long arg3) {
 					String selected = parent.getItemAtPosition(pos).toString();
-					
+
 					for (int i = 0; i < clients.size(); i++) {
 						if(selected.equals(clients.get(i).getName())){
 							clientLocation = clients.get(i);
@@ -692,29 +749,29 @@ OnMyLocationButtonClickListener,DCACallBack{
 							break;
 						}
 					}
-					*/
+					 */
 				}
 
 				@Override
 				public void onNothingSelected(AdapterView<?> arg0) {
 					// TODO Auto-generated method stub
-					
+
 				}
 			});
-			
+
 			Button showm = (Button) dialogbtnclt.findViewById(R.id.clientshowme);
 			showm.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
-					
+
 					Log.e("Client Location",clientLocation.toString());
 					if(clientLocation.getLatitude() != 0){
 						myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
 					}else{
 						myClient = myPosition;
 					}
-					
+
 
 					CameraPosition cameraPosition = new CameraPosition.Builder()
 					.target(myClient)
@@ -731,27 +788,27 @@ OnMyLocationButtonClickListener,DCACallBack{
 					 *	map.addMarker(markMe);
 					 */
 
-	
+
 					mesPositions.add(markMe);
 					clearMap(map);
 
 					dialogbtnclt.dismiss();
 				}
 			});
-			
+
 			Button itinere = (Button) dialogbtnclt.findViewById(R.id.itenermoiclient);
 			itinere.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View arg0) {
 					//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-					
+
 					if(clientLocation.getLatitude() != 0){
 						myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
 					}else{
 						myClient = myPosition;
 					}
-					
+
 					CameraPosition cameraPosition = new CameraPosition.Builder()
 					.target(myClient)
 					.zoom(zoom)// Sets the zoom
@@ -772,19 +829,19 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 					getDirections(myPosition,myClient);
 					dialogbtnclt.dismiss();
-					
-					
+
+
 				}
 			});
-			
+
 			dialogbtnclt.show();
 			break;
-			
-		/************************MENU FACTURE *****************************************/
+
+			/************************MENU FACTURE *****************************************/
 		case R.id.pointerFact:
 			//facturespinner= (Spinner) dialogbtnfact.findViewById(R.id.facturepointer);
 			factcomplete = (AutoCompleteTextView) dialogbtnfact.findViewById(R.id.autocomplate);
-			
+
 			if(!factcomplete.hasFocus()){
 				hideSoftKeyboard();
 			}
@@ -834,7 +891,7 @@ OnMyLocationButtonClickListener,DCACallBack{
 					}else{
 						myfact = myPosition;
 					}
-					
+
 
 					CameraPosition cameraPosition = new CameraPosition.Builder()
 					.target(myfact)
@@ -851,7 +908,7 @@ OnMyLocationButtonClickListener,DCACallBack{
 					 *	map.addMarker(markMe);
 					 */
 
-	
+
 					mesPositions.add(markMe);
 					clearMap(map);
 
@@ -865,13 +922,13 @@ OnMyLocationButtonClickListener,DCACallBack{
 				@Override
 				public void onClick(View arg0) {
 					//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-					
+
 					if(Double.parseDouble(facture.getLat()) > 0){
 						myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
 					}else{
 						myfact = myPosition;
 					}
-					
+
 					CameraPosition cameraPosition = new CameraPosition.Builder()
 					.target(myfact)
 					.zoom(10)// Sets the zoom
@@ -892,14 +949,14 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 					getDirections(myPosition,myfact);
 					dialogbtnfact.dismiss();
-					
-					
+
+
 				}
 			});
-			
+
 			Button annul1 = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
 			annul1.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					dialogbtnfact.dismiss();
@@ -909,16 +966,411 @@ OnMyLocationButtonClickListener,DCACallBack{
 			break;
 		}
 		return true;
-		
+
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main, menu);
+		menuInflater.inflate(R.menu.main, menu);
 
-        return super.onCreateOptionsMenu(menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	public void onClickHome(View v){
+		Intent intent = new Intent(this, HomeActivity.class);
+		intent.putExtra("user", compte);
+		intent.setFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity (intent);
+		this.finish();
 	}
 	
-	
+	private void myHomDialog(){
+		
+		Log.e("in home duialog ",type +"  ");
+		switch (type) {
+		case 1:
+			clientspinner = (Spinner) dialogbtnclt.findViewById(R.id.produitpointer);
+
+			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+					android.R.layout.simple_spinner_item, listclt);
+			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			clientspinner.setAdapter(dataAdapter);
+
+			Log.i("Clients ", clients.toString());
+			Log.d("List pour spinner ", listclt.toString());
+
+			Button annul = (Button) dialogbtnclt.findViewById(R.id.annulershowme); 
+			annul.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					dialogbtnclt.dismiss();
+				}
+			});
+
+			clientspinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+				@Override
+				public void onItemSelected(AdapterView<?> parent, View arg1,int pos, long arg3) {
+					String selected = parent.getItemAtPosition(pos).toString();
+
+					for (int i = 0; i < clients.size(); i++) {
+						if(selected.equals(clients.get(i).getName())){
+							clientLocation = clients.get(i);
+							Log.e("Client selected",clientLocation.toString());
+							break;
+						}
+					}
+					/*
+					for (Client clt : clients) {
+						if(selected.equals(clt.getName())){
+							clientLocation = clt;
+							Log.e("Client selected",clt.toString());
+							break;
+						}
+					}
+					 */
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {
+					// TODO Auto-generated method stub
+
+				}
+			});
+
+			Button showm = (Button) dialogbtnclt.findViewById(R.id.clientshowme);
+			showm.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					Log.e("Client Location",clientLocation.toString());
+					if(clientLocation.getLatitude() != 0){
+						myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
+					}else{
+						myClient = myPosition;
+					}
+
+
+					CameraPosition cameraPosition = new CameraPosition.Builder()
+					.target(myClient)
+					.zoom(zoom)// Sets the zoom
+					.build();    // Creates a CameraPosition from the builder
+					map.animateCamera(CameraUpdateFactory.newCameraPosition(
+							cameraPosition));
+
+
+					MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
+							.icon(BitmapDescriptorFactory.defaultMarker(
+									BitmapDescriptorFactory.HUE_GREEN));
+					/*
+					 *	map.addMarker(markMe);
+					 */
+
+
+					mesPositions.add(markMe);
+					clearMap(map);
+
+					dialogbtnclt.dismiss();
+				}
+			});
+
+			Button itinere = (Button) dialogbtnclt.findViewById(R.id.itenermoiclient);
+			itinere.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+
+					if(clientLocation.getLatitude() != 0){
+						myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
+					}else{
+						myClient = myPosition;
+					}
+
+					CameraPosition cameraPosition = new CameraPosition.Builder()
+					.target(myClient)
+					.zoom(zoom)// Sets the zoom
+					.build();    // Creates a CameraPosition from the builder
+					map.animateCamera(CameraUpdateFactory.newCameraPosition(
+							cameraPosition));
+
+
+					MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
+							.icon(BitmapDescriptorFactory.defaultMarker(
+									BitmapDescriptorFactory.HUE_YELLOW));
+					/*
+					 *	map.addMarker(markMe);
+					 */
+
+					mesPositions.add(markMe);
+					clearMap(map);
+
+					getDirections(myPosition,myClient);
+					dialogbtnclt.dismiss();
+
+
+				}
+			});
+
+			dialogbtnclt.show();
+			break;
+		case 2:
+			factcomplete = (AutoCompleteTextView) dialogbtnfact.findViewById(R.id.autocomplate);
+
+			if(!factcomplete.hasFocus()){
+				hideSoftKeyboard();
+			}
+
+
+			ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<String>(this,
+
+					android.R.layout.simple_spinner_item, listfact);
+			dataAdapter1.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+
+			//facturespinner.setAdapter(dataAdapter);
+			factcomplete.setAdapter(dataAdapter1);
+			factcomplete.setThreshold(1);
+			factcomplete.setTextColor(Color.RED); 
+			factcomplete.setOnItemClickListener(new OnItemClickListener() {
+
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					factcomplete.showDropDown();
+					String selected = (String) parent.getItemAtPosition(position);
+					final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
+
+					factcomplete.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
+					//Toast.makeText(MainActivity.this, selected, Toast.LENGTH_LONG).show();
+
+					for (int i = 0; i < factures.size(); i++) {
+						if(selected.equals(factures.get(i).getNumero())){
+							facture = factures.get(i);
+							break;
+						}
+					}
+					//factcomplete.setInputType(InputType.TYPE_NULL);
+				}
+			});
+
+			Button showme = (Button) dialogbtnfact.findViewById(R.id.factshowme);
+			showme.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					if(Double.parseDouble(facture.getLat()) > 0){
+						myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+					}else{
+						myfact = myPosition;
+					}
+
+
+					CameraPosition cameraPosition = new CameraPosition.Builder()
+					.target(myfact)
+					.zoom(zoom)// Sets the zoom
+					.build();    // Creates a CameraPosition from the builder
+					map.animateCamera(CameraUpdateFactory.newCameraPosition(
+							cameraPosition));
+
+
+					MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.facture_num)+facture.getNumero())
+							.icon(BitmapDescriptorFactory.defaultMarker(
+									BitmapDescriptorFactory.HUE_YELLOW));
+					/*
+					 *	map.addMarker(markMe);
+					 */
+
+
+					mesPositions.add(markMe);
+					clearMap(map);
+
+					dialogbtnfact.dismiss();
+				}
+			});
+
+			Button itinerer = (Button) dialogbtnfact.findViewById(R.id.itenermoifact);
+			itinerer.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+
+					if(Double.parseDouble(facture.getLat()) > 0){
+						myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+					}else{
+						myfact = myPosition;
+					}
+					
+					Log.e("myPoss",myPosition +" ##myfact "+myfact);
+
+					CameraPosition cameraPosition = new CameraPosition.Builder()
+					.target(myfact)
+					.zoom(10)// Sets the zoom
+					.build();    // Creates a CameraPosition from the builder
+					map.animateCamera(CameraUpdateFactory.newCameraPosition(
+							cameraPosition));
+
+
+					MarkerOptions markMe = new MarkerOptions().position(myfact).title("Facture Numero :"+facture.getNumero())
+							.icon(BitmapDescriptorFactory.defaultMarker(
+									BitmapDescriptorFactory.HUE_YELLOW));
+					/*
+					 *	map.addMarker(markMe);
+					 */
+
+					mesPositions.add(markMe);
+					clearMap(map);
+
+					getDirections(myPosition,myfact);
+					dialogbtnfact.dismiss();
+
+
+				}
+			});
+
+			Button annul1 = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
+			annul1.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					dialogbtnfact.dismiss();
+				}
+			});
+			dialogbtnfact.show();
+			break;
+
+		case 3:
+			factcomplete = (AutoCompleteTextView) dialogbtnfact.findViewById(R.id.autocomplate);
+
+			if(!factcomplete.hasFocus()){
+				hideSoftKeyboard();
+			}
+
+
+			ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, listcmd);
+			dataAdapter3.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+
+			//facturespinner.setAdapter(dataAdapter);
+			factcomplete.setAdapter(dataAdapter3);
+			factcomplete.setThreshold(1);
+			factcomplete.setTextColor(Color.RED); 
+			factcomplete.setOnItemClickListener(new OnItemClickListener() {
+
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					factcomplete.showDropDown();
+					String selected = (String) parent.getItemAtPosition(position);
+					final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
+
+					factcomplete.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
+					//Toast.makeText(MainActivity.this, selected, Toast.LENGTH_LONG).show();
+
+					for (int i = 0; i < cmds.size(); i++) {
+						if(selected.equals(cmds.get(i).getNumero())){
+							cmd = cmds.get(i);
+							break;
+						}
+					}
+					//factcomplete.setInputType(InputType.TYPE_NULL);
+				}
+			});
+
+			Button showme2 = (Button) dialogbtnfact.findViewById(R.id.factshowme);
+			showme2.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					if(Double.parseDouble(cmd.getLat()) > 0){
+						myfact = new LatLng(Double.parseDouble(cmd.getLat()), Double.parseDouble(cmd.getLng()));
+					}else{
+						myfact = myPosition;
+					}
+
+
+					CameraPosition cameraPosition = new CameraPosition.Builder()
+					.target(myfact)
+					.zoom(zoom)// Sets the zoom
+					.build();    // Creates a CameraPosition from the builder
+					map.animateCamera(CameraUpdateFactory.newCameraPosition(
+							cameraPosition));
+
+
+					MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.commande_num)+cmd.getNumero())
+							.icon(BitmapDescriptorFactory.defaultMarker(
+									BitmapDescriptorFactory.HUE_YELLOW));
+					/*
+					 *	map.addMarker(markMe);
+					 */
+
+
+					mesPositions.add(markMe);
+					clearMap(map);
+
+					dialogbtnfact.dismiss();
+				}
+			});
+
+			Button itinerer2 = (Button) dialogbtnfact.findViewById(R.id.itenermoifact);
+			itinerer2.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+
+					if(Double.parseDouble(cmd.getLat()) > 0){
+						myfact = new LatLng(Double.parseDouble(cmd.getLat()), Double.parseDouble(cmd.getLng()));
+					}else{
+						myfact = myPosition;
+					}
+					
+					Log.e("myPoss",myPosition +" ##myfact "+myfact);
+
+					CameraPosition cameraPosition = new CameraPosition.Builder()
+					.target(myfact)
+					.zoom(10)// Sets the zoom
+					.build();    // Creates a CameraPosition from the builder
+					map.animateCamera(CameraUpdateFactory.newCameraPosition(
+							cameraPosition));
+
+
+					MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.commande_num)+cmd.getNumero())
+							.icon(BitmapDescriptorFactory.defaultMarker(
+									BitmapDescriptorFactory.HUE_YELLOW));
+					/*
+					 *	map.addMarker(markMe);
+					 */
+
+					mesPositions.add(markMe);
+					clearMap(map);
+
+					getDirections(myPosition,myfact);
+					dialogbtnfact.dismiss();
+
+
+				}
+			});
+
+			Button annul12 = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
+			annul12.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					dialogbtnfact.dismiss();
+				}
+			});
+			dialogbtnfact.show();
+			break;
+		default:
+			break;
+		}
+	}
 }
