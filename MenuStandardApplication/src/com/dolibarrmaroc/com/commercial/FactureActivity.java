@@ -172,6 +172,8 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 			listprd.add(getResources().getString(R.string.product_spinner));
 
 			commentaire = (EditText) findViewById(R.id.commentaire);
+			
+			headtitle = (TextView)findViewById(R.id.headtitleview);
 
 			
 
@@ -234,6 +236,7 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 				facture.setText(getResources().getString(R.string.cmdtofc26));
 			}else if(cmdTrue == 1 && type_invoice == -1){
 				facture.setText(getResources().getString(R.string.btn_validete_order));
+				headtitle.setText(getResources().getString(R.string.cmdtofc35));
 			}else if(cmdTrue == 0 && type_invoice == 2){
 				facture.setText(getResources().getString(R.string.cmdtofc27));
 			}else{
@@ -338,7 +341,7 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 			qntview = (TextView)dialog.findViewById(R.id.textView1ww);
 			
 			
-			headtitle = (TextView)findViewById(R.id.headtitleview);
+			
 			if(type_invoice == 0){
 				headtitle.setText(getResources().getString(R.string.title_activity_vendeur));
 			}else if(type_invoice == 1){

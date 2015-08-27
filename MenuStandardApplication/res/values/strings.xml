@@ -4,7 +4,7 @@
     <string name="app_name">GOOGLE+ APPLICATION</string>
     <string name="hello_world">GEO.COM!</string>
     <string name="action_settings">Settings</string>
-    <string name="mapKey">AIzaSyBs7LDzcCTU1sDJccSM7UF6Bz4RVc8RNek</string>
+    <string name="mapKey">AIzaSyBJUHaz5yEjC36YfbsXVYBPHAq7PEuvyU4</string>
     <string name="title_activity_connexion">GEO.COM</string>
 
     <!-- ********************************* DASHBOARD ********************************* -->
@@ -443,6 +443,7 @@
     <string name="cmdtofc30">Le client est encours dans état inactif. Veuillez synchronizer votre client avant de passer des transactions</string>
     <string name="cmdtofc33">--Liste secteurs--</string>
     <string name="cmdtofc34">Vous voulez annuler votre operation ?</string>
+    <string name="cmdtofc35">Création commande</string>
     <string name="factlab1">Le montant n\'est pas valide</string>
     <string name="factlab2">Le montant encaisser est supérieure au montant total</string>
     <string name="comerciallab1">Récupération des données</string>
@@ -477,7 +478,7 @@
     <string name="syscl5">Vider le cache hors ligne</string>
     <string name="syscl6">Votre choix est introuvable</string>
     <string name="syscl7">Vous ne disposer pas des droits pour Ajouter et modifier les clients</string>
-    <string name="syscl8">Vous ne disposer pas des droits pour passer des commandes</string>
+    <string name="syscl8">Vous ne disposer pas des droits pour créer et valider des commandes</string>
     <string name="syscl9">Cette option n\'est pas disponible pour le moment</string>
     <string name="syscl10">Vous ne disposer pas des droits pour passer des factures et effectuer des payements</string>
     <string name="title_activity_synchronisation_home">Accueil de synchronisation</string>

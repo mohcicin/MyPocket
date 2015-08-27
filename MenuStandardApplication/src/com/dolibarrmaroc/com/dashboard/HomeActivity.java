@@ -1,9 +1,16 @@
 
 package com.dolibarrmaroc.com.dashboard;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.apache.commons.codec.binary.Base64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,6 +20,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.telephony.TelephonyManager;
@@ -66,6 +74,7 @@ import com.dolibarrmaroc.com.utils.CheckOutSysc;
 import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
 import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
+import com.dolibarrmaroc.com.utils.UrlImage;
 import com.dolibarrmaroc.com.utils.VendeurManagerFactory;
 import com.karouani.cicin.widget.alert.AlertDialogList;
 
@@ -148,9 +157,6 @@ public class HomeActivity extends Activity
 		//Log.e(">> clts ",myoffline.chargerInvoice_prospect(compte).toString());
 
 		if(CheckOutNet.isNetworkConnected(getApplicationContext())){
-
-			
-
 			/*
 			if(myoffline.checkAvailableofflinestorage() > 0){
 				dialog2 = ProgressDialog.show(HomeActivity.this, getResources().getString(R.string.caus15),
@@ -418,7 +424,7 @@ public class HomeActivity extends Activity
 			break;
 		case R.id.home_btn_prise_cmd : 
 
-			if("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) || (compte.getPermissionbl() != 0 || "vendeur".equals(compte.getProfile().toLowerCase()))){
+			if(("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) && compte.getPermissionbl() != 0) || (compte.getPermissionbl() != 0 && "vendeur".equals(compte.getProfile().toLowerCase()))){
 				List<com.dolibarrmaroc.com.models.AlertDialog> alertc2 = new ArrayList<>();
 				Intent intentc1 = new Intent(getApplicationContext(), CatalogeActivity.class); //CatalogeActivity.class  //CmdViewActivity
 				intentc1.putExtra("user", compte);
@@ -436,6 +442,8 @@ public class HomeActivity extends Activity
 			}else{
 				alertPrdClt(getString(R.string.syscl8));
 			}
+			
+			 
 			break;
 		case R.id.home_btn_maps : 
 

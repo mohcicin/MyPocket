@@ -3875,7 +3875,7 @@ public class Offlineimpl implements ioffline {
 				dataeror2 = synchronisationPayementOut(invo_cl,cmd_cl);
 			}
 			
-			
+			Log.e("cmd to facture ",LoadCmdToFact("").size()+" ");
 			if(LoadCmdToFact("").size() > 0){
 				lscmdv = synchronisationCmdToFacOut(compte);
 			}
