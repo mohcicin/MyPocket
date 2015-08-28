@@ -23,7 +23,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="com.dolibarrmaroc.com.ConnexionActivity"
+            android:name=".ConnexionActivity"
             android:label="@string/title_activity_connexion"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
@@ -34,95 +34,95 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.dashboard.HomeActivity"
+            android:name=".dashboard.HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.gps.TrackingActivity"
+            android:name=".gps.TrackingActivity"
             android:label="@string/title_activity_tracking"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
 
         <service
-            android:name="com.dolibarrmaroc.com.gps.ShowLocationActivity"
+            android:name=".gps.ShowLocationActivity"
             android:enabled="true"
             android:exported="false"
             android:process=":geocom_services" >
         </service>
 
         <activity
-            android:name="com.dolibarrmaroc.com.maps.MainActivity"
+            android:name=".maps.MainActivity"
             android:label="@string/title_feature1"
             android:theme="@style/Theme.D1" />
         <activity
-            android:name="com.dolibarrmaroc.com.AboutActivity"
+            android:name=".AboutActivity"
             android:label="@string/title_about"
             android:theme="@style/Theme.D1" />
         <activity
-            android:name="com.dolibarrmaroc.com.commercial.VendeurActivity"
+            android:name=".commercial.VendeurActivity"
             android:label="@string/title_activity_vendeur"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.intervention.TechnicienActivity"
+            android:name=".intervention.TechnicienActivity"
             android:label="@string/title_activity_technicien"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.tiers.CommercialActivity"
+            android:name=".tiers.CommercialActivity"
             android:label="@string/title_activity_commercial"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.gps.GpsTrackerActivity"
+            android:name=".gps.GpsTrackerActivity"
             android:label="@string/title_activity_gps_tracker"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.commercial.FactureActivity"
+            android:name=".commercial.FactureActivity"
             android:label="@string/title_activity_facture"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.commercial.NextEtapeActivity"
+            android:name=".commercial.NextEtapeActivity"
             android:label="@string/title_activity_next_etape"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.commercial.EsignatureActivity"
+            android:name=".commercial.EsignatureActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout"
             android:label="@string/title_activity_esignature"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.impression.ReadPDFActivity"
+            android:name=".impression.ReadPDFActivity"
             android:label="@string/title_activity_read_pdf"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.administration.AdminActivity"
+            android:name=".administration.AdminActivity"
             android:label="@string/title_activity_admin"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.administration.WebViewActivity"
+            android:name=".administration.WebViewActivity"
             android:label="@string/title_activity_web_view"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.commercial.VendeurTabActivity"
+            android:name=".commercial.VendeurTabActivity"
             android:label="@string/title_activity_vendeur_tab"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1"
@@ -130,68 +130,68 @@
         </activity>
 
         <service
-            android:name="com.dolibarrmaroc.com.gps.ShowLocationActivity"
+            android:name=".gps.ShowLocationActivity"
             android:enabled="true"
             android:exported="false"
             android:process=":geocom_services" >
         </service>
 
         <activity
-            android:name="com.dolibarrmaroc.com.gps.GpsFactureActivity"
+            android:name=".gps.GpsFactureActivity"
             android:label="@string/title_activity_gps_facture"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.impression.PrintDialogActivity"
+            android:name=".impression.PrintDialogActivity"
             android:label="@string/title_activity_print_dialog"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.intervention.TechnicienTabActivity"
+            android:name=".intervention.TechnicienTabActivity"
             android:label="@string/title_activity_technicien_tab"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.intervention.SecondStepTechnActivity"
+            android:name=".intervention.SecondStepTechnActivity"
             android:label="@string/title_activity_second_step_techn"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.intervention.InterfaceTechnicienActivity"
+            android:name=".intervention.InterfaceTechnicienActivity"
             android:label="@string/title_activity_interface_technicien"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.intervention.ObservationTechActivity"
+            android:name=".intervention.ObservationTechActivity"
             android:label="@string/title_activity_observation_tech"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.intervention.CameraActivity"
+            android:name=".intervention.CameraActivity"
             android:label="@string/title_activity_camera"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.impression.ImprimerActivity"
+            android:name=".impression.ImprimerActivity"
             android:label="@string/title_activity_imprimer"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.tiers.PersonnePhysiqueActivity"
+            android:name=".tiers.PersonnePhysiqueActivity"
             android:label="@string/title_activity_personne_physique"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.tiers.SecondeEtapeCommercialActivity"
+            android:name=".tiers.SecondeEtapeCommercialActivity"
             android:label="@string/title_activity_seconde_etape_commercial"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
@@ -199,132 +199,138 @@
 
         <!-- Ticket Bluthouth -->
         <activity
-            android:name="com.dolibarrmaroc.com.impression.DeviceListActivity"
+            android:name=".impression.DeviceListActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/select_device"
             android:theme="@android:style/Theme.Dialog" />
         <activity
-            android:name="com.dolibarrmaroc.com.impression.TicketActivity"
+            android:name=".impression.TicketActivity"
             android:label="@string/title_activity_ticket"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.commercial.PayementActivity"
+            android:name=".commercial.PayementActivity"
             android:label="@string/title_activity_payement"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.commercial.OfflineActivity"
+            android:name=".commercial.OfflineActivity"
             android:label="@string/title_activity_offline"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.impression.TicketOfflineActivity"
+            android:name=".impression.TicketOfflineActivity"
             android:label="@string/title_activity_ticket_offline"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.ticket.FactureTicketActivity"
+            android:name=".ticket.FactureTicketActivity"
             android:label="@string/title_activity_facture_ticket"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.ticket.ReglementTicketActivity"
+            android:name=".ticket.ReglementTicketActivity"
             android:label="@string/title_activity_reglement_ticket"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.commercial.ReglementOfflineActivity"
+            android:name=".commercial.ReglementOfflineActivity"
             android:label="@string/title_activity_reglement_offline"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.synchronisation.SettingsynchroActivity"
+            android:name=".synchronisation.SettingsynchroActivity"
             android:label="@string/title_activity_settingsynchro"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.commercial.ValiderActivity"
+            android:name=".commercial.ValiderActivity"
             android:label="@string/title_activity_valider"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.intervention.InterventionhistoActivity"
+            android:name=".intervention.InterventionhistoActivity"
             android:label="@string/title_activity_interventionhisto"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.prevendeur.ViewcommandeActivity"
+            android:name=".prevendeur.ViewcommandeActivity"
             android:label="@string/title_activity_viewcommande"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.prevendeur.CommandeViewTicketActivity"
+            android:name=".prevendeur.CommandeViewTicketActivity"
             android:label="@string/title_activity_commande_view"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.stocks.TransfertstockActivity"
+            android:name=".stocks.TransfertstockActivity"
             android:label="@string/title_activity_transfertstock"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.stocks.ViewstockActivity"
+            android:name=".stocks.ViewstockActivity"
             android:label="@string/title_activity_viewstock"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.prevendeur.CatalogeActivity"
+            android:name=".prevendeur.CatalogeActivity"
             android:label="@string/title_activity_cataloge"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.prevendeur.CmdDetailActivity"
+            android:name=".prevendeur.CmdDetailActivity"
             android:label="@string/title_activity_cmd_detail"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.prevendeur.CmdPayActivity"
+            android:name=".prevendeur.CmdPayActivity"
             android:label="@string/title_activity_cmd_pay"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.tiers.UpdateClientActivity"
+            android:name=".tiers.UpdateClientActivity"
             android:label="@string/title_activity_update_client"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.prevendeur.CmdViewActivity"
+            android:name=".prevendeur.CmdViewActivity"
             android:label="@string/title_activity_cmd_view"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.stocks.TransfertvirtualstockActivity"
+            android:name=".stocks.TransfertvirtualstockActivity"
             android:label="@string/title_activity_transfertvirtualstock"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.synchronisation.SynchronisationHomeActivity"
+            android:name=".synchronisation.SynchronisationHomeActivity"
             android:label="@string/title_activity_synchronisation_home"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.D1" >
+        </activity>
+        <activity
+            android:name="com.dolibarrmaroc.statistic.StatistiqueActivity"
+            android:label="@string/title_activity_statistique"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
@@ -352,7 +358,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <!--
      The following two permissions are not required to use
-     Google Maps Android API v2, but are recommended.
+     Google Maps Android API v2, but are recommended.
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

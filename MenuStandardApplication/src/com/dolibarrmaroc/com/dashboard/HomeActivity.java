@@ -76,6 +76,7 @@ import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
 import com.dolibarrmaroc.com.utils.UrlImage;
 import com.dolibarrmaroc.com.utils.VendeurManagerFactory;
+import com.dolibarrmaroc.statistic.StatistiqueActivity;
 import com.karouani.cicin.widget.alert.AlertDialogList;
 
 
@@ -327,8 +328,17 @@ public class HomeActivity extends Activity
 
 			break;
 		case R.id.home_btn_statistque :
-			//startActivity (new Intent(getApplicationContext(), F3Activity.class));
-			alertPrdClt(getString(R.string.syscl9));
+			//startActivity (new Intent(getApplicationContext(), F3Activity.class));StatistiqueActivity
+			
+			
+			if("Administrateur magasinier".toLowerCase().equals(compte.getProfile().toLowerCase())){
+				alertPrdClt(getString(R.string.syscl9));
+			}else{
+				Intent intentsts = new Intent(HomeActivity.this, StatistiqueActivity.class);
+				intentsts.putExtra("user", compte);
+				startActivity(intentsts);
+			}
+			
 			break;
 		case R.id.home_btn_livraison :
 			//startActivity (new Intent(getApplicationContext(), VendeurActivity.class));

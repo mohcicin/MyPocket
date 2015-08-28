@@ -155,6 +155,7 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 			CategorieDao categorie = new CategorieDaoMysql(getApplicationContext());
 			
 			
+			
 			if(myoffline.checkAvailableofflinestorage() > 0){
 				myoffline.SendOutData(compte);
 			}
