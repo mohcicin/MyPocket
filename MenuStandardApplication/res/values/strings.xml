@@ -401,7 +401,7 @@
     <string name="title_activity_viewstock">Liste des transferts</string>
 
     <!-- catalogue produits -->
-    <string name="title_activity_cataloge">Catalogue des produits</string>
+    <string name="title_activity_cataloge">Création des commandes</string>
     <string name="addpan">Ajouter au pannier</string>
     <string name="title_activity_commande">Mes commandes</string>
     <string name="title_activity_cmd_view">Consulter mes commandes</string>
@@ -471,10 +471,10 @@
     <string name="vendcat1">Categorie par defaut</string>
 
     <!-- synchronisation labels -->
-    <string name="syscl1">Chargement des produits et clients</string>
-    <string name="syscl2">Chargement des informations des commerciaux</string>
-    <string name="syscl3">Chargement des commandes et catalogue produits</string>
-    <string name="syscl4">Chargement des factures</string>
+    <string name="syscl1">Charger produits et clients</string>
+    <string name="syscl2">Charger informations des commerciaux</string>
+    <string name="syscl3">Charger des commandes et catalogue</string>
+    <string name="syscl4">Charger des factures</string>
     <string name="syscl5">Vider le cache hors ligne</string>
     <string name="syscl6">Votre choix est introuvable</string>
     <string name="syscl7">Vous ne disposer pas des droits pour Ajouter et modifier les clients</string>
@@ -487,18 +487,19 @@
     <string name="mapstitle1">Factures operation</string>
     <string name="mapstitle2">Clients operation</string>
     <string name="mapstitle3">Commandes operation</string>
-    
+
     <!-- statistique -->
     <string name="title_activity_statistique">Accueil des statistiques</string>
     <string name="statlab1">Nombre des Factures</string>
     <string name="statlab2">Nombre des Clients</string>
     <string name="statlab3">Nombre des Payements</string>
-    
     <string name="statlab4">Nombre des Produits</string>
     <string name="statlab5">Nombre des Clients</string>
     <string name="statlab6">Nombre des Factures</string>
-    
     <string name="statlab7">Etats des operations hors-ligne en attente</string>
     <string name="statlab8">Etats de stock en cache</string>
+    
+    <!-- Cmd cache -->
+    <string name="title_activity_cmd_cache">Commande en cache</string>
 
 </resources>

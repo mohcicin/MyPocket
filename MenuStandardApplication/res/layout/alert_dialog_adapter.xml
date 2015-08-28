@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:text="Medium Text"
         android:layout_marginTop="12dp"
+        android:layout_marginLeft="5dp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ImageView
