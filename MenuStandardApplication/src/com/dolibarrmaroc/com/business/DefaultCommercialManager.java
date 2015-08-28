@@ -43,4 +43,11 @@ public class DefaultCommercialManager implements CommercialManager {
 		return dao.update(c, p);
 	}
 
+	@Override
+	public String insertWithImage(Compte compte, Prospection client,
+			String ba1, String lieux) {
+		// TODO Auto-generated method stub
+		return dao.insertWithImage(compte, client, ba1, lieux);
+	}
+
 }

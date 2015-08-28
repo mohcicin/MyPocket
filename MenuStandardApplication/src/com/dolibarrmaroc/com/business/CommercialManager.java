@@ -12,4 +12,6 @@ public interface CommercialManager {
 	public ProspectData getInfos(Compte c);
 	public List<Societe> getAll(Compte c);
 	public String update(Compte c,Prospection p); 
+	public String insertWithImage(Compte compte, Prospection client,
+			String ba1, String lieux);
 }

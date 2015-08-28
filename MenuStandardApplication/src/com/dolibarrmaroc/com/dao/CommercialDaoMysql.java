@@ -286,5 +286,77 @@ public class CommercialDaoMysql implements CommercialDao{
 		return list;
 	}
 
+	@Override
+	public String insertWithImage(Compte c, Prospection p,String ba1, String lieux) {
+		//Log.e("Appel INSERTION", p.toString());
+
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		nameValuePairs.add(new BasicNameValuePair("username",c.getLogin()));
+		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
+		nameValuePairs.add(new BasicNameValuePair("create","create"));
+
+		if (p.getParticulier() == 1) {
+			nameValuePairs.add(new BasicNameValuePair("nom",p.getFirstname()));
+		}else{
+			nameValuePairs.add(new BasicNameValuePair("nom",p.getName()));
+		}
+
+		nameValuePairs.add(new BasicNameValuePair("firstname",p.getLastname()));
+		nameValuePairs.add(new BasicNameValuePair("particulier",p.getParticulier()+""));
+		nameValuePairs.add(new BasicNameValuePair("client",p.getClient()+""));
+		nameValuePairs.add(new BasicNameValuePair("address",p.getAddress()));
+		nameValuePairs.add(new BasicNameValuePair("zip",p.getZip()));
+		nameValuePairs.add(new BasicNameValuePair("town",p.getTown()));
+		nameValuePairs.add(new BasicNameValuePair("phone",p.getPhone()));
+		nameValuePairs.add(new BasicNameValuePair("fax",p.getFax()));
+		nameValuePairs.add(new BasicNameValuePair("email",p.getEmail()));
+		nameValuePairs.add(new BasicNameValuePair("capital",p.getCapital()));
+		nameValuePairs.add(new BasicNameValuePair("idprof1",p.getIdprof1()));
+		nameValuePairs.add(new BasicNameValuePair("idprof2",p.getIdprof2()));
+		nameValuePairs.add(new BasicNameValuePair("idprof3",p.getIdprof3()));
+		nameValuePairs.add(new BasicNameValuePair("idprof4",p.getIdprof4()));
+		nameValuePairs.add(new BasicNameValuePair("typent_id",p.getTypent_id()));
+		nameValuePairs.add(new BasicNameValuePair("effectif_id",p.getEffectif_id()));
+		nameValuePairs.add(new BasicNameValuePair("assujtva_value",p.getTva_assuj()+""));
+		nameValuePairs.add(new BasicNameValuePair("status",p.getStatus()+""));
+		nameValuePairs.add(new BasicNameValuePair("commercial_id",c.getIduser()));
+		nameValuePairs.add(new BasicNameValuePair("country_id",p.getCountry_id()+""));
+		nameValuePairs.add(new BasicNameValuePair("forme_juridique_code",p.getForme_juridique_code()));
+
+		nameValuePairs.add(new BasicNameValuePair("latitude",p.getLatitude()+""));
+		nameValuePairs.add(new BasicNameValuePair("longitude",p.getLangitude()+""));
+
+		nameValuePairs.add(new BasicNameValuePair("lieux",lieux));
+		nameValuePairs.add(new BasicNameValuePair("images",ba1));
+		
+		String retour = "-1";
+
+		try {
+			String json = parser.makeHttpRequest(urlData, "POST", nameValuePairs);
+			String stfomat = json.substring(json.indexOf("{"),json.lastIndexOf("}")+1);
+
+			Log.e("Insertion Message old", json);
+
+			JSONObject obj = new JSONObject(stfomat);
+			if(obj.has("message")){
+				JSONArray arr = obj.getJSONArray("message");
+				int k =arr.length() - 1;
+				//retour = arr.getString(k);
+			}
+			//$message['client']
+			retour = obj.getString("client");
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			retour ="-1";
+			Log.e("json insert prospect",e.getMessage() +" << ");
+		}
+
+		Log.e("Retour >> 00",retour);
+		return retour;
+	}
+
 	
 }

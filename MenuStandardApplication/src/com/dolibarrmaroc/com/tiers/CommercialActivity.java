@@ -1,6 +1,8 @@
 package com.dolibarrmaroc.com.tiers;
 
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,18 +11,26 @@ import java.util.List;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -32,6 +42,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -60,6 +72,7 @@ import com.dolibarrmaroc.com.models.ProspectData;
 import com.dolibarrmaroc.com.models.Prospection;
 import com.dolibarrmaroc.com.offline.Offlineimpl;
 import com.dolibarrmaroc.com.offline.ioffline;
+import com.dolibarrmaroc.com.utils.Base64;
 import com.dolibarrmaroc.com.utils.CheckOutNet;
 import com.dolibarrmaroc.com.utils.CheckOutSysc;
 import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
@@ -139,6 +152,20 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 	
 	private StockVirtual sv;
 	
+	/************************CAMERA************************/
+	MediaPlayer mp=new MediaPlayer();
+	private static final int PICK_IMAGE = 1;
+	private static final int PICK_Camera_IMAGE = 2;
+	private Bitmap bitmap;
+	private Uri imageUri;
+	private ImageButton camera;
+	private String ba1;
+	private String lieux;
+	private boolean withimg = false;
+	/*****************Dialog composant****************/
+	private Dialog dialogcamera;
+	private Button galerie,cam,upload,cancel,next;
+	private ImageView imgView;
 	
 	public CommercialActivity() {
 		// TODO Auto-generated constructor stub
@@ -257,6 +284,26 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 			// manager.getInfos(compte);
 			
 			sv  = new StockVirtual(CommercialActivity.this);
+			
+			/*********************************************/
+			dialogcamera = new Dialog(this);
+			dialogcamera.setContentView(R.layout.commercial_camera);
+			dialogcamera.setTitle("Ajouter un autre Produit");
+			//dialogcamera.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			galerie = (Button) dialogcamera.findViewById(R.id.imggaleriebtn);
+			galerie.setOnClickListener(this);
+			cam 	= (Button) dialogcamera.findViewById(R.id.imgcamerabtn);
+			cam.setOnClickListener(this);
+			upload 	= (Button) dialogcamera.findViewById(R.id.imguploadbtndialog);
+			upload.setOnClickListener(this);
+			cancel 	= (Button) dialogcamera.findViewById(R.id.imgcancelbtndialog);
+			cancel.setOnClickListener(this);
+			imgView = (ImageView) dialogcamera.findViewById(R.id.ImageViewdialog);
+			camera = (ImageButton) findViewById(R.id.comm_camera);
+			camera.setOnClickListener(this);
+			next = (Button) findViewById(R.id.imgsuivantdbtndialog);
+			next.setOnClickListener(this);
+			/*********************************************/
 			
 	        
 		} catch (Exception e) {
@@ -564,7 +611,65 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 					//String res = manager.insert(compte, client);
 					//Log.d("Client",client.toString());
 				}
-			}else{
+			}else if(v == camera){
+				//checkRequiredFields();
+				if(email.getText().toString().length() == 0 || email.getText().toString().equals("")){
+
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(new Date()); 
+
+					client.setEmail(calendar.getTime().getTime()+"_anonyme@gmail.com");
+					email.setText(calendar.getTime().getTime()+"_anonyme@gmail.com");
+				}
+
+				if(checkRequiredFields().size() > 0){
+					alertinvonan();
+				}else{
+					if(myoffline.checkRefClient(client.getName(),client.getEmail()) == -1){
+						/*
+							dialog = ProgressDialog.show(CommercialActivity.this, getResources().getString(R.string.comerciallab3),
+									getResources().getString(R.string.msg_wait), true);
+
+							new EnregistrationTask().execute();
+						 */
+						dialogcamera.show();
+					}else{
+
+						AlertDialog.Builder localBuilder = new AlertDialog.Builder(CommercialActivity.this);
+						localBuilder
+						.setTitle(getResources().getString(R.string.cmdtofc10))
+						.setMessage(R.string.caus16)
+						.setCancelable(false)
+						.setPositiveButton("Retour",
+								new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+								ViewGroup group = (ViewGroup)findViewById(R.id.layoutall);
+
+								for (int i = 0, count = group.getChildCount(); i < count; ++i)
+								{
+									View view = group.getChildAt(i);
+									if (view instanceof EditText) {
+										((EditText)view).setText("");
+									}
+
+								}
+
+								ViewGroup group2 = (ViewGroup)findViewById(R.id.comm_interface);
+
+								for (int i = 0, count = group2.getChildCount(); i < count; ++i)
+								{
+									View view = group2.getChildAt(i);
+									if (view instanceof EditText) {
+										((EditText)view).setText("");
+									}
+								}
+							}
+						});
+						localBuilder.show();
+					}
+
+				}
+			}else if(v == suivant){
 				if(checkRequiredFields().size() > 0){
 					alertinvonan();
 				}else{
@@ -576,9 +681,99 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 					intent.putExtra("code_juridique", data.getJuridique_code());
 					intent.putExtra("code_type", data.getTypent_code());
 					intent.putExtra("id_type", data.getTypent_id());
-
-					startActivity(intent);	
+					intent.putExtra("type", "0");
+					startActivity(intent);
 				}
+			}else if(v == cam){
+				String fileName = "new-photo-name.jpg";
+				ContentValues values = new ContentValues();
+				values.put(MediaStore.Images.Media.TITLE, fileName);
+				values.put(MediaStore.Images.Media.DESCRIPTION,"Image capturer par Camera");
+				imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+				intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+				startActivityForResult(intent, PICK_Camera_IMAGE);
+				//dialogcamera.dismiss();
+			}else if (v == galerie) {
+				try {
+					Intent gintent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+					gintent.setType("image/*");
+					//gintent.setAction(Intent.ACTION_GET_CONTENT,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+					//gintent.setAction(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+					startActivityForResult(gintent,PICK_IMAGE);
+					//dialogcamera.dismiss();
+
+				} catch (Exception e) {
+					Toast.makeText(getApplicationContext(),
+							e.getMessage(),
+							Toast.LENGTH_LONG).show();
+					Log.e(e.getClass().getName(), e.getMessage() +" << ", e);
+
+				}
+			}else if(v == cancel){
+				dialogcamera.dismiss();
+			}else if (v == upload) {
+				InputStream is;
+				BitmapFactory.Options bfo;
+				Bitmap bitmapOrg;
+				ByteArrayOutputStream bao ;
+
+				bfo = new BitmapFactory.Options();
+				bfo.inSampleSize = 2;
+				//bitmapOrg = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/" + customImage, bfo);
+
+				bao = new ByteArrayOutputStream();
+				bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+				byte [] ba = bao.toByteArray();
+				ba1 = Base64.encodeBytes(ba);
+
+				//Log.e("name >> ", name.getText().toString().split("_")[0]);
+				lieux = "client-"+client.getName()+".jpg";
+
+				if (v == upload) {
+					withimg = true;
+					if(CheckOutNet.isNetworkConnected(getApplicationContext())){
+						dialog = ProgressDialog.show(CommercialActivity.this, getResources().getString(R.string.comerciallab3),
+								getResources().getString(R.string.msg_wait), true);
+
+						new EnregistrationTask().execute();
+					}else{
+						dialog = ProgressDialog.show(CommercialActivity.this, getResources().getString(R.string.comerciallab3),
+								getResources().getString(R.string.msg_wait), true);
+
+						new EnregistrationOfflineTask().execute();
+					}
+				}
+
+			}else{
+				
+				InputStream is;
+				BitmapFactory.Options bfo;
+				Bitmap bitmapOrg;
+				ByteArrayOutputStream bao ;
+
+				bfo = new BitmapFactory.Options();
+				bfo.inSampleSize = 2;
+				//bitmapOrg = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/" + customImage, bfo);
+
+				bao = new ByteArrayOutputStream();
+				bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+				byte [] ba = bao.toByteArray();
+				ba1 = Base64.encodeBytes(ba);
+				
+				Intent intent = new Intent(CommercialActivity.this,SecondeEtapeCommercialActivity.class);
+				intent.putExtra("client", client);
+				intent.putExtra("user", compte);
+				intent.putStringArrayListExtra("form", (ArrayList<String>) data.getJuridique());
+				intent.putStringArrayListExtra("tierce", (ArrayList<String>) data.getTypent());
+				intent.putExtra("code_juridique", data.getJuridique_code());
+				intent.putExtra("code_type", data.getTypent_code());
+				intent.putExtra("id_type", data.getTypent_id());
+				intent.putExtra("type", "1");
+				intent.putExtra("ba", ba1);
+				intent.putExtra("lieux", lieux);
+				startActivity(intent);
 			}
 
 		}
@@ -593,7 +788,13 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 		protected String doInBackground(Void... arg0) {
 			
 			if(CheckOutNet.isNetworkConnected(getApplicationContext())){
-				resu = manager.insert(compte, client);
+				//resu = manager.insert(compte, client);
+				
+				if (withimg) {
+					resu = manager.insertWithImage(compte, client,ba1,lieux);
+				}else{
+					resu = manager.insert(compte, client);
+				}
 				
 				VendeurManager vendeurManager = VendeurManagerFactory.getClientManager();
 				PayementManager payemn = PayementManagerFactory.getPayementFactory();
@@ -1053,5 +1254,128 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 	{
 		startActivity (new Intent(getApplicationContext(), AboutActivity.class));
 		this.finish();
+	}
+	
+	/********************** Function For Camera **************************/
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Uri selectedImageUri = null;
+		String filePath = null;
+		switch (requestCode) {
+		case PICK_IMAGE:
+			if (resultCode == Activity.RESULT_OK) {
+				selectedImageUri = data.getData();
+			}
+			break;
+		case PICK_Camera_IMAGE:
+			if (resultCode == RESULT_OK) {
+				selectedImageUri = imageUri;
+				/*Bitmap mPic = (Bitmap) data.getExtras().get("data");
+				selectedImageUri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), 
+				mPic, getResources().getString(R.string.app_name), Long.toString(System.currentTimeMillis())));*/
+			} else if (resultCode == RESULT_CANCELED) {
+				Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT).show();
+			}
+			break;
+		}
+
+		if(selectedImageUri != null){
+			try {
+				// OI FILE Manager
+				String filemanagerstring = selectedImageUri.getPath();
+
+				// MEDIA GALLERY
+				String selectedImagePath = getPath(selectedImageUri);
+
+				if (selectedImagePath != null) {
+					filePath = selectedImagePath;
+				} else if (filemanagerstring != null) {
+					filePath = filemanagerstring;
+				} else {
+					Toast.makeText(getApplicationContext(), "Unknown path",
+							Toast.LENGTH_LONG).show();
+					Log.e("Bitmap", "Unknown path");
+				}
+
+				if (filePath != null) {
+					decodeFile(filePath);
+					Log.e("Lien Image ", filePath);
+				} else {
+
+					bitmap = null;
+				}
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(), "Internal error",
+						Toast.LENGTH_LONG).show();
+				Log.e(e.getClass().getName(), e.getMessage() +" << ", e);
+			}
+		}
+
+	}
+
+	public String getPath(Uri uri) {
+		String[] projection = {  MediaStore.MediaColumns.DATA};
+		Cursor cursor;
+		try{
+			cursor = getContentResolver().query(uri, projection, null, null, null);
+		} catch (SecurityException e){
+			String path = uri.getPath();
+			String result = tryToGetStoragePath(path);
+			return  result;
+		}
+		if(cursor != null) {
+			//HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
+			//THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
+			cursor.moveToFirst();
+			int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+			String filePath = cursor.getString(columnIndex);
+			cursor.close();
+			return filePath;
+		}
+		else
+			return uri.getPath();               // FOR OI/ASTRO/Dropbox etc
+	}
+
+	private String tryToGetStoragePath(String path) {
+		int actualPathStart = path.indexOf("//storage");
+		String result = path;
+
+		if(actualPathStart!= -1 && actualPathStart< path.length())
+			result = path.substring(actualPathStart+1 , path.length());
+
+		return result;
+	}
+
+
+	public void decodeFile(String filePath) {
+		// Decode image size
+		BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(filePath, o);
+
+		// The new size we want to scale to
+		final int REQUIRED_SIZE = 2048;
+
+		// Find the correct scale value. It should be the power of 2.
+		int width_tmp = o.outWidth, height_tmp = o.outHeight;
+		int scale = 2;
+
+		while (true) {
+			if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
+				break;
+			width_tmp /= 2;
+			height_tmp /= 2;
+			scale *= 2;
+		}
+
+		// Decode with inSampleSize
+		BitmapFactory.Options o2 = new BitmapFactory.Options();
+		o2.inSampleSize = scale;
+		bitmap = BitmapFactory.decodeFile(filePath, o2);
+
+		imgView.setImageBitmap(bitmap);
+
+		dialogcamera.show();
 	}
 }

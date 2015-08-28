@@ -473,8 +473,8 @@
     <!-- synchronisation labels -->
     <string name="syscl1">Charger produits et clients</string>
     <string name="syscl2">Charger informations des commerciaux</string>
-    <string name="syscl3">Charger des commandes et catalogue</string>
-    <string name="syscl4">Charger des factures</string>
+    <string name="syscl3">Charger les commandes et catalogue</string>
+    <string name="syscl4">Charger les factures</string>
     <string name="syscl5">Vider le cache hors ligne</string>
     <string name="syscl6">Votre choix est introuvable</string>
     <string name="syscl7">Vous ne disposer pas des droits pour Ajouter et modifier les clients</string>

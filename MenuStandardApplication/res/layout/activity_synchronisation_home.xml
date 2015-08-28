@@ -65,7 +65,7 @@
              <Button
                 android:id="@+id/syscbtn5"
                 style="@style/SynchroBtn"
-                android:drawableTop="@drawable/home_state"
+                android:drawableTop="@drawable/sys_minus"
                 android:onClick="onClickFeature"
                 android:text="@string/syscl5"
                 android:textColor="#FFFFFFFF" />
@@ -73,7 +73,7 @@
             <Button
                 android:id="@+id/syscbtn4"
                 style="@style/SynchroBtn"
-                android:drawableTop="@drawable/home_intervention"
+                android:drawableTop="@drawable/home_livraison"
                 android:onClick="onClickFeature"
                 android:text="@string/syscl4"
                 android:textColor="#FFFFFFFF" />
@@ -89,7 +89,7 @@
             <Button
                 android:id="@+id/syscbtn3"
                 style="@style/SynchroBtn"
-                android:drawableTop="@drawable/home_carte"
+                android:drawableTop="@drawable/sys_appdrawer"
                 android:onClick="onClickFeature"
                 android:text="@string/syscl3"
                 android:textColor="#FFFFFFFF" />

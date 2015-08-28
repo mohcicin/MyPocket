@@ -123,6 +123,15 @@
                         android:text="@string/btn_save"
                         android:textColor="@android:color/white" />
 
+                    <ImageButton
+                        android:id="@+id/comm_camera"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:scaleType="centerInside"
+                        android:background="@null"
+                        android:src="@drawable/camera" />
+                    
                     <Button
                         android:id="@+id/comm_suivant"
                         android:layout_width="155dp"
