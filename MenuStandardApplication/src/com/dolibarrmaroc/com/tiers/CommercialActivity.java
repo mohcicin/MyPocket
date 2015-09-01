@@ -1,12 +1,16 @@
 package com.dolibarrmaroc.com.tiers;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -161,7 +165,7 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 	private ImageButton camera;
 	private String ba1;
 	private String lieux;
-	private boolean withimg = false;
+	private static boolean withimg = false;
 	/*****************Dialog composant****************/
 	private Dialog dialogcamera;
 	private Button galerie,cam,upload,cancel,next;
@@ -288,20 +292,26 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 			/*********************************************/
 			dialogcamera = new Dialog(this);
 			dialogcamera.setContentView(R.layout.commercial_camera);
-			dialogcamera.setTitle("Ajouter un autre Produit");
+			dialogcamera.setTitle(getResources().getString(R.string.comerciallab13));
 			//dialogcamera.requestWindowFeature(Window.FEATURE_NO_TITLE);
 			galerie = (Button) dialogcamera.findViewById(R.id.imggaleriebtn);
 			galerie.setOnClickListener(this);
+			
 			cam 	= (Button) dialogcamera.findViewById(R.id.imgcamerabtn);
 			cam.setOnClickListener(this);
+			
 			upload 	= (Button) dialogcamera.findViewById(R.id.imguploadbtndialog);
 			upload.setOnClickListener(this);
+			
 			cancel 	= (Button) dialogcamera.findViewById(R.id.imgcancelbtndialog);
 			cancel.setOnClickListener(this);
+			
 			imgView = (ImageView) dialogcamera.findViewById(R.id.ImageViewdialog);
+			
 			camera = (ImageButton) findViewById(R.id.comm_camera);
 			camera.setOnClickListener(this);
-			next = (Button) findViewById(R.id.imgsuivantdbtndialog);
+			
+			next = (Button) dialogcamera.findViewById(R.id.imgsuivantdbtndialog);
 			next.setOnClickListener(this);
 			/*********************************************/
 			
@@ -525,6 +535,8 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 				}else{
 					if(CheckOutNet.isNetworkConnected(getApplicationContext())){
 						
+						prepa_img();
+						
 						if(myoffline.checkRefClient(client.getName(),client.getEmail()) == -1){
 							dialog = ProgressDialog.show(CommercialActivity.this, getResources().getString(R.string.comerciallab3),
 									getResources().getString(R.string.msg_wait), true);
@@ -566,11 +578,12 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 						}
 						
 					}else{
-						Log.e("add clt ",client.toString());
+						
 						if(myoffline.checkRefClient(client.getName(),client.getEmail()) == -1){
 							dialog = ProgressDialog.show(CommercialActivity.this, getResources().getString(R.string.comerciallab3),
 									getResources().getString(R.string.msg_wait), true);
 							
+							prepa_img();
 							new EnregistrationOfflineTask().execute();
 						}else{
 							
@@ -673,6 +686,9 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 				if(checkRequiredFields().size() > 0){
 					alertinvonan();
 				}else{
+					
+					prepa_img();
+					
 					Intent intent = new Intent(CommercialActivity.this,SecondeEtapeCommercialActivity.class);
 					intent.putExtra("client", client);
 					intent.putExtra("user", compte);
@@ -682,9 +698,12 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 					intent.putExtra("code_type", data.getTypent_code());
 					intent.putExtra("id_type", data.getTypent_id());
 					intent.putExtra("type", "0");
+					intent.putExtra("ba", ba1);
+					intent.putExtra("lieux", lieux);
 					startActivity(intent);
 				}
 			}else if(v == cam){
+				withimg = true;
 				String fileName = "new-photo-name.jpg";
 				ContentValues values = new ContentValues();
 				values.put(MediaStore.Images.Media.TITLE, fileName);
@@ -697,6 +716,7 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 				//dialogcamera.dismiss();
 			}else if (v == galerie) {
 				try {
+					withimg = true;
 					Intent gintent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 					gintent.setType("image/*");
 					//gintent.setAction(Intent.ACTION_GET_CONTENT,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -729,7 +749,7 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 				ba1 = Base64.encodeBytes(ba);
 
 				//Log.e("name >> ", name.getText().toString().split("_")[0]);
-				lieux = "client-"+client.getName()+".jpg";
+				lieux = "client-"+client.getName().replaceAll(" ", "-")+".jpg";
 
 				if (v == upload) {
 					withimg = true;
@@ -746,21 +766,10 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 					}
 				}
 
-			}else{
+			}else if(v == next){
 				
-				InputStream is;
-				BitmapFactory.Options bfo;
-				Bitmap bitmapOrg;
-				ByteArrayOutputStream bao ;
-
-				bfo = new BitmapFactory.Options();
-				bfo.inSampleSize = 2;
-				//bitmapOrg = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/" + customImage, bfo);
-
-				bao = new ByteArrayOutputStream();
-				bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-				byte [] ba = bao.toByteArray();
-				ba1 = Base64.encodeBytes(ba);
+				Log.e("in next ","hello");
+				prepa_img();
 				
 				Intent intent = new Intent(CommercialActivity.this,SecondeEtapeCommercialActivity.class);
 				intent.putExtra("client", client);
@@ -774,6 +783,25 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 				intent.putExtra("ba", ba1);
 				intent.putExtra("lieux", lieux);
 				startActivity(intent);
+			}else{
+				
+				prepa_img();
+				
+				Intent intent = new Intent(CommercialActivity.this,SecondeEtapeCommercialActivity.class);
+				intent.putExtra("client", client);
+				intent.putExtra("user", compte);
+				intent.putStringArrayListExtra("form", (ArrayList<String>) data.getJuridique());
+				intent.putStringArrayListExtra("tierce", (ArrayList<String>) data.getTypent());
+				intent.putExtra("code_juridique", data.getJuridique_code());
+				intent.putExtra("code_type", data.getTypent_code());
+				intent.putExtra("id_type", data.getTypent_id());
+				intent.putExtra("type", "1");
+				intent.putExtra("ba", ba1);
+				intent.putExtra("lieux", lieux);
+				startActivity(intent);
+				
+				
+				
 			}
 
 		}
@@ -791,6 +819,7 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 				//resu = manager.insert(compte, client);
 				
 				if (withimg) {
+					prepa_img();
 					resu = manager.insertWithImage(compte, client,ba1,lieux);
 				}else{
 					resu = manager.insert(compte, client);
@@ -909,9 +938,19 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 				database = new DatabaseHandler(getApplicationContext());
 				client.setId((int)database.addrow("clt"));
 				
+				Log.e("in out goood",withimg +"  ");
+				
+				if (withimg) {
+					prepa_img();
+					client.setImage(ba1);
+					client.setLieux(lieux);
+					
+				}
 				resu = myoffline.shynchronizeProspection(client,compte);
 			}
 
+			
+			
 			
 			//wakelock.acquire();
 			return null;
@@ -1378,4 +1417,29 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 
 		dialogcamera.show();
 	}
+	
+	private void prepa_img(){
+		
+		if(bitmap != null){
+			InputStream is;
+			BitmapFactory.Options bfo;
+			Bitmap bitmapOrg;
+			ByteArrayOutputStream bao ;
+
+			bfo = new BitmapFactory.Options();
+			bfo.inSampleSize = 2;
+			//bitmapOrg = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/" + customImage, bfo);
+
+			bao = new ByteArrayOutputStream();
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+			byte [] ba = bao.toByteArray();
+			ba1 = Base64.encodeBytes(ba);
+
+			//Log.e("name >> ", name.getText().toString().split("_")[0]);
+			lieux = "client-"+client.getName().replaceAll(" ", "-")+".jpg";
+		}
+		
+	}
+	
+	
 }

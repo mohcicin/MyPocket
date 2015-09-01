@@ -1,8 +1,11 @@
 package com.dolibarrmaroc.com.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -174,4 +177,29 @@ public class Utils {
 	        // 返回生成的数组　
 	        return str;
 	    }
+	    
+	    public static byte[] compress2(String string) throws IOException {
+		    ByteArrayOutputStream os = new ByteArrayOutputStream(string.length());
+		    GZIPOutputStream gos = new GZIPOutputStream(os);
+		    gos.write(string.getBytes());
+		    gos.close();
+		    byte[] compressed = os.toByteArray();
+		    os.close();
+		    return compressed;
+		}
+
+		public static String decompress2(byte[] compressed) throws IOException {
+		    final int BUFFER_SIZE = 1024;
+		    ByteArrayInputStream is = new ByteArrayInputStream(compressed);
+		    GZIPInputStream gis = new GZIPInputStream(is, BUFFER_SIZE);
+		    StringBuilder string = new StringBuilder();
+		    byte[] data = new byte[BUFFER_SIZE];
+		    int bytesRead;
+		    while ((bytesRead = gis.read(data)) != -1) {
+		        string.append(new String(data, 0, bytesRead));
+		    }
+		    gis.close();
+		    is.close();
+		    return string.toString();
+		}
 }

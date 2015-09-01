@@ -458,6 +458,7 @@
     <string name="comerciallab10">Addresse du client</string>
     <string name="comerciallab11">Nom du client</string>
     <string name="comerciallab12">Code zip</string>
+    <string name="comerciallab13">Ajouter une photo</string>
     <string name="cnxlab1">Recherche d\'une mise à jour disponible</string>
     <string name="cnxlab2">Veuillez patienter ... </string>
     <string name="cnxlab3">Echéc : le montant de la facture est depassé</string>

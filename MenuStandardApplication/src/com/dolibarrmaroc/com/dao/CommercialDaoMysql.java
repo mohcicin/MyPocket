@@ -256,7 +256,7 @@ public class CommercialDaoMysql implements CommercialDao{
 		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
 		
 		String json = parser.makeHttpRequest(url, "POST", nameValuePairs);
-		Log.e("RepondreMoi", json);
+		Log.e("RepondreMoi soc", json);
 	
 		
 		try {
@@ -274,6 +274,8 @@ public class CommercialDaoMysql implements CommercialDao{
 										obj.getInt("company"), 
 										obj.getDouble("latitude"), 
 										obj.getDouble("longitude"));
+				s.setLogo(obj.getString("logo"));
+				Log.e("RepondreMoi", obj.getString("logo")+"");
 				list.add(s);
 			}
 			
@@ -329,7 +331,7 @@ public class CommercialDaoMysql implements CommercialDao{
 
 		nameValuePairs.add(new BasicNameValuePair("lieux",lieux));
 		nameValuePairs.add(new BasicNameValuePair("images",ba1));
-		
+		Log.e("pssssss >>",nameValuePairs.toString());
 		String retour = "-1";
 
 		try {

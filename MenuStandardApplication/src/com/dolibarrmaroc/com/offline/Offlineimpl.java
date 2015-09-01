@@ -85,6 +85,7 @@ import com.dolibarrmaroc.com.utils.MouvementManagerFactory;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
 import com.dolibarrmaroc.com.utils.ServiceDao;
 import com.dolibarrmaroc.com.utils.TechnicienManagerFactory;
+import com.dolibarrmaroc.com.utils.Utils;
 
 public class Offlineimpl implements ioffline {
 
@@ -1698,7 +1699,7 @@ public class Offlineimpl implements ioffline {
 					String s1 = ps.getName();
 					ps.setName(cp.getLogin()+"-"+s1);
 					
-					//Log.e("data "+ps.getName()," "+ps.getFirstname());
+					//Log.e("data ","["+gson.toJson(ps,Prospection.class)+"]");
 					
 					pout.println("["+gson.toJson(ps,Prospection.class)+"]");
 					if(ps.getClient() == 1){
@@ -3563,9 +3564,12 @@ public class Offlineimpl implements ioffline {
 					
 					if(invo == null) invo = new ArrayList<>();
 					
+					if(ps.getImage() != null && !"".equals(ps.getImage())){
+						cl = managerclient.insertWithImage(cp, ps, ps.getImage(), ps.getLieux());
+					}else{
+						cl = managerclient.insert(cp, ps);
+					}
 					
-					
-					cl = managerclient.insert(cp, ps);
 					
 					
 					if(cl != null && !cl.equals("-1")){
@@ -5176,7 +5180,7 @@ public class Offlineimpl implements ioffline {
 				file.mkdir();
 			}
 
-			Log.e("ct >>>>>>>>>>>> ",ct.toString());
+		//	Log.e("ct >>>>>>>>>>>> ",ct.toString());
 			if(file.exists()){
 				FileWriter fw = new FileWriter(file, true);
 				PrintWriter pout = new PrintWriter(fw);

@@ -2,20 +2,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+    
+    
 
-    <ImageView
+    <ScrollView
+        android:id="@+id/l2"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp" >
+
+      <LinearLayout  
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+        <ImageView
         android:id="@+id/ImageViewdialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:scaleType="fitXY"
         android:src="@drawable/logo" />
-
+    </LinearLayout>
+    </ScrollView>
+    
     <LinearLayout
         android:id="@+id/linearLayout4sx"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ImageViewdialog"
+        android:layout_below="@+id/l2"
         android:layout_centerHorizontal="true" >
 
         <Button

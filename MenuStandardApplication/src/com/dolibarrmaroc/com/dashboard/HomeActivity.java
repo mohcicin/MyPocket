@@ -18,6 +18,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -75,6 +77,7 @@ import com.dolibarrmaroc.com.utils.CheckOutSysc;
 import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
 import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
+import com.dolibarrmaroc.com.utils.URL;
 import com.dolibarrmaroc.com.utils.UrlImage;
 import com.dolibarrmaroc.com.utils.VendeurManagerFactory;
 import com.dolibarrmaroc.statistic.StatistiqueActivity;
@@ -155,7 +158,32 @@ public class HomeActivity extends Activity
 		vendeurManager = VendeurManagerFactory.getClientManager();
 		myoffline = new Offlineimpl(getApplicationContext());
 		
-		//Log.e(">>> cl",myoffline.LoadProspection("").toString());
+		
+		String imageURL = UrlImage.urlimgclients+"1377-client-test-galery.jpg";
+		Log.e(">>> img",imageURL+"");
+		Bitmap bitmap = null;
+		try {
+			// Download Image from URL
+			InputStream input = new java.net.URL(imageURL).openStream();
+			// Decode Bitmap
+			bitmap = BitmapFactory.decodeStream(input);
+			
+			 File dir = new File(UrlImage.pathimg+"/produit_img");
+			 if(!dir.exists())  dir.mkdirs();
+			 
+			     File file = new File(dir, "/Desert.jpg");
+			     FileOutputStream fOut = new FileOutputStream(file);
+			     
+			     //Log.e(">>hotos ",produit.getPhoto());
+			     
+			     bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+			   
+			     fOut.flush();
+			     fOut.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e(">> ","pic out pd "+e.getMessage());
+		}
 		//Log.e(">> clts ",myoffline.chargerInvoice_prospect(compte).toString());
 
 		if(CheckOutNet.isNetworkConnected(getApplicationContext())){

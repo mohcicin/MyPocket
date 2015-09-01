@@ -55,6 +55,9 @@ public class Prospection implements Serializable{
 	
 	private int idpros;
 	
+	private String image;
+	private String 	lieux;
+	
 	public Prospection(int id, String name, String firstname, String lastname,
 			int particulier, String civility_id, String address, String zip,
 			String town, int status, int country_id, String country_code,
@@ -450,7 +453,8 @@ public class Prospection implements Serializable{
 				+ prospect + ", fournisseur=" + fournisseur
 				+ ", commercial_id=" + commercial_id + ", parent=" + parent
 				+ ", latitude=" + latitude + ", langitude=" + langitude
-				+ ", idpros=" + idpros + "]";
+				+ ", idpros=" + idpros +", lieux="
+						+ lieux + ", image=" + image +  "]";
 	}
 
 
@@ -463,6 +467,30 @@ public class Prospection implements Serializable{
 
 	public void setIdpros(int idpros) {
 		this.idpros = idpros;
+	}
+
+
+
+	public String getImage() {
+		return image;
+	}
+
+
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+
+
+	public String getLieux() {
+		return lieux;
+	}
+
+
+
+	public void setLieux(String lieux) {
+		this.lieux = lieux;
 	}
 
 	

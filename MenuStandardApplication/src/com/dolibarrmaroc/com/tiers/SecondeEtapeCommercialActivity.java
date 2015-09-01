@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.spec.MGF1ParameterSpec;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,6 +99,9 @@ public class SecondeEtapeCommercialActivity extends Activity implements OnItemSe
 	private List<String> juri;
 	private List<String> typent;
 	
+	private String imgclt;
+	private String lieux;
+	
 	private ioffline myoffline;
 
 	//database 
@@ -155,8 +159,13 @@ public class SecondeEtapeCommercialActivity extends Activity implements OnItemSe
 				tierce_id = (HashMap<String, String>)getIntent().getSerializableExtra("id_type");
 				juri = getIntent().getExtras().getStringArrayList("form");
 				typent = getIntent().getExtras().getStringArrayList("tierce");
+				
+				imgclt = getIntent().getExtras().getString("ba");
+				lieux = getIntent().getExtras().getString("lieux");
 
 			}
+			
+			Log.e("myimegae ",imgclt + " ## "+ lieux);
 
 			iF = (EditText) findViewById(R.id.comm_if);
 			cnss= (EditText) findViewById(R.id.comm_cnss);
@@ -352,7 +361,12 @@ public class SecondeEtapeCommercialActivity extends Activity implements OnItemSe
 		@Override
 		protected String doInBackground(Void... arg0) {
 			if(CheckOutNet.isNetworkConnected(getApplicationContext())){
-				resu = manager.insert(compte, client);
+				if(imgclt != null ){
+					resu = manager.insertWithImage(compte, client, imgclt, lieux);
+				}else{
+					resu = manager.insert(compte, client);
+				}
+				
 				
 				VendeurManager vendeurManager = VendeurManagerFactory.getClientManager();
 				PayementManager payemn = PayementManagerFactory.getPayementFactory();
@@ -447,6 +461,11 @@ public class SecondeEtapeCommercialActivity extends Activity implements OnItemSe
 			}else{
 				database = new DatabaseHandler(getApplicationContext());
 				client.setId((int)database.addrow("clt"));
+				
+				if (imgclt != null) {
+					client.setImage(imgclt);
+					client.setLieux(lieux);
+				}
 				resu = myoffline.shynchronizeProspection(client,compte);
 			}
 			
@@ -636,19 +655,21 @@ public class SecondeEtapeCommercialActivity extends Activity implements OnItemSe
 
 	}
 	
+	/*
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
+		//if (keyCode == KeyEvent.KEYCODE_BACK) {
 			/*
 			SecondeEtapeCommercialActivity.this.finish();
 			Intent intent1 = new Intent(SecondeEtapeCommercialActivity.this, VendeurActivity.class);
 			intent1.putExtra("user", compte);
 			startActivity(intent1);
-			*/
-			onClickHome(LayoutInflater.from(SecondeEtapeCommercialActivity.this).inflate(R.layout.activity_seconde_etape_commercial, null));
-		}
+			*
+		//	onClickHome(LayoutInflater.from(SecondeEtapeCommercialActivity.this).inflate(R.layout.activity_seconde_etape_commercial, null));
+		//}
 		return false;
 	}
+*/
 	
 public List<String> checkRequiredFields(){
 		

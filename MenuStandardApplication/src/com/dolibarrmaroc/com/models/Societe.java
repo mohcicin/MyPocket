@@ -16,6 +16,7 @@ public class Societe {
 	private int company;
 	private Double latitude;
 	private Double longitude;
+	private String logo;
 	
 	public Societe() {
 		// TODO Auto-generated constructor stub
@@ -132,7 +133,15 @@ public class Societe {
 				+ ", town=" + town + ", phone=" + phone + ", fax=" + fax
 				+ ", email=" + email + ", type=" + type + ", company="
 				+ company + ", latitude=" + latitude + ", longitude="
-				+ longitude + "]";
+				+ longitude + ", logo=" + logo + "]";
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 
 }
