@@ -184,12 +184,13 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 		
 		ExpandList = (ExpandableListView) findViewById(R.id.exp_list);
 		//ExpandList.setGroupIndicator(null);
-		DisplayMetrics metrics = new DisplayMetrics();
+		/*
+		DisplayMetrics metrics = new DisplayMetrics();ss
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int width = metrics.widthPixels;
 		//this code for adjusting the group indicator into right side of the view
-		ExpandList.setIndicatorBounds(width - GetDipsFromPixel(50), width - GetDipsFromPixel(10));
-        
+		//ExpandList.setIndicatorBounds(width - GetDipsFromPixel(50), width - GetDipsFromPixel(10));
+		*/
         
 		categorie = new CategorieDaoMysql(getApplicationContext());
 		lscats = new ArrayList<>();
@@ -727,6 +728,19 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 		ExpandList.invalidateViews();
 		ExpandList.setAdapter(ExpAdapter);
 		ExpandList.refreshDrawableState();
+	}
+	
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+	    super.onWindowFocusChanged(hasFocus);
+	    DisplayMetrics metrics = new DisplayMetrics();
+	    getWindowManager().getDefaultDisplay().getMetrics(metrics);
+	    int width = metrics.widthPixels; 
+	    if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+	    	ExpandList.setIndicatorBounds(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
+	    } else { 
+	    	ExpandList.setIndicatorBoundsRelative(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
+	    }
 	}
 	
 	public int GetDipsFromPixel(float pixels)

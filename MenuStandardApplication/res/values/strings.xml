@@ -260,7 +260,7 @@
         <item name="1">Société/Association</item>
     </string-array>
 
-    <string name="title_activity_personne_physique">Personne Physique</string>
+    <string name="title_activity_personne_physique">Liste des clients</string>
     <string name="title_activity_seconde_etape_commercial">Commercial</string>
 
     <!-- IMPRIMENT BLUe -->
@@ -499,8 +499,14 @@
     <string name="statlab6">Nombre des Factures</string>
     <string name="statlab7">Etats des operations hors-ligne en attente</string>
     <string name="statlab8">Etats de stock en cache</string>
+    <string name="statlab9">Chiffre d\'affaire </string>
+    <string name="statlab10">CA des factures</string>
+    <string name="statlab11">CA des payements</string>
     
     <!-- Cmd cache -->
     <string name="title_activity_cmd_cache">Commande en cache</string>
+    
+    <!-- update client -->
+    <string name="upcltnext">Editer cet client</string>
 
 </resources>

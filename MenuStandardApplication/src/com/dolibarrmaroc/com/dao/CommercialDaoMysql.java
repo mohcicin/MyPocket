@@ -1,5 +1,8 @@
 package com.dolibarrmaroc.com.dao;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.dolibarrmaroc.com.models.Compte;
@@ -18,6 +23,7 @@ import com.dolibarrmaroc.com.models.Prospection;
 import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.utils.JSONParser;
 import com.dolibarrmaroc.com.utils.URL;
+import com.dolibarrmaroc.com.utils.UrlImage;
 
 public class CommercialDaoMysql implements CommercialDao{
 
@@ -224,7 +230,16 @@ public class CommercialDaoMysql implements CommercialDao{
         nameValuePairs.add(new BasicNameValuePair("latitude",p.getLatitude()+""));
         nameValuePairs.add(new BasicNameValuePair("longitude",p.getLangitude()+""));
         
-        Log.e("Insertion params", nameValuePairs.toString());
+        
+        if(p.getLieux() != null && p.getImage() != null && !"".equals(p.getImage()) && !"".equals(p.getLieux())){
+        	  nameValuePairs.add(new BasicNameValuePair("lieux",p.getLieux()));
+              
+              Log.e("Insertion params", nameValuePairs.toString());
+      		nameValuePairs.add(new BasicNameValuePair("images",p.getImage()));
+        }
+      
+        
+       
 		
 		String json = parser.makeHttpRequest(urlData, "POST", nameValuePairs);
 		
@@ -240,6 +255,7 @@ public class CommercialDaoMysql implements CommercialDao{
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			Log.e("error ",e.getMessage() +" ");
 			retour = "Error Survenue lors d'insertion, réssayer plus tard !!";
 		}
 		
@@ -256,6 +272,7 @@ public class CommercialDaoMysql implements CommercialDao{
 		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
 		
 		String json = parser.makeHttpRequest(url, "POST", nameValuePairs);
+		
 		Log.e("RepondreMoi soc", json);
 	
 		
@@ -275,7 +292,40 @@ public class CommercialDaoMysql implements CommercialDao{
 										obj.getDouble("latitude"), 
 										obj.getDouble("longitude"));
 				s.setLogo(obj.getString("logo"));
-				Log.e("RepondreMoi", obj.getString("logo")+"");
+				
+				if(obj.getString("imgin").equals("ok") && !"".equals(obj.getString("logo"))){
+					
+					String imageURL = UrlImage.urlimgclients+obj.getString("logo");
+					//Log.e(">>> img",imageURL+"");
+					Bitmap bitmap = null;
+					try {
+						// Download Image from URL
+						InputStream input = new java.net.URL(imageURL).openStream();
+						// Decode Bitmap
+						bitmap = BitmapFactory.decodeStream(input);
+						
+						 File dir = new File(UrlImage.pathimg+"/client_img");
+						 if(!dir.exists())  dir.mkdirs();
+						 
+						     File file = new File(dir, "/"+obj.getString("logo"));
+						     FileOutputStream fOut = new FileOutputStream(file);
+						     
+						     //Log.e(">>hotos ",produit.getPhoto());
+						     
+						     if(obj.getString("logo").split("\\.")[1].equals("jpeg") || obj.getString("logo").split("\\.")[1].equals("jpg") || obj.getString("logo").split("\\.")[1].equals("jpe")){
+						    	  bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+						     }else{
+						    	  bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+						     }
+						   
+						     fOut.flush();
+						     fOut.close();
+					} catch (Exception e) {
+						e.printStackTrace();
+						Log.e(">> ","pic out clt "+e.getMessage());
+					}
+					
+				}
 				list.add(s);
 			}
 			

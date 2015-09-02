@@ -1,10 +1,12 @@
 package com.dolibarrmaroc.com.database;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -31,6 +33,7 @@ public class StockVirtual extends SQLiteOpenHelper {
 	private static final String TABLE_PROD = "storageprod";
 	private static final String TABLE_SYNCRO = "storagesynchronisation";
 	private static final String TABLE_SYNERROR = "storagesyncroerror";
+	private static final String TABLE_HISTOOPS = "storageoperation";
 
 
 	// Table Columns names
@@ -44,6 +47,10 @@ public class StockVirtual extends SQLiteOpenHelper {
 
 	private static final String KEY_DT = "dtcheck";
 	private static final String KEY_ISIT = "ischeck";
+	
+	private static final String KEY_DTOP = "dtop";
+	private static final String KEY_MTN = "montant";
+	private static final String KEY_TPOP = "TYPEOP";
 
 	public StockVirtual(Context context) {
 		super(context,Environment.getExternalStorageDirectory()+"/.datadolicachenew/"+DATABASE_NAME, null, DATABASE_VERSION);
@@ -68,6 +75,11 @@ public class StockVirtual extends SQLiteOpenHelper {
 			String cr2 = "CREATE TABLE " + TABLE_SYNERROR + "("
 					+ KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DT + " VARCHAR(30), "+KEY_ISIT+" INTEGER )";
 			db.execSQL(cr2);
+			
+
+			String cr3 = "CREATE TABLE " + TABLE_HISTOOPS + "("
+					+ KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DTOP + " VARCHAR(30), "+KEY_MTN+" REAL, " + KEY_TPOP + " VARCHAR(30) )";
+			db.execSQL(cr3);
 			
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -138,6 +150,18 @@ public class StockVirtual extends SQLiteOpenHelper {
 		try {
 			SQLiteDatabase db = this.getWritableDatabase();
 			db.execSQL("delete from "+TABLE_SYNCRO);
+			db.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return id;
+	}
+	
+	public long cleantablesCA(String tb){
+		long id =-1;
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL("delete from "+TABLE_HISTOOPS);
 			db.close();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -475,5 +499,74 @@ public class StockVirtual extends SQLiteOpenHelper {
 
 		return -1;
 	}   
+	
+	
+	/*********************************** Creatae Operations data ******************************************************************/
+	public long addOperation(String tp,double mtn) {
+		long id =-1;
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			ContentValues values = new ContentValues();
+			values.put(KEY_DTOP, sdf.format(new Date()));
+			values.put(KEY_MTN, mtn);
+			values.put(KEY_TPOP, tp);
+
+			// Inserting Row
+			id = db.insert(TABLE_HISTOOPS, null, values);
+
+			db.close(); // Closing database connection
+
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("insert data","insert opeartion");
+		}
+		return id;
+	}
+	
+	public HashMap<String, Double> calculCA(){
+		HashMap<String, Double> res = new HashMap<>();
+		double fc =0;
+		double py = 0;
+		try {
+			String selectQuery = "";
+			selectQuery = "SELECT * FROM " + TABLE_HISTOOPS+" where "+KEY_TPOP+" = ?";
+
+			String[] nm = new String[]{"FC"};
+
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor cursor = db.rawQuery(selectQuery, nm);
+
+			if (cursor.moveToFirst()) {
+				do {
+					fc += cursor.getDouble(2);
+				} while (cursor.moveToNext());
+			}
+			
+			String[] nm2 = new String[]{"PY"};
+
+			Cursor cursor2 = db.rawQuery(selectQuery, nm2);
+
+			if (cursor2.moveToFirst()) {
+				do {
+					py += cursor2.getDouble(2);
+				} while (cursor2.moveToNext());
+			}
+			
+			db.close();
+			
+			res.put("FC", fc);
+			res.put("PY", py);
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("errror CA get ",e.getMessage() +"");
+			res.put("FC", fc);
+			res.put("PY", py);
+		}
+
+		return res;
+	}
 
 }

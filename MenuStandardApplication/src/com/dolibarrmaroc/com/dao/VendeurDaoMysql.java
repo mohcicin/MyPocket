@@ -258,6 +258,42 @@ public class VendeurDaoMysql implements VendeurDao {
 
 	@Override
 	public Dictionnaire getDictionnaire() {
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		nameValuePairs.add(new BasicNameValuePair("all","okk"));
+
+		String jsonString =  jsonParser.makeHttpRequest(
+				urlprd , "POST", nameValuePairs);
+		// Parse les donn�es JSON
+
+
+		ArrayList<HashMap<String, String>> mapsss = new ArrayList<>();
+
+
+		try{
+
+			JSONArray jArray = new JSONArray(jsonString);
+			// check your log for json response
+			//Log.d("Dictionnaire", jArray.);
+
+			//[{"id":"1","ref":"c00001","desig":"Produit1","stock":"100","pu":"100,00"},
+			for(int i=0;i<jArray.length();i++){
+					JSONArray dico = jArray.getJSONArray(i);
+					for (int j = 0; j < dico.length(); j++) {
+						JSONObject jsone = dico.getJSONObject(j);
+						HashMap<String, String> dic = new HashMap<>();
+						dic.put(jsone.getString("code"), jsone.getString("libelle"));
+						mapsss.add(dic);
+					}
+
+			}
+		}catch(JSONException e){
+			Log.e("log_tag", "Error parsing data " + e.toString());
+		}
+
+		dicot.setDico(mapsss);
+		//Log.i("Dictionnaire >> ",dicot.toString());
+
 		return dicot;
 	}
 

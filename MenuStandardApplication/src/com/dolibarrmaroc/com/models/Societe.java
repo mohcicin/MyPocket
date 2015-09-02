@@ -1,6 +1,8 @@
 package com.dolibarrmaroc.com.models;
 
-public class Societe {
+import java.io.Serializable;
+
+public class Societe implements Serializable{
 	
 	/*
 	 * {"rowid":"590","name":"com Commercial","address":"","town":null,"phone":null,"fax":null,"email":null,"type":"3","company":0,"latitude":"0","longitude":"0"}

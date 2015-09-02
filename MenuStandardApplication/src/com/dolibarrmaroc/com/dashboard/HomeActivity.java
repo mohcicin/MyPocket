@@ -71,6 +71,7 @@ import com.dolibarrmaroc.com.stocks.TransfertstockActivity;
 import com.dolibarrmaroc.com.stocks.TransfertvirtualstockActivity;
 import com.dolibarrmaroc.com.synchronisation.SynchronisationHomeActivity;
 import com.dolibarrmaroc.com.tiers.CommercialActivity;
+import com.dolibarrmaroc.com.tiers.PersonnePhysiqueActivity;
 import com.dolibarrmaroc.com.tiers.UpdateClientActivity;
 import com.dolibarrmaroc.com.utils.CheckOutNet;
 import com.dolibarrmaroc.com.utils.CheckOutSysc;
@@ -159,31 +160,6 @@ public class HomeActivity extends Activity
 		myoffline = new Offlineimpl(getApplicationContext());
 		
 		
-		String imageURL = UrlImage.urlimgclients+"1377-client-test-galery.jpg";
-		Log.e(">>> img",imageURL+"");
-		Bitmap bitmap = null;
-		try {
-			// Download Image from URL
-			InputStream input = new java.net.URL(imageURL).openStream();
-			// Decode Bitmap
-			bitmap = BitmapFactory.decodeStream(input);
-			
-			 File dir = new File(UrlImage.pathimg+"/produit_img");
-			 if(!dir.exists())  dir.mkdirs();
-			 
-			     File file = new File(dir, "/Desert.jpg");
-			     FileOutputStream fOut = new FileOutputStream(file);
-			     
-			     //Log.e(">>hotos ",produit.getPhoto());
-			     
-			     bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-			   
-			     fOut.flush();
-			     fOut.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.e(">> ","pic out pd "+e.getMessage());
-		}
 		//Log.e(">> clts ",myoffline.chargerInvoice_prospect(compte).toString());
 
 		if(CheckOutNet.isNetworkConnected(getApplicationContext())){
@@ -424,7 +400,7 @@ public class HomeActivity extends Activity
 				intentX.putExtra("user", compte);
 				com.dolibarrmaroc.com.models.AlertDialog create = new com.dolibarrmaroc.com.models.AlertDialog(intentX, getString(R.string.comm_new_head), "user_yellow_add");
 
-				Intent intentY = new Intent(getApplicationContext(), UpdateClientActivity.class);
+				Intent intentY = new Intent(getApplicationContext(), PersonnePhysiqueActivity.class);
 				intentY.putExtra("user", compte);
 				com.dolibarrmaroc.com.models.AlertDialog update = new com.dolibarrmaroc.com.models.AlertDialog(intentY,  getString(R.string.comm_title_head), "user_yellow_edit");
 

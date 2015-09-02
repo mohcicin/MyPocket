@@ -747,6 +747,8 @@ public class PayementActivity extends Activity implements OnItemSelectedListener
 				
 			}
 			
+			sv.addOperation("PY", Double.parseDouble(encaisse.getText().toString()));
+			
 			return null;
 		}
 		
@@ -822,6 +824,8 @@ public class PayementActivity extends Activity implements OnItemSelectedListener
 				reg.setFk_facture(rendu.getText().toString());
 				reg.setIdreg((int)database.addrow("reg"));
 				ix = myoffline.shynchronizeReglement(reg);
+				
+				sv.addOperation("PY", Double.parseDouble(encaisse.getText().toString()));
 			}
 			
 			
@@ -1283,6 +1287,8 @@ public class PayementActivity extends Activity implements OnItemSelectedListener
 					reg.setFk_facture(rendu.getText().toString());
 					reg.setIdreg((int)database.addrow("reg"));
 					ix = myoffline.shynchronizeReglement(reg);
+					
+					sv.addOperation("PY", Double.parseDouble(encaisse.getText().toString()));
 				}
 			
 			
@@ -1391,6 +1397,8 @@ public class PayementActivity extends Activity implements OnItemSelectedListener
 				}
 				
 			}
+			
+			sv.addOperation("PY", Double.parseDouble(encaisse.getText().toString()));
 			
 			return null;
 		}

@@ -693,6 +693,7 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 							}
 						}
 					}
+					sv.addOperation("FC", Double.parseDouble(du.getText().toString()));
 				}
 			}
 			
@@ -776,6 +777,7 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 				
 				//myofline.updateProduits(meinvo);
 				
+				
 				if(type_invoice == 0){
 					myofline.updateProduits(meinvo);
 				}else {
@@ -785,6 +787,7 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 				}
 				
 				myofline.shynchronizeGpsInvoice(new MyGpsInvoice(gps,imei,num,battery,compte,data.getErreur()));
+				sv.addOperation("FC", Double.parseDouble(du.getText().toString()));
 			}
 			
 			
@@ -858,6 +861,7 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 				if(!data.getErreur().equals("-100")){
 					daoGps.insertData(gps,imei,num,battery,compte,data.getErreur());
 					database = new DatabaseHandler(getApplicationContext());
+					
 
 					numChek = numchek.getText().toString();
 
@@ -874,6 +878,7 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 						
 						//myofline.shynchronizeGpsInvoice(new MyGpsInvoice(gps,imei,num,battery,compte,data.getErreur()));
 					}
+					sv.addOperation("FC", Double.parseDouble(du.getText().toString()));
 				}
 				
 			}
@@ -956,6 +961,7 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 						sv.addrow("", produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander(), type_invoice+"",produitsFacture.get(i).getDesig(),idclt);
 					}
 				}
+				sv.addOperation("FC", Double.parseDouble(du.getText().toString()));
 			}
 
 

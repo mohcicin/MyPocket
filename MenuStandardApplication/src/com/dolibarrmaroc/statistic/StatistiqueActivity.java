@@ -1,6 +1,7 @@
 package com.dolibarrmaroc.statistic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.dolibarrmaroc.com.R;
 import com.dolibarrmaroc.com.R.id;
@@ -38,6 +39,7 @@ public class StatistiqueActivity extends Activity {
 	
 	private Compte compte;
 	private ioffline myoffline;
+	private StockVirtual sv;
 	
 	private int nbr_fc;
 	private int nbr_cl;
@@ -47,7 +49,10 @@ public class StatistiqueActivity extends Activity {
 	private int nbr_s_cl;
 	private int nbr_s_fc;
 	
-	private TextView txt1,txt2,txt3,txt4,txt5,txt6;
+	private double nbr_ca_fc;
+	private double nbr_ca_py;
+	
+	private TextView txt1,txt2,txt3,txt4,txt5,txt6,txt7,txt8;
 	
 	//Asynchrone avec connexion 
 	private ProgressDialog dialog;
@@ -78,6 +83,9 @@ public class StatistiqueActivity extends Activity {
 		txt5 = (TextView)findViewById(R.id.instc5);
 		txt6 = (TextView)findViewById(R.id.instc6);
 		
+		txt7 = (TextView)findViewById(R.id.instca1);
+		txt8 = (TextView)findViewById(R.id.instca2);
+		
 		dialog = ProgressDialog.show(StatistiqueActivity.this, getResources().getString(R.string.map_data),
 				getResources().getString(R.string.msg_wait), true);
 			new ConnexionTask().execute();	
@@ -92,6 +100,7 @@ public class StatistiqueActivity extends Activity {
 
 			
 			myoffline = new Offlineimpl(StatistiqueActivity.this);
+			sv = new StockVirtual(StatistiqueActivity.this);
 			
 			try {
 				nbr_fc = myoffline.LoadInvoice("").size();
@@ -101,6 +110,10 @@ public class StatistiqueActivity extends Activity {
 				nbr_s_pd = myoffline.LoadProduits("").size();
 				nbr_s_cl = myoffline.LoadClients("").size();
 				nbr_s_fc = myoffline.prepaOfflinePayement(null).size();
+				
+				HashMap<String, Double> rs = sv.calculCA();
+				nbr_ca_fc = rs.get("FC");
+				nbr_ca_py = rs.get("PY");
 			} catch (Exception e) {
 				// TODO: handle exception
 				nbr_fc = 0;
@@ -110,6 +123,9 @@ public class StatistiqueActivity extends Activity {
 				nbr_s_pd = 0;
 				nbr_s_cl = 0;
 				nbr_s_fc = 0;
+				
+				nbr_ca_fc = 0;
+				nbr_ca_py = 0;
 			}
 			
 			
@@ -150,6 +166,9 @@ public class StatistiqueActivity extends Activity {
 		txt4.setText(" "+nbr_s_pd);
 		txt5.setText(" "+nbr_s_cl);
 		txt6.setText(" "+nbr_s_fc);
+		
+		txt7.setText(" "+nbr_ca_fc);
+		txt8.setText(" "+nbr_ca_py);
 	}
 	
 	public void onClickHome(View v){

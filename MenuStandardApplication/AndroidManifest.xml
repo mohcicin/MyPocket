@@ -60,6 +60,7 @@
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_about"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" />
         <activity
             android:name=".commercial.VendeurActivity"
@@ -309,6 +310,7 @@
         <activity
             android:name=".tiers.UpdateClientActivity"
             android:label="@string/title_activity_update_client"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.D1" >
         </activity>
         <activity

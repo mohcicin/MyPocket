@@ -1,5 +1,6 @@
 package com.dolibarrmaroc.com.synchronisation;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -290,6 +292,12 @@ public class SettingsynchroActivity extends Activity {
 								StockVirtual sv = new StockVirtual(SettingsynchroActivity.this);
 								sv.cleantables("");// clean les produits echanges + rendus
 								sv.cleantablesSysc("");
+								sv.cleantablesCA("");
+								
+								File fl = new File(Environment.getExternalStorageDirectory()+"/.datadolicachenew/storagevirtual");
+								if(fl.exists()){
+									fl.delete();
+								}
 								
 								DBHandler mydb = new DBHandler(SettingsynchroActivity.this);
 								mydb.deleteUserAll();
