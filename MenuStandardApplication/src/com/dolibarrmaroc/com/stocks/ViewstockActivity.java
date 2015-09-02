@@ -382,13 +382,18 @@ public class ViewstockActivity extends Activity implements OnItemClickListener,O
 							public void onClick(DialogInterface d, int arg1) {
 								//VendeurActivity.super.onBackPressed();
 								 
-								dialog =  ProgressDialog.show(ViewstockActivity.this,getResources().getString(R.string.map_data),
-										getResources().getString(R.string.msg_wait), true);
-								
-								new MouvementTask().execute();
-								
+								if(CheckOutNet.isNetworkConnected(getApplicationContext())){
+									dialog =  ProgressDialog.show(ViewstockActivity.this,getResources().getString(R.string.map_data),
+											getResources().getString(R.string.msg_wait), true);
 									
-									 d.dismiss();
+									new MouvementTask().execute();
+									
+										
+										 d.dismiss();
+								}else{
+									alert_network();
+								}
+								
 									
 							}
 

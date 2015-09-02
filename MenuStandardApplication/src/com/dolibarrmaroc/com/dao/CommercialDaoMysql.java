@@ -126,7 +126,7 @@ public class CommercialDaoMysql implements CommercialDao{
 			                 {"code":"2121","nom":"Soci\u00e9t\u00e9 A R\u00e9sponsabilit\u00e9 Limit\u00e9e"}]
 	    }*/
 		
-		Log.e("RepondreMoi json", json);
+		Log.e("RepondreMoi all client getinfo json", json);
 		try {
 			String stfomat = json.substring(json.indexOf("{"),json.lastIndexOf("}")+1);
 			Log.e("RepondreMoi cc", stfomat);

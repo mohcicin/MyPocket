@@ -75,6 +75,7 @@ public interface ioffline {
 	public long shnchronizeSocietesClients(List<Societe> ct,Compte cp);
 	public long shnchronizeUpClients(Prospection ct,Compte cp);
 	public long PutDeniededData(Object in,int cl);
+	public long PutDeniededDataFw(String in,int cl);
 
 	
 	/* Load data from offline */

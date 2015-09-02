@@ -5532,5 +5532,33 @@ public class Offlineimpl implements ioffline {
 		}
 		return list;
 	}
+
+	@Override
+	public long PutDeniededDataFw(String in, int cl) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		file = new File(path, "/deniededdata.txt");
+		Log.e("filesavz",file.getPath());
+		FileOutputStream outputStream;
+
+		try {
+			if(!file.exists()){
+				file.createNewFile();
+				file.mkdir();
+				//Log.e("file not exist ","wloo wloo");
+			}
+
+			if(file.exists()){
+				FileWriter fw = new FileWriter(file, true);
+				PrintWriter pout = new PrintWriter(fw);
+				pout.println(in);
+				pout.close();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return 0;
+	}
 	
 }

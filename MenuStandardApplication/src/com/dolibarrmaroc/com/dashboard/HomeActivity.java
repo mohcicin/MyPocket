@@ -652,9 +652,14 @@ public class HomeActivity extends Activity
 						
 						
 						
-						new DeniedDataDaoMysql().sendMyErrorData(myoffline.LoadDenided(""), compte);
-						
+						List<String> inres = new DeniedDataDaoMysql().sendMyErrorData(myoffline.LoadDenided(""), compte);
 						myoffline.CleanAllDeniededData();
+						
+						if(inres != null){
+							for (int i = 0; i < inres.size(); i++) {
+								myoffline.PutDeniededDataFw(inres.get(i), 0);
+							}
+						}
 					}
 				}else{
 					
