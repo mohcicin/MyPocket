@@ -512,6 +512,7 @@ public class StockVirtual extends SQLiteOpenHelper {
 			values.put(KEY_DTOP, sdf.format(new Date()));
 			values.put(KEY_MTN, mtn);
 			values.put(KEY_TPOP, tp);
+			
 
 			// Inserting Row
 			id = db.insert(TABLE_HISTOOPS, null, values);
@@ -530,6 +531,9 @@ public class StockVirtual extends SQLiteOpenHelper {
 		HashMap<String, Double> res = new HashMap<>();
 		double fc =0;
 		double py = 0;
+		
+		double nbrfc =0;
+		double nbrpy =0;
 		try {
 			String selectQuery = "";
 			selectQuery = "SELECT * FROM " + TABLE_HISTOOPS+" where "+KEY_TPOP+" = ?";
@@ -542,6 +546,7 @@ public class StockVirtual extends SQLiteOpenHelper {
 			if (cursor.moveToFirst()) {
 				do {
 					fc += cursor.getDouble(2);
+					nbrfc++;
 				} while (cursor.moveToNext());
 			}
 			
@@ -552,6 +557,7 @@ public class StockVirtual extends SQLiteOpenHelper {
 			if (cursor2.moveToFirst()) {
 				do {
 					py += cursor2.getDouble(2);
+					nbrpy++;
 				} while (cursor2.moveToNext());
 			}
 			
@@ -559,11 +565,17 @@ public class StockVirtual extends SQLiteOpenHelper {
 			
 			res.put("FC", fc);
 			res.put("PY", py);
+			res.put("NFC", nbrfc);
+			res.put("NPY", nbrpy);
+			
+			
 		} catch (Exception e) {
 			// TODO: handle exception
 			Log.e("errror CA get ",e.getMessage() +"");
 			res.put("FC", fc);
 			res.put("PY", py);
+			res.put("NFC", nbrfc);
+			res.put("NPY", nbrpy);
 		}
 
 		return res;

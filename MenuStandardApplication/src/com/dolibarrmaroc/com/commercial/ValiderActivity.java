@@ -220,7 +220,7 @@ public class ValiderActivity extends Activity {
 							}
 						}
 					
-
+						
 					/******************* REMPLIR TICKET ************************************/
 					ticket.setAddresse(removeDiacritic(offlineticket.getAddresse()));
 					ticket.setClient(removeDiacritic(clt.getName()));
@@ -237,12 +237,12 @@ public class ValiderActivity extends Activity {
 
 
 
-
 					long ix = myoffline.shynchronizePayemntTicket(new MyTicketPayement(compte, ticket, offlineticket, clt, mypay, myreg, lsreg));
 					Intent intent1 = new Intent(ValiderActivity.this, HomeActivity.class);
 					intent1.putExtra("user", compte);
 					startActivity(intent1);
 					ValiderActivity.this.finish();
+					
 				}else{
 					Intent intent1 = new Intent(ValiderActivity.this, HomeActivity.class);
 					intent1.putExtra("user", compte);
@@ -261,6 +261,10 @@ public class ValiderActivity extends Activity {
 		} catch (Exception e) {
 			// TODO: handle exception
 			Log.e("eroor ticket valide ",e.getMessage() +" << ");
+			Intent intent1 = new Intent(ValiderActivity.this, HomeActivity.class);
+			intent1.putExtra("user", compte);
+			startActivity(intent1);
+			ValiderActivity.this.finish();
 		}
 	}
 	public static String removeDiacritic(String source) {

@@ -52,7 +52,9 @@ public class StatistiqueActivity extends Activity {
 	private double nbr_ca_fc;
 	private double nbr_ca_py;
 	
-	private TextView txt1,txt2,txt3,txt4,txt5,txt6,txt7,txt8;
+	private double nbr_ca,nbr_ca2;
+	
+	private TextView txt1,txt2,txt3,txt4,txt5,txt6,txt7,txt8,txt9,txt10;
 	
 	//Asynchrone avec connexion 
 	private ProgressDialog dialog;
@@ -86,6 +88,9 @@ public class StatistiqueActivity extends Activity {
 		txt7 = (TextView)findViewById(R.id.instca1);
 		txt8 = (TextView)findViewById(R.id.instca2);
 		
+		txt9 = (TextView) findViewById(R.id.canbr);
+		txt10 = (TextView) findViewById(R.id.canbr1);
+		
 		dialog = ProgressDialog.show(StatistiqueActivity.this, getResources().getString(R.string.map_data),
 				getResources().getString(R.string.msg_wait), true);
 			new ConnexionTask().execute();	
@@ -112,8 +117,14 @@ public class StatistiqueActivity extends Activity {
 				nbr_s_fc = myoffline.prepaOfflinePayement(null).size();
 				
 				HashMap<String, Double> rs = sv.calculCA();
+				
+				Log.e("res>> ",rs.toString());
 				nbr_ca_fc = rs.get("FC");
 				nbr_ca_py = rs.get("PY");
+				
+				nbr_ca = rs.get("NFC");
+				nbr_ca2 = rs.get("NPY");
+			
 			} catch (Exception e) {
 				// TODO: handle exception
 				nbr_fc = 0;
@@ -169,6 +180,10 @@ public class StatistiqueActivity extends Activity {
 		
 		txt7.setText(" "+nbr_ca_fc);
 		txt8.setText(" "+nbr_ca_py);
+		
+		txt9.setText(txt9.getText().toString()+"  [Nbr "+nbr_ca+" ]");
+
+		txt10.setText(txt10.getText().toString()+"  [Nbr "+nbr_ca2+" ]");
 	}
 	
 	public void onClickHome(View v){

@@ -1191,6 +1191,8 @@ public class PayementActivity extends Activity implements OnItemSelectedListener
 				cl = ls.get(i);
 			}
 		}
+		
+		Log.e("load ct ",cl.toString() +"");
 		return cl;
 	}
 	

@@ -198,6 +198,7 @@
 
     <TableRow>
         <TextView
+            android:id="@+id/canbr"
             android:layout_column="1"
             android:text="@string/statlab10"
             android:padding="3dip"/>
@@ -212,6 +213,7 @@
 
     <TableRow>
         <TextView
+            android:id="@+id/canbr1"
             android:layout_column="1"
             android:text="@string/statlab11"
             android:padding="3dip"/>
