@@ -1138,6 +1138,9 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 					switch (data) {
 					case "10":
 						res = getResources().getString(R.string.cmdtofc18);
+							Myinvoice me = new Myinvoice("0", produitsFacture, idclt, 0, "", compte, "", "", "", 0, prepaRemise(remise), null, "", "", "");
+							//Log.e("invo ",me.toString());
+							myofline.updateProduits(me);
 						break;
 					case "-2":
 						res = getResources().getString(R.string.cmdtofc17);

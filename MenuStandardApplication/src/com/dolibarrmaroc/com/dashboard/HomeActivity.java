@@ -66,6 +66,7 @@ import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.offline.Offlineimpl;
 import com.dolibarrmaroc.com.prevendeur.CatalogeActivity;
 import com.dolibarrmaroc.com.prevendeur.CmdCacheActivity;
+import com.dolibarrmaroc.com.prevendeur.CmdEditActivity;
 import com.dolibarrmaroc.com.prevendeur.CmdViewActivity;
 import com.dolibarrmaroc.com.stocks.TransfertstockActivity;
 import com.dolibarrmaroc.com.stocks.TransfertvirtualstockActivity;
@@ -449,16 +450,24 @@ public class HomeActivity extends Activity
 				Intent intentc2 = new Intent(getApplicationContext(), CmdViewActivity.class);
 				intentc2.putExtra("user", compte);
 				intentc2.putExtra("cmd", "1");
+				intentc2.putExtra("editcmd", "0");
 				com.dolibarrmaroc.com.models.AlertDialog updatec2 = new com.dolibarrmaroc.com.models.AlertDialog(intentc2, getString(R.string.title_activity_cmd_view), "catalog");
 				
 				Intent intentc3 = new Intent(getApplicationContext(), CmdCacheActivity.class);
 				intentc3.putExtra("user", compte);
 				intentc3.putExtra("cmd", "1");
 				com.dolibarrmaroc.com.models.AlertDialog updatec3 = new com.dolibarrmaroc.com.models.AlertDialog(intentc3, getString(R.string.title_activity_cmd_cache), "catalog");
+				
+				Intent intentc4 = new Intent(getApplicationContext(), CmdViewActivity.class);
+				intentc4.putExtra("user", compte);
+				intentc4.putExtra("cmd", "1");
+				intentc4.putExtra("editcmd", "1");
+				com.dolibarrmaroc.com.models.AlertDialog updatec4 = new com.dolibarrmaroc.com.models.AlertDialog(intentc4, getString(R.string.title_activity_cmd_cache), "catalog");
 
 				alertc2.add(createc1);
 				alertc2.add(updatec2);
 				alertc2.add(updatec3);
+				alertc2.add(updatec4);
 				new AlertDialogList(HomeActivity.this, alertc2).show();
 			}else{
 				alertPrdClt(getString(R.string.syscl8));

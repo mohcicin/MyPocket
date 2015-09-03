@@ -101,6 +101,8 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 	private CommandeManager manager;
 	
 	private Commandeview cicin;
+	
+	private int edite_cmd;
 
 	
 	@Override
@@ -124,6 +126,9 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 		if (objetbunble != null) {
 			compte = (Compte) getIntent().getSerializableExtra("user");
 			//cicin.setText(compte.getLogin() + compte.getProfile());
+			
+			
+			edite_cmd = Integer.parseInt(getIntent().getStringExtra("editcmd"));
 		}
 		
 		lisview = (ListView) findViewById(R.id.lscicincmd);
@@ -349,20 +354,39 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 		 Log.e("You've selected : ",selectedfact.toString());
 
 		 cicin = mycmd.get(selectedfact.getIdfact());
+		 
+		 
+		 if(edite_cmd == 0){
+			 new AlertDialog.Builder(this)
+			    .setTitle(getResources().getString(R.string.cmdtofc12))
+			    .setNegativeButton(R.string.tecv4, new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int which) { 
+			        	Intent intent1 = new Intent(CmdViewActivity.this, CmdDetailActivity.class);
+		    			intent1.putExtra("user", compte);
+		    			intent1.putExtra("vc", cicin);
+		    			intent1.putExtra("lscmd", mycmd);
+		    			startActivity(intent1);
+			        }
+			     })
+			     .setCancelable(true)
+			     .show();
+		 }else{
+			 new AlertDialog.Builder(this)
+			    .setTitle(getResources().getString(R.string.cmdtofc12))
+			    .setNegativeButton(R.string.tecv4, new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int which) { 
+			        	Intent intent1 = new Intent(CmdViewActivity.this, CmdEditActivity.class);
+		    			intent1.putExtra("user", compte);
+		    			intent1.putExtra("vc", cicin);
+		    			intent1.putExtra("lscmd", mycmd);
+		    			startActivity(intent1);
+			        }
+			     })
+			     .setCancelable(true)
+			     .show();
+		 }
 		
-		new AlertDialog.Builder(this)
-	    .setTitle(getResources().getString(R.string.cmdtofc12))
-	    .setNegativeButton(R.string.tecv4, new DialogInterface.OnClickListener() {
-	        public void onClick(DialogInterface dialog, int which) { 
-	        	Intent intent1 = new Intent(CmdViewActivity.this, CmdDetailActivity.class);
-    			intent1.putExtra("user", compte);
-    			intent1.putExtra("vc", cicin);
-    			intent1.putExtra("lscmd", mycmd);
-    			startActivity(intent1);
-	        }
-	     })
-	     .setCancelable(true)
-	     .show();
+		
          
 	}
 	

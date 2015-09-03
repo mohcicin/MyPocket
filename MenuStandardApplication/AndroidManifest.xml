@@ -338,10 +338,14 @@
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.prevendeur.CmdCacheActivity"
-            android:label="@string/title_activity_cmd_cache" 
+            android:name=".prevendeur.CmdCacheActivity"
+            android:label="@string/title_activity_cmd_cache"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.D1">
+            android:theme="@style/Theme.D1" >
+        </activity>
+        <activity
+            android:name="com.dolibarrmaroc.com.prevendeur.CmdEditActivity"
+            android:label="@string/title_activity_cmd_edit" >
         </activity>
     </application>
 
@@ -367,7 +371,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <!--
      The following two permissions are not required to use
-     Google Maps Android API v2, but are recommended.
+     Google Maps Android API v2, but are recommended.
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

@@ -20,6 +20,7 @@
         android:layout_height="fill_parent"
         android:text="col_1"
         android:width="100dip" 
+        android:gravity="right"
         android:textAlignment="textEnd"/>
     
     <TextView
@@ -28,6 +29,7 @@
         android:layout_height="fill_parent"
         android:text="col_2"
         android:width="100dip" 
+        android:gravity="right"
         android:textAlignment="textEnd"/>
     
      <TextView
@@ -36,6 +38,7 @@
         android:layout_height="fill_parent"
         android:text="col_1"
         android:width="100dip" 
+        android:gravity="right"
         android:textAlignment="textEnd"/>
 
 </LinearLayout>

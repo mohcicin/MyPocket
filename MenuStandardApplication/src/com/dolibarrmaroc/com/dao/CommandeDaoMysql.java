@@ -85,9 +85,10 @@ public class CommandeDaoMysql implements CommandeDao {
 					JSONObject ob = p.getJSONObject(j);
 					
 					//						(String ref, String desig, int qteDispo, String prixUnitaire,	int qtedemander, double prixttc, String tva_tx, String fk_tva)
-					Produit px = new Produit(ob.getString("ref"), ob.getString("libelle"), ob.getInt("qnt"), "", 0, ob.getDouble("price"), ob.getString("remise_percent"), "");
-					
+					Produit px = new Produit(ob.getString("ref"), ob.getString("libelle"), ob.getInt("qnt"), ob.getString("price_ht"), 0, ob.getDouble("price"), ob.getString("remise_percent"), "");
+					px.setId(ob.getInt("ref_id"));
 					pd.add(px);
+					
 				}
 				
 				cm.setLsprods(pd);

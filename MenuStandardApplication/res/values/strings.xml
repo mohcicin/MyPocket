@@ -502,11 +502,16 @@
     <string name="statlab9">Chiffre d\'affaire </string>
     <string name="statlab10">CA des factures</string>
     <string name="statlab11">CA des payements</string>
-    
+
     <!-- Cmd cache -->
     <string name="title_activity_cmd_cache">Commande en cache</string>
-    
+
     <!-- update client -->
     <string name="upcltnext">Editer cet client</string>
+    
+    <!--  update commande -->
+    <string name="edcmd1">Ajouter produit</string>
+    <string name="edcmd2">Appliquer</string>
+    <string name="title_activity_cmd_edit">Modifier la commande</string>
 
 </resources>
