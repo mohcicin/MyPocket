@@ -76,6 +76,7 @@ public interface ioffline {
 	public long shnchronizeUpClients(Prospection ct,Compte cp);
 	public long PutDeniededData(Object in,int cl);
 	public long PutDeniededDataFw(String in,int cl);
+	public long shynchornizeUpdateCmd(Commandeview cm); 
 
 	
 	/* Load data from offline */
@@ -106,6 +107,7 @@ public interface ioffline {
 	public List<Societe> LoadSocietesClients(String fl);
 	public List<Prospection> LoadUpClients(String fl);
 	public List<String> LoadDenided(String fl);
+	public List<Commandeview> LoadUpdateCmdList(String fl);
 	
 	public Compte LoadCompte(String log,String pwd);
 	
@@ -139,6 +141,7 @@ public interface ioffline {
 	public void CleanSocieteClients();
 	public void CleanUpClients();
 	public void CleanAllDeniededData();
+	public void CleanUpdateCmd();
 	
 	public List<Promotion> getPromotions(int idclt, int idprd);
 	public Client seeClient(List<Client> ls,String id);
@@ -209,6 +212,9 @@ public interface ioffline {
 	
 	// send mouvement (factures echanges )
 	public long sendMouvements(Compte cp);
+	
+	//send update commande 
+	public List<Commandeview> sendUpdateCmd(Compte cp);
 	
 	//send updated clients
 	public long sendUpClients(Compte cp);

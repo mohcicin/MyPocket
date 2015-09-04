@@ -444,6 +444,12 @@
     <string name="cmdtofc33">--Liste secteurs--</string>
     <string name="cmdtofc34">Vous voulez annuler votre operation ?</string>
     <string name="cmdtofc35">Création commande</string>
+    <string name="cmdtofc36">Vérifier si vous disposer des droits de modification des commandes ou votre stock physique</string>
+    <string name="cmdtofc37">Votre transaction n\'est pas terminé. Vérifier votre stock physique</string>
+    <string name="cmdtofc38">Une erreur est survenu lors de l\'ouverture de votre commande</string>
+    <string name="cmdtofc39">Une erreur est survenu lors de la modification de votre commande</string>
+    <string name="cmdtofc40">La mdification de votre commande est terminé</string>
+    <string name="cmdtofc41">Enregistrer vos modification apporter à votre commande</string>
     <string name="factlab1">Le montant n\'est pas valide</string>
     <string name="factlab2">Le montant encaisser est supérieure au montant total</string>
     <string name="comerciallab1">Récupération des données</string>
@@ -512,6 +518,7 @@
     <!--  update commande -->
     <string name="edcmd1">Ajouter produit</string>
     <string name="edcmd2">Appliquer</string>
+    <string name="edcmd3">Modifier les commandes</string>
     <string name="title_activity_cmd_edit">Modifier la commande</string>
 
 </resources>

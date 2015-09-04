@@ -462,7 +462,7 @@ public class HomeActivity extends Activity
 				intentc4.putExtra("user", compte);
 				intentc4.putExtra("cmd", "1");
 				intentc4.putExtra("editcmd", "1");
-				com.dolibarrmaroc.com.models.AlertDialog updatec4 = new com.dolibarrmaroc.com.models.AlertDialog(intentc4, getString(R.string.title_activity_cmd_cache), "catalog");
+				com.dolibarrmaroc.com.models.AlertDialog updatec4 = new com.dolibarrmaroc.com.models.AlertDialog(intentc4, getString(R.string.edcmd3), "update_cmd");
 
 				alertc2.add(createc1);
 				alertc2.add(updatec2);

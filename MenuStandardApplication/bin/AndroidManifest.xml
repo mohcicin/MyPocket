@@ -345,7 +345,9 @@
         </activity>
         <activity
             android:name="com.dolibarrmaroc.com.prevendeur.CmdEditActivity"
-            android:label="@string/title_activity_cmd_edit" >
+            android:label="@string/title_activity_cmd_edit"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.D1" >
         </activity>
     </application>
 

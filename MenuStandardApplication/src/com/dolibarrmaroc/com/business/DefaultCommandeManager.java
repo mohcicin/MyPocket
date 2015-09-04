@@ -44,5 +44,10 @@ public class DefaultCommandeManager implements CommandeManager {
 		// TODO Auto-generated method stub
 		return dao.charger_commandes_gps(c, imei);
 	}
+	@Override
+	public String updateCommande(List<Produit> prds, String cmd, Compte compte) {
+		// TODO Auto-generated method stub
+		return dao.updateCommande(prds, cmd, compte);
+	}
 
 }

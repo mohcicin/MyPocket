@@ -27,6 +27,7 @@ public class CommandeDaoMysql implements CommandeDao {
 
 	private String urlData = URL.URL+"bl.php";
 	private static final String save = URL.URL+"createcmd.php";
+	private static final String update = URL.URL+"updatecmd.php";
 	
 	private static final String cmdtofc = URL.URL+"cmdtofacture.php";
 	
@@ -318,6 +319,62 @@ public class CommandeDaoMysql implements CommandeDao {
 		}
 
 		return list;
+	}
+
+	@Override
+	public String updateCommande(List<Produit> prds, String cmd, Compte compte) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		
+		Calendar cl = Calendar.getInstance();
+		cl.setTime(new Date());
+		
+		
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		nameValuePairs.add(new BasicNameValuePair("username",compte.getLogin()));
+		//Log.e("PRDS ",compte.getLogin());
+		nameValuePairs.add(new BasicNameValuePair("password",compte.getPassword()));
+		//Log.e("PRDS ",compte.getPassword());
+		nameValuePairs.add(new BasicNameValuePair("idcmd",cmd));
+		
+		
+		 
+		for (int j = 0; j < prds.size(); j++) {
+			Produit pr = prds.get(j);
+			
+			nameValuePairs.add(new BasicNameValuePair("fk_article"+j,pr.getId()+""));
+			nameValuePairs.add(new BasicNameValuePair("qte"+j,pr.getQtedemander()+""));
+			nameValuePairs.add(new BasicNameValuePair("remise"+j,"0"));
+			Log.e("PRDS "+j,pr.toString());
+			
+		}
+		
+		nameValuePairs.add(new BasicNameValuePair("nbrprod",prds.size()+""));
+		
+		String stfomat ="ko";
+		Log.e("com up  >>",nameValuePairs.toString());
+		
+		try {
+			
+			String jsonString =  parser.makeHttpRequest(update , "POST", nameValuePairs);
+			// Parse les donn�es JSON
+			Log.e("JsonString com up", jsonString);
+			
+			stfomat = jsonString.substring(jsonString.indexOf("{"),jsonString.lastIndexOf("}")+1);
+			
+			JSONObject obj = new JSONObject(stfomat);
+			
+			stfomat = obj.getString("code");
+			
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			stfomat ="ko";
+		}
+		
+		return stfomat;
 	}
 	
 

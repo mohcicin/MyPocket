@@ -2833,6 +2833,7 @@ public class Offlineimpl implements ioffline {
 		x += LoadCmdToFact("").size();
 		x += LoadMouvement("").size();
 		x += LoadUpClients("").size(); 
+		x += LoadUpdateCmdList("").size();
 		
 		Log.e("nbr >>",x+"");
 		
@@ -3924,7 +3925,7 @@ public class Offlineimpl implements ioffline {
 				lsreg.add(dataeror2.getLsreg().get(i));
 			}
 			
-			
+			Log.e("update cmd >>> ",sendUpdateCmd(compte).toString());
 			
 			dataeror3 = new DataErreur(lspros, lsinvo, lsreg);
 			dataeror3.setCmd(lscmd);
@@ -5559,6 +5560,118 @@ public class Offlineimpl implements ioffline {
 		}
 		
 		return 0;
+	}
+
+	@Override
+	public long shynchornizeUpdateCmd(Commandeview cm) {
+		// TODO Auto-generated method stub
+		long ix = -1;
+		try {
+			//CleanCmdList();
+			file = new File(path, "/updatecmddata.txt");
+			FileOutputStream outputStream;
+
+			if(!file.exists()){
+				file.createNewFile();
+				file.mkdir();
+			}
+
+		//	Log.e(">> cmd ",cm.toString());
+			if(file.exists()){
+				FileWriter fw = new FileWriter(file, true);
+				PrintWriter pout = new PrintWriter(fw);
+				pout.println("["+gson.toJson(cm,Commandeview.class)+"]");
+				ix =1;
+				pout.close();
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("save upadte cmd ",e.getMessage()  +" << ");
+			ix =-1;
+		}
+		return ix;
+	}
+
+	@Override
+	public List<Commandeview> LoadUpdateCmdList(String fl) {
+		// TODO Auto-generated method stub
+		List<Commandeview> list = new ArrayList<Commandeview>();
+
+		try{
+			int n;
+
+			File file = new File(path, "/updatecmddata.txt");
+			if(file.exists()){
+				//Log.e("data loaded exist  ",file.getAbsolutePath());
+				File secondInputFile = new File(file.getAbsolutePath());
+				InputStream secondInputStream = new BufferedInputStream(new FileInputStream(secondInputFile));
+				BufferedReader r = new BufferedReader(new InputStreamReader(secondInputStream));
+				StringBuilder total = new StringBuilder();
+				String line;
+				
+				while ((line = r.readLine()) != null) {
+					
+					JSONArray jr = new JSONArray(line);
+					for (int i = 0; i < jr.length(); i++) {
+						JSONObject json = jr.getJSONObject(i);
+						Commandeview c = new Commandeview();
+
+						c = gson.fromJson(json.toString(), Commandeview.class);
+
+						list.add(c);
+					}
+
+
+					}
+				}
+
+		}catch(Exception e){
+			Log.e("load Commandeview update save",e.getMessage()  +" << ");
+		}
+		return list;
+	}
+
+	@Override
+	public void CleanUpdateCmd() {
+		// TODO Auto-generated method stub
+		try {
+			File file = new File(path, "/updatecmddata.txt");
+			if(file.exists()){
+				FileWriter fw = new FileWriter(file,false);
+				PrintWriter pout = new PrintWriter(fw);
+				pout.print("");
+				pout.close();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	@Override
+	public List<Commandeview> sendUpdateCmd(Compte cp) {
+		// TODO Auto-generated method stub
+		
+		List<Commandeview> tmp = new ArrayList<>();
+		CommandeManager manager = new CommandeManagerFactory().getManager();
+
+		String res = "";
+		for (int i = 0; i < LoadUpdateCmdList("").size(); i++) {
+			try {
+				res = manager.updateCommande(LoadUpdateCmdList("").get(i).getLsprods(), ""+LoadUpdateCmdList("").get(i).getRowid(), cp);
+			} catch (Exception e) {
+				// TODO: handle exception
+				res = "-1";
+			}
+			
+			if(!"0".equals(res)){
+				tmp.add(LoadUpdateCmdList("").get(i));
+			}
+			
+		}
+		
+		CleanUpdateCmd();
+		return tmp;
 	}
 	
 }
