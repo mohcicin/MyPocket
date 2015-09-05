@@ -658,17 +658,7 @@ public class HomeActivity extends Activity
 							nclt = 1;
 							nprod = 1;
 						}
-						
-						
-						
-						List<String> inres = new DeniedDataDaoMysql().sendMyErrorData(myoffline.LoadDenided(""), compte);
-						myoffline.CleanAllDeniededData();
-						
-						if(inres != null){
-							for (int i = 0; i < inres.size(); i++) {
-								myoffline.PutDeniededDataFw(inres.get(i), 0);
-							}
-						}
+					
 					}
 				}else{
 					
@@ -686,6 +676,23 @@ public class HomeActivity extends Activity
 						Log.e("in prof ","adm mag");
 					}
 					
+				}
+				
+				if(CheckOutNet.isNetworkConnected(HomeActivity.this)){
+					List<String> inres = new DeniedDataDaoMysql().sendMyErrorData(myoffline.LoadDenided("0"), compte,"facture");
+					List<String> inres2 = new DeniedDataDaoMysql().sendMyErrorData(myoffline.LoadDenided("1"), compte,"commande");
+					myoffline.CleanAllDeniededData();
+					
+					if(inres != null){
+						for (int i = 0; i < inres.size(); i++) {
+							myoffline.PutDeniededDataFw(inres.get(i), 0);
+						}
+					}
+					if(inres2 != null){
+						for (int i = 0; i < inres2.size(); i++) {
+							myoffline.PutDeniededDataFw(inres2.get(i), 1);
+						}
+					}
 				}
 			}
 

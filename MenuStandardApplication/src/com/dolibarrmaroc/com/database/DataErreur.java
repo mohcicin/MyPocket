@@ -19,6 +19,7 @@ public class DataErreur implements Serializable{
 	private List<MyGpsInvoice> msgps = new ArrayList<>();
 	private List<Commande> cmd = new ArrayList<>();
 	private List<Commandeview> cmdview = new ArrayList<>();
+	private List<Commandeview> upcmdview = new ArrayList<>();
 	
 	public DataErreur() {
 		super();
@@ -71,6 +72,12 @@ public class DataErreur implements Serializable{
 	}
 	public void setCmdview(List<Commandeview> cmdview) {
 		this.cmdview = cmdview;
+	}
+	public List<Commandeview> getUpcmdview() {
+		return upcmdview;
+	}
+	public void setUpcmdview(List<Commandeview> upcmdview) {
+		this.upcmdview = upcmdview;
 	}
 	
 	

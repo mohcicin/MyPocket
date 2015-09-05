@@ -288,6 +288,8 @@ public class SettingsynchroActivity extends Activity {
 								myoffline.CleanCmdToFactList(); 
 								myoffline.CleanMouvement();
 								
+								myoffline.CleanUpdateCmd();
+								
 								
 								StockVirtual sv = new StockVirtual(SettingsynchroActivity.this);
 								sv.cleantables("");// clean les produits echanges + rendus

@@ -3768,6 +3768,7 @@ public class Offlineimpl implements ioffline {
 		CleanGpsInvoice();
 		CleanCmdList();
 		CleanCmdToFactList();
+		CleanUpdateCmd();
 		
 		
 		for (int i = 0; i < data.getPros().size(); i++) {
@@ -3798,6 +3799,11 @@ public class Offlineimpl implements ioffline {
 		for (int i = 0; i < data.getCmdview().size(); i++) {
 			//shynchornizeCmdToFact(data.getCmdview().get(i));
 			PutDeniededData(data.getCmdview().get(i), 6);
+		}
+		
+		for (int i = 0; i < data.getUpcmdview().size(); i++) {
+			//shynchornizeUpdateCmd 
+			PutDeniededData(data.getUpcmdview().get(i), 6);
 		}
 		
 		return k;
@@ -3862,6 +3868,7 @@ public class Offlineimpl implements ioffline {
 			List<Reglement> lsreg = new ArrayList<>();
 			List<Commande> lscmd = new ArrayList<>();
 			List<Commandeview> lscmdv = new ArrayList<>();
+			List<Commandeview> uplscmdv = new ArrayList<>();
 			
 			//synchronisation des payements pour des factures déja existes
 			List<Reglement> ls = synchronisationReglementOut(compte);
@@ -3925,11 +3932,12 @@ public class Offlineimpl implements ioffline {
 				lsreg.add(dataeror2.getLsreg().get(i));
 			}
 			
-			Log.e("update cmd >>> ",sendUpdateCmd(compte).toString());
+			uplscmdv = sendUpdateCmd(compte);
 			
 			dataeror3 = new DataErreur(lspros, lsinvo, lsreg);
 			dataeror3.setCmd(lscmd);
 			dataeror3.setCmdview(lscmdv);
+			dataeror3.setUpcmdview(uplscmdv);
 			CleanAlldataOut(dataeror3, compte);
 			
 			sendUpClients(compte);
@@ -5445,7 +5453,13 @@ public class Offlineimpl implements ioffline {
 	@Override
 	public long PutDeniededData(Object in,int ob) {
 		// TODO Auto-generated method stub
-		file = new File(path, "/deniededdata.txt");
+		
+		if(ob >= 5 ){
+			file = new File(path, "/deniededdata.txt");
+		}else{
+			file = new File(path, "/deniededdatacmd.txt");
+		}
+		
 		Log.e("filesavz",file.getPath());
 		FileOutputStream outputStream;
 
@@ -5500,6 +5514,14 @@ public class Offlineimpl implements ioffline {
 				pout.print("");
 				pout.close();
 			}
+			
+			file = new File(path, "/deniededdatacmd.txt");
+			if(file.exists()){
+				FileWriter fw = new FileWriter(file,false);
+				PrintWriter pout = new PrintWriter(fw);
+				pout.print("");
+				pout.close();
+			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -5511,9 +5533,12 @@ public class Offlineimpl implements ioffline {
 		List<String> list = new ArrayList<String>();
 
 		try{
-			int n;
-
-			File file = new File(path, "/deniededdata.txt");
+			if(fl.equals("0")){
+				file = new File(path, "/deniededdata.txt");
+			}else{
+				file = new File(path, "/deniededdatacmd.txt");
+			}
+			
 			if(file.exists()){
 				//Log.e("data loaded exist  ",file.getAbsolutePath());
 				File secondInputFile = new File(file.getAbsolutePath());
@@ -5526,6 +5551,7 @@ public class Offlineimpl implements ioffline {
 					list.add(line);
 					}
 				}
+			
 
 		}catch(Exception e){
 			Log.e("load deniede data error",e.getMessage()  +" << ");
@@ -5538,7 +5564,13 @@ public class Offlineimpl implements ioffline {
 	public long PutDeniededDataFw(String in, int cl) {
 		// TODO Auto-generated method stub
 		// TODO Auto-generated method stub
-		file = new File(path, "/deniededdata.txt");
+		
+		if(cl == 0){
+			file = new File(path, "/deniededdata.txt");
+		}else{
+			file = new File(path, "/deniededdatacmd.txt");
+		}
+		
 		Log.e("filesavz",file.getPath());
 		FileOutputStream outputStream;
 
@@ -5670,7 +5702,7 @@ public class Offlineimpl implements ioffline {
 			
 		}
 		
-		CleanUpdateCmd();
+		
 		return tmp;
 	}
 	
