@@ -165,6 +165,7 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 		dialog.setTitle("Ajouter un autre Produit");
 
 		facturePop = (Button) dialog.findViewById(R.id.itenermoifact);
+		facturePop.setText(getResources().getString(R.string.facture2));
 		cancel = (Button) dialog.findViewById(R.id.annulershowme);
 		addprd = (Button) dialog.findViewById(R.id.factshowme);
 
@@ -463,15 +464,38 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				if(panier.size() != 0){
-					if(CheckOutNet.isNetworkConnected(CmdEditActivity.this)){
-						dialogload = ProgressDialog.show(CmdEditActivity.this, getResources().getString(R.string.map_data),
-								getResources().getString(R.string.msg_wait), true);
-						new UpdateTask().execute();
-					}else{
-						dialogload = ProgressDialog.show(CmdEditActivity.this, getResources().getString(R.string.map_data),
-								getResources().getString(R.string.msg_wait), true);
-						new UpdateOfflineTask().execute();
-					}
+					
+					AlertDialog.Builder localBuilder = new AlertDialog.Builder(CmdEditActivity.this);
+					localBuilder
+					.setTitle(getResources().getString(R.string.cmdtofc10))
+					.setMessage(getResources().getString(R.string.cmdtofc41))
+					.setCancelable(false)
+					.setPositiveButton(getResources().getString(R.string.btn_save),
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+							paramDialogInterface.dismiss();
+
+							if(CheckOutNet.isNetworkConnected(CmdEditActivity.this)){
+								dialogload = ProgressDialog.show(CmdEditActivity.this, getResources().getString(R.string.map_data),
+										getResources().getString(R.string.msg_wait), true);
+								new UpdateTask().execute();
+							}else{
+								dialogload = ProgressDialog.show(CmdEditActivity.this, getResources().getString(R.string.map_data),
+										getResources().getString(R.string.msg_wait), true);
+								new UpdateOfflineTask().execute();
+							}
+						}
+					})
+					.setNegativeButton(getResources().getString(R.string.btn_cancel),new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+							paramDialogInterface.dismiss();
+							
+						}
+					});
+					localBuilder.setCancelable(false);
+					localBuilder.show();
+					
+					
 				}else{
 					Toast.makeText(CmdEditActivity.this, getResources().getString(R.string.produit_min2), Toast.LENGTH_LONG).show();
 				}
