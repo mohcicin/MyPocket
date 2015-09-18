@@ -38,7 +38,7 @@ import android.widget.TextView;
 public class AboutActivity extends Activity 
 {
 	private Compte compte;
-
+  
 	/**
 	 * onCreate
 	 *
