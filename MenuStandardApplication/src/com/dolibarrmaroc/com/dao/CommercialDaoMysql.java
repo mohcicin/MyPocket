@@ -30,6 +30,8 @@ public class CommercialDaoMysql implements CommercialDao{
 	private String urlData = URL.URL+"prospection.php";
 	private JSONParser parser ;
 	private String url = URL.URL+"allclient.php";
+	
+	
 
 	public CommercialDaoMysql() {
 		// TODO Auto-generated constructor stub

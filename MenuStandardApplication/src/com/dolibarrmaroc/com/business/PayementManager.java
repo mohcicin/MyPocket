@@ -9,4 +9,5 @@ import com.dolibarrmaroc.com.models.Reglement;
 public interface PayementManager {
 	public List<Payement> getFactures(Compte c);
 	public String insertPayement(Reglement reg,Compte c);
+	public List<Payement> getLastFactures(Compte c,String in);
 }

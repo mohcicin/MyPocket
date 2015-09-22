@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,6 +43,7 @@ import com.dolibarrmaroc.com.R;
 import com.dolibarrmaroc.com.R.id;
 import com.dolibarrmaroc.com.R.layout;
 import com.dolibarrmaroc.com.R.string;
+import com.dolibarrmaroc.com.TourneeViewerActivity;
 import com.dolibarrmaroc.com.business.CommandeManager;
 import com.dolibarrmaroc.com.business.CommercialManager;
 import com.dolibarrmaroc.com.business.PayementManager;
@@ -52,6 +55,8 @@ import com.dolibarrmaroc.com.commercial.VendeurActivity;
 import com.dolibarrmaroc.com.dao.CategorieDao;
 import com.dolibarrmaroc.com.dao.CategorieDaoMysql;
 import com.dolibarrmaroc.com.dao.DeniedDataDaoMysql;
+import com.dolibarrmaroc.com.dao.TourneeDao;
+import com.dolibarrmaroc.com.dao.TourneeDaoMysql;
 import com.dolibarrmaroc.com.database.DBHandler;
 import com.dolibarrmaroc.com.database.StockVirtual;
 import com.dolibarrmaroc.com.gps.ShowLocationActivity;
@@ -63,6 +68,7 @@ import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.Dictionnaire;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Societe;
+import com.dolibarrmaroc.com.models.Tournee;
 import com.dolibarrmaroc.com.offline.Offlineimpl;
 import com.dolibarrmaroc.com.prevendeur.CatalogeActivity;
 import com.dolibarrmaroc.com.prevendeur.CmdCacheActivity;
@@ -78,6 +84,7 @@ import com.dolibarrmaroc.com.utils.CheckOutNet;
 import com.dolibarrmaroc.com.utils.CheckOutSysc;
 import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
 import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
+import com.dolibarrmaroc.com.utils.Functions;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
 import com.dolibarrmaroc.com.utils.URL;
 import com.dolibarrmaroc.com.utils.UrlImage;
@@ -131,7 +138,7 @@ public class HomeActivity extends Activity
 	private DBHandler mydb ;
 	private WakeLock wakelock;
 	private ProgressDialog dialog2;
-
+	
 	public HomeActivity() {
 		// TODO Auto-generated constructor stub
 		vendeurManager = VendeurManagerFactory.getClientManager();
@@ -188,6 +195,12 @@ public class HomeActivity extends Activity
 		btn9 = (Button)findViewById(R.id.home_btn_logout);
 		
 		ShowMyHome();
+		
+		/*
+		 * Check tournee
+		 */
+		
+		
 	}
 
 	/**
@@ -369,11 +382,16 @@ public class HomeActivity extends Activity
 				Intent intentfc4 = new Intent(getApplicationContext(), ReglementOfflineActivity.class);
 				intentfc4.putExtra("user", compte);
 				com.dolibarrmaroc.com.models.AlertDialog updatefc4 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc4, getString(R.string.title_activity_reglement_offline), "invoice_pay");
+				
+				Intent intentfc5 = new Intent(getApplicationContext(), TourneeViewerActivity.class);
+				intentfc5.putExtra("user", compte);
+				com.dolibarrmaroc.com.models.AlertDialog updatefc5 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc5, getString(R.string.title_activity_tournee_viewer), "invoice_pay");
 
 				alertfc2.add(createfc1);
 				alertfc2.add(updatefc2);
 				alertfc2.add(updatefc3);
 				alertfc2.add(updatefc4);
+				alertfc2.add(updatefc5);
 				new AlertDialogList(HomeActivity.this, alertfc2).show();
 
 			}else{
@@ -429,9 +447,6 @@ public class HomeActivity extends Activity
 				com.dolibarrmaroc.com.models.AlertDialog updates2 = new com.dolibarrmaroc.com.models.AlertDialog(intents2, getString(R.string.title_activity_transfertvirtualstock), "warehouse_put");
 				alerts2.add(updates2);
 			}
-			
-
-
 			
 			new AlertDialogList(HomeActivity.this, alerts2).show();
 
@@ -625,76 +640,88 @@ public class HomeActivity extends Activity
 			PayementManager payemn = PayementManagerFactory.getPayementFactory();
 			CategorieDao categorie = new CategorieDaoMysql(getApplicationContext());
 
-			 
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			
+			try {
+				
+				if(!myoffline.checkFolderexsiste()){
+					showmessageOffline();
+				}else{
 
-			if(!myoffline.checkFolderexsiste()){
-				showmessageOffline();
-			}else{
+					int vsv = sv.getSyc();
+					Log.e("is alreadey sysc ",vsv+" ## "+compte.getProfile());
+					if(vsv == 1){
+						if(CheckOutNet.isNetworkConnected(HomeActivity.this)){
+							HashMap<String, Integer> res = new HashMap<>();
+							
+							if(compte.getProfile().toLowerCase().equals("vendeur")){
+								res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 0,manager);
 
-				int vsv = sv.getSyc();
-				Log.e("is alreadey sysc ",vsv+" ## "+compte.getProfile());
-				if(vsv == 1){
-					if(CheckOutNet.isNetworkConnected(HomeActivity.this)){
-						HashMap<String, Integer> res = new HashMap<>();
+								CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 0);
+
+								TourneeDao tour = new TourneeDaoMysql();
+								List<Tournee> lstr = tour.consulterMesTournee(compte, sdf.format(new Date()));//"2015-09-11"
+								myoffline.shynchornizeTournee(lstr);
+								
+								
+								nprod = res.get("prod");
+								nclt = res.get("clt");
+							}else if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase())){
+								res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,manager);
+								nclt = res.get("clt");
+								
+								res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 4,manager);
+								nprod = res.get("prod");
+								
+								CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 1);
+								
+							}else if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
+								nclt = 1;
+								nprod = 1;
+							}
 						
-						if(compte.getProfile().toLowerCase().equals("vendeur")){
-							res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 0,manager);
-
-							CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 0);
-
-							
-							nprod = res.get("prod");
-							nclt = res.get("clt");
-						}else if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase())){
-							res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,manager);
-							nclt = res.get("clt");
-							
-							res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 4,manager);
-							nprod = res.get("prod");
-							
-							CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 1);
-							
+						}
+					}else{
+						
+						if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase())){
+							nclt = myoffline.LoadClients("").size();
+							nprod = myoffline.LoadCategorieList("").size();
+							Log.e("in prof ","pre_vendeur");
+						}else if(compte.getProfile().toLowerCase().equals("vendeur")){
+							nclt = myoffline.LoadClients("").size();
+							nprod = myoffline.LoadProduits("").size();
+							Log.e("in prof ","vendeur");
 						}else if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
 							nclt = 1;
 							nprod = 1;
+							Log.e("in prof ","adm mag");
 						}
-					
-					}
-				}else{
-					
-					if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase())){
-						nclt = myoffline.LoadClients("").size();
-						nprod = myoffline.LoadCategorieList("").size();
-						Log.e("in prof ","pre_vendeur");
-					}else if(compte.getProfile().toLowerCase().equals("vendeur")){
-						nclt = myoffline.LoadClients("").size();
-						nprod = myoffline.LoadProduits("").size();
-						Log.e("in prof ","vendeur");
-					}else if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
-						nclt = 1;
-						nprod = 1;
-						Log.e("in prof ","adm mag");
+						
 					}
 					
+					if(CheckOutNet.isNetworkConnected(HomeActivity.this)){
+						List<String> inres = new DeniedDataDaoMysql().sendMyErrorData(myoffline.LoadDenided("0"), compte,"facture");
+						List<String> inres2 = new DeniedDataDaoMysql().sendMyErrorData(myoffline.LoadDenided("1"), compte,"commande");
+						myoffline.CleanAllDeniededData();
+						
+						if(inres != null){
+							for (int i = 0; i < inres.size(); i++) {
+								myoffline.PutDeniededDataFw(inres.get(i), 0);
+							}
+						}
+						if(inres2 != null){
+							for (int i = 0; i < inres2.size(); i++) {
+								myoffline.PutDeniededDataFw(inres2.get(i), 1);
+							}
+						}
+					}
 				}
 				
-				if(CheckOutNet.isNetworkConnected(HomeActivity.this)){
-					List<String> inres = new DeniedDataDaoMysql().sendMyErrorData(myoffline.LoadDenided("0"), compte,"facture");
-					List<String> inres2 = new DeniedDataDaoMysql().sendMyErrorData(myoffline.LoadDenided("1"), compte,"commande");
-					myoffline.CleanAllDeniededData();
-					
-					if(inres != null){
-						for (int i = 0; i < inres.size(); i++) {
-							myoffline.PutDeniededDataFw(inres.get(i), 0);
-						}
-					}
-					if(inres2 != null){
-						for (int i = 0; i < inres2.size(); i++) {
-							myoffline.PutDeniededDataFw(inres2.get(i), 1);
-						}
-					}
-				}
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
+
+			
 
 			Log.e("start ","start cnx task "+nclt+" c###p "+nprod);
 

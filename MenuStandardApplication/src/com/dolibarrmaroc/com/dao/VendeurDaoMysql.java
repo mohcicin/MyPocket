@@ -1,5 +1,7 @@
 package com.dolibarrmaroc.com.dao;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.dolibarrmaroc.com.models.CategorieCustomer;
@@ -26,8 +30,10 @@ import com.dolibarrmaroc.com.models.Dictionnaire;
 import com.dolibarrmaroc.com.models.Facture;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
+import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.utils.JSONParser;
 import com.dolibarrmaroc.com.utils.URL;
+import com.dolibarrmaroc.com.utils.UrlImage;
 
 public class VendeurDaoMysql implements VendeurDao {
 
@@ -42,6 +48,8 @@ public class VendeurDaoMysql implements VendeurDao {
 	private String jsonprd,jsonclt;
 	private Dictionnaire dicot = new Dictionnaire();
 
+	private List<Societe> lssociete;
+	
 	/*
 	 * Integer => id Produit
 	 * Integer => id Promotion
@@ -58,6 +66,7 @@ public class VendeurDaoMysql implements VendeurDao {
 		jsonParser = new JSONParser();
 		listPromoByProduits = new HashMap<>();
 		listPromoByClient = new HashMap<>();
+		lssociete = new ArrayList<>();
 	}
 
 	@Override
@@ -209,6 +218,8 @@ public class VendeurDaoMysql implements VendeurDao {
 		// Parse les donn�es JSON
 
 		List<Client> list = new ArrayList<Client>();
+		
+		lssociete = new ArrayList<>();
 
 		Log.d("Json retourne >> ", jsonString);
 		try{
@@ -248,6 +259,55 @@ public class VendeurDaoMysql implements VendeurDao {
 
 				listPromoByClient.put(json.getInt("rowid"), listP);
 				list.add(clt);
+				
+				/******************************* Load societe data **********************************/
+				Societe s = new Societe(json.getInt("rowid"), 
+						json.getString("name"), 
+						json.getString("address"), 
+						json.getString("town"), 
+						json.getString("phone"), 
+						json.getString("fax"), 
+						json.getString("email"), 
+						json.getInt("type"), 
+						json.getInt("company"), 
+						json.getDouble("latitude"), 
+						json.getDouble("longitude"));
+						s.setLogo(json.getString("logo"));
+						
+						if(json.getString("imgin").equals("ok") && !"".equals(json.getString("logo"))){
+							
+							String imageURL = UrlImage.urlimgclients+json.getString("logo");
+							//Log.e(">>> img",imageURL+"");
+							Bitmap bitmap = null;
+							try {
+								// Download Image from URL
+								InputStream input = new java.net.URL(imageURL).openStream();
+								// Decode Bitmap
+								bitmap = BitmapFactory.decodeStream(input);
+								
+								 File dir = new File(UrlImage.pathimg+"/client_img");
+								 if(!dir.exists())  dir.mkdirs();
+								 
+								     File file = new File(dir, "/"+json.getString("logo"));
+								     FileOutputStream fOut = new FileOutputStream(file);
+								     
+								     //Log.e(">>hotos ",produit.getPhoto());
+								     
+								     if(json.getString("logo").split("\\.")[1].equals("jpeg") || json.getString("logo").split("\\.")[1].equals("jpg") || json.getString("logo").split("\\.")[1].equals("jpe")){
+								    	  bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+								     }else{
+								    	  bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+								     }
+								   
+								     fOut.flush();
+								     fOut.close();
+							} catch (Exception e) {
+								e.printStackTrace();
+								Log.e(">> ","pic out clt "+e.getMessage());
+							}
+							
+						}
+						lssociete.add(s);
 
 			}
 		}catch(JSONException e){
@@ -372,6 +432,73 @@ public class VendeurDaoMysql implements VendeurDao {
 
 
 		return res;
+	}
+
+	@Override
+	public List<Client> selectAllLastClient(Compte c, String in) {
+		// TODO Auto-generated method stub
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		nameValuePairs.add(new BasicNameValuePair("username",c.getLogin()));
+		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
+		nameValuePairs.add(new BasicNameValuePair("rowid",in));
+
+		String jsonString =  jsonParser.makeHttpRequest(
+				urlclt, "POST", nameValuePairs);
+		// Parse les donn�es JSON
+
+		List<Client> list = new ArrayList<Client>();
+
+		Log.d("Json retourne >> ", jsonString);
+		try{
+
+			JSONArray jArray = new JSONArray(jsonString);
+			// check your log for json response
+			//Log.d("Login attempt", jArray.toString());
+
+
+			for(int i=0;i<jArray.length();i++){
+				JSONObject json = jArray.getJSONObject(i);
+				Client clt = new Client();
+
+				//"rowid":"3","name":"karouani","client":"1","zip":"54020","town":null,
+				//"stcomm":"Jamais contact\u00e9","prefix_comm":null,"code_client":"14589"
+
+				clt.setId(json.getInt("rowid"));
+				clt.setName(json.getString("name"));
+				clt.setZip(json.getString("zip"));
+				clt.setTown(json.getString("town"));
+				clt.setLatitude(Double.parseDouble(json.getString("latitude")));
+				clt.setLongitude(Double.parseDouble(json.getString("longitude")));
+				if(!c.getProfile().toLowerCase().equals("technicien")){
+					clt.setEmail(json.getString("email"));
+				}
+
+
+				int nombre_promos = json.getInt("nombre_promotion");
+				List<Integer> listP = new ArrayList<>();
+
+				if(nombre_promos>0){
+					for (int j = 0; j < nombre_promos; j++) {
+						int idp = Integer.parseInt(json.getString("id_promos"+j));
+						listP.add(idp);
+					}
+				}
+
+				listPromoByClient.put(json.getInt("rowid"), listP);
+				list.add(clt);
+
+			}
+		}catch(JSONException e){
+			Log.e("log_tag", "Error parsing data " + e.toString());
+		}
+		return list;
+	}
+
+	@Override
+	public List<Societe> selectSociete() {
+		// TODO Auto-generated method stub
+		return lssociete;
 	}
 
 

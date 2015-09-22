@@ -514,11 +514,28 @@
 
     <!-- update client -->
     <string name="upcltnext">Editer cet client</string>
-    
-    <!--  update commande -->
+
+    <!-- update commande -->
     <string name="edcmd1">Ajouter produit</string>
     <string name="edcmd2">Appliquer</string>
     <string name="edcmd3">Modifier les commandes</string>
     <string name="title_activity_cmd_edit">Modifier la commande</string>
+    <string name="title_activity_tournee_viewer">Consulter tournées</string>
+    
+    
+    <!-- gestion tournee -->
+    <string name="task1">Tournee</string>
+    <string name="task2">Periode</string>
+    <string name="task3">Recurrence</string>
+    <string-array name="task4">
+        <item name="-1">All</item>
+		<item name="1">Lun</item>
+		<item name="2">Mar</item>
+		<item name="3">Mer</item>
+		<item name="4">Jeu</item>
+		<item name="5">Ven</item>
+		<item name="6">Sam</item>        
+    </string-array>
+    <string name="task4">Liste des clients</string>
 
 </resources>

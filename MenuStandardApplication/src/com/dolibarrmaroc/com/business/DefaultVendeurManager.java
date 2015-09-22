@@ -11,6 +11,7 @@ import com.dolibarrmaroc.com.models.Dictionnaire;
 import com.dolibarrmaroc.com.models.Facture;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
+import com.dolibarrmaroc.com.models.Societe;
 
 public class DefaultVendeurManager implements VendeurManager {
 
@@ -90,6 +91,20 @@ public class DefaultVendeurManager implements VendeurManager {
 	public List<CategorieCustomer> getAllCategorieCustomer(Compte c) {
 		// TODO Auto-generated method stub
 		return dao.getAllCategorieCustomer(c);
+	}
+
+
+	@Override
+	public List<Client> selectAllLastClient(Compte c, String in) {
+		// TODO Auto-generated method stub
+		return dao.selectAllLastClient(c, in);
+	}
+
+
+	@Override
+	public List<Societe> selectSociete() {
+		// TODO Auto-generated method stub
+		return dao.selectSociete();
 	}
 
 }

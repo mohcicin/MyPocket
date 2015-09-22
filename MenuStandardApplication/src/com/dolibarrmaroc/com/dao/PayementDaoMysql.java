@@ -109,4 +109,44 @@ public class PayementDaoMysql implements PayementDao{
 		return res;
 	}
 
+	@Override
+	public List<Payement> getLastFactures(Compte c, String in) {
+		// TODO Auto-generated method stub
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		nameValuePairs.add(new BasicNameValuePair("username",c.getLogin()));
+		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
+		nameValuePairs.add(new BasicNameValuePair("idu",c.getIduser()));
+		nameValuePairs.add(new BasicNameValuePair("rowid",in));
+
+		String jsonString =  jsonParser.makeHttpRequest(
+				url , "POST", nameValuePairs);
+
+		List<Payement> list = new ArrayList<Payement>();
+		Log.e(">>factures load ", jsonString);
+		try{
+
+			String stfomat = jsonString.substring(jsonString.indexOf("["),jsonString.lastIndexOf("]")+1);
+			
+			JSONArray jArray = new JSONArray(stfomat);
+			for(int i=0;i<jArray.length();i++){
+				JSONObject json = jArray.getJSONObject(i);
+				Payement pay = new Payement();
+				pay.setId(json.getInt("rowid"));
+				pay.setNum(json.getString("facnumber"));
+				pay.setTotal(json.getDouble("total_ttc"));
+				pay.setAmount(json.getDouble("amount"));
+				pay.setSoc(json.getInt("soc"));
+
+				//{"rowid":"2095","facnumber":"2015-02436","amount":1000,"total_ttc":"2700.00000000","soc":"67"}]
+				list.add(pay);
+			}
+		}catch(JSONException e){
+			Log.e("log_tag", "Error parsing data " + e.toString());
+		}
+
+		Log.e("List DAta",list.toString()+"");
+		return list;
+	}
+
 }

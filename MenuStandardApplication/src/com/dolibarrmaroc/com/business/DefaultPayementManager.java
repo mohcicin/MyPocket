@@ -51,6 +51,13 @@ public class DefaultPayementManager implements PayementManager{
 		return dao.insertPayement(reg, c);
 	}
 
+
+	@Override
+	public List<Payement> getLastFactures(Compte c, String in) {
+		// TODO Auto-generated method stub
+		return dao.getLastFactures(c, in);
+	}
+
 	
 	
 }

@@ -381,7 +381,8 @@ public class SecondeEtapeCommercialActivity extends Activity implements OnItemSe
 									myoffline.SendOutData(compte);
 								}
 			
-				CheckOutSysc.ReloadProdClt(SecondeEtapeCommercialActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,managercom);
+				//CheckOutSysc.ReloadProdClt(SecondeEtapeCommercialActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,managercom);
+				CheckOutSysc.ReloadProdClt(SecondeEtapeCommercialActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 7,managercom);
 				CheckOutSysc.RelaodClientSectInfoCommDicto(SecondeEtapeCommercialActivity.this, myoffline, compte, vendeurManager, managercom, 0);
 			}else{
 				if(!myoffline.checkFolderexsiste()){

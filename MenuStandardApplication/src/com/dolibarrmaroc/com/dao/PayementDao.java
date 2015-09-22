@@ -8,5 +8,6 @@ import com.dolibarrmaroc.com.models.Reglement;
 
 public interface PayementDao {
 	public List<Payement> getFactures(Compte c);
+	public List<Payement> getLastFactures(Compte c,String in);
 	public String insertPayement(Reglement reg,Compte c);
 }

@@ -838,7 +838,8 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 									myoffline.SendOutData(compte);
 								}
 			
-				CheckOutSysc.ReloadProdClt(CommercialActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,managercom);
+				//CheckOutSysc.ReloadProdClt(CommercialActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,managercom);
+				CheckOutSysc.ReloadProdClt(CommercialActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 7,managercom);
 				CheckOutSysc.RelaodClientSectInfoCommDicto(CommercialActivity.this, myoffline, compte, vendeurManager, managercom, 0);
 			}else{
 				if(!myoffline.checkFolderexsiste()){

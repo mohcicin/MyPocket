@@ -698,7 +698,8 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 			}
 			
 			CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 2,managercom);
-			CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
+			//CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
+			CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 6,managercom);
 			
 			
 			return null;
@@ -884,7 +885,8 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 			}
 			
 			CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 2,managercom);
-			CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
+			//CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
+			CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 6,managercom);
 
 			
 			return null;

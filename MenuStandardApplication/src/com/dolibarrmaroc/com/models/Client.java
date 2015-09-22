@@ -15,6 +15,12 @@ public class Client implements Serializable{
 	private double latitude;
 	private double longitude;
 	
+	private String phone;
+	private String fax;
+	private int type;
+	private int company;
+	private String logo;
+	
 	public Client() {
 	}
 
@@ -110,6 +116,46 @@ public class Client implements Serializable{
 				+ ", town=" + town + ", email=" + email + ", tel=" + tel
 				+ ", address=" + address + ", latitude=" + latitude
 				+ ", longitude=" + longitude + "]";
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getFax() {
+		return fax;
+	}
+
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	public int getCompany() {
+		return company;
+	}
+
+	public void setCompany(int company) {
+		this.company = company;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 
 }

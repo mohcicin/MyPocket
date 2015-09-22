@@ -48,6 +48,15 @@ public class CheckOutSysc implements Serializable{
 		return  vendeurManager.selectAllClient(c);
 	}
 	
+	public static List<Client> checkOutLastClient(VendeurManager vendeurManager,Compte c,StockVirtual sv){
+		
+		int mx = sv.getLastRow("addclt");
+		if(mx != -1){
+			return vendeurManager.selectAllLastClient(c, mx+"");
+		}
+		return  vendeurManager.selectAllClient(c);
+	}
+	
 	public static HashMap<Integer, HashMap<Integer, Promotion>> checkOutPromotionProduits(VendeurManager vendeurManager,Compte c){
 		return  vendeurManager.getPromotionProduits();
 	}
@@ -61,6 +70,14 @@ public class CheckOutSysc implements Serializable{
 	}
 	
 	public static List<Payement> checkOutPayement(PayementManager payemnmanager,Compte c){
+		return payemnmanager.getFactures(c);
+	}
+	
+	public static List<Payement> checkOutLastPayement(PayementManager payemnmanager,Compte c,StockVirtual sv){
+		int mx = sv.getLastRow("pay");
+		if(mx != -1){
+			return payemnmanager.getLastFactures(c, "pay");
+		}
 		return payemnmanager.getFactures(c);
 	}
 	
@@ -409,6 +426,34 @@ public class CheckOutSysc implements Serializable{
 					
 					checkInPayement(myoffline, paym, compte);
 					nbpay = paym.size();
+					break;
+					
+				case 6:
+					paym = new ArrayList<>();
+					paym = checkOutLastPayement(payemnmanager, compte,sv);
+					
+					paym.addAll(myoffline.LoadPayements(""));
+					
+					checkInPayement(myoffline, paym, compte);
+					nbpay = paym.size();
+					break;
+				case 7:
+					clients = new ArrayList<>();
+					clients = checkOutLastClient(vendeurManager, compte,sv); //   vendeurManager.selectAllClient(compte);
+						
+					clients.addAll(myoffline.LoadClients(""));
+					
+					HashMap<Integer, List<Integer>> prom = new HashMap<>();
+					prom = vendeurManager.getPromotionClients();
+					
+					prom.putAll(myoffline.LoadPromoClient(""));
+					
+					
+						if(clients.size() > 0){
+							nbclt =clients.size(); 
+							checkInClientsPromotion(myoffline, compte, clients, vendeurManager.getPromotionClients());
+						}
+						
 					break;
 			}
 			

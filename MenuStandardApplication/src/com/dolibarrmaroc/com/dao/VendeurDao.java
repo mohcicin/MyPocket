@@ -10,6 +10,7 @@ import com.dolibarrmaroc.com.models.Dictionnaire;
 import com.dolibarrmaroc.com.models.Facture;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
+import com.dolibarrmaroc.com.models.Societe;
 
 public interface VendeurDao {
 	
@@ -26,4 +27,8 @@ public interface VendeurDao {
 	
 	public HashMap<Integer, HashMap<Integer, Promotion>> getPromotionProduits();
 	public HashMap<Integer, List<Integer>> getPromotionClients();
+	
+	public List<Client> selectAllLastClient(Compte c,String in);
+	
+	public List<Societe> selectSociete();
 }

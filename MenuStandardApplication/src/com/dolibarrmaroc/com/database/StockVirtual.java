@@ -34,6 +34,7 @@ public class StockVirtual extends SQLiteOpenHelper {
 	private static final String TABLE_SYNCRO = "storagesynchronisation";
 	private static final String TABLE_SYNERROR = "storagesyncroerror";
 	private static final String TABLE_HISTOOPS = "storageoperation";
+	private static final String TABLE_LASTROW = "storagelastrow";
 
 
 	// Table Columns names
@@ -80,6 +81,10 @@ public class StockVirtual extends SQLiteOpenHelper {
 			String cr3 = "CREATE TABLE " + TABLE_HISTOOPS + "("
 					+ KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DTOP + " VARCHAR(30), "+KEY_MTN+" REAL, " + KEY_TPOP + " VARCHAR(30) )";
 			db.execSQL(cr3);
+			
+			String cr = "CREATE TABLE " + TABLE_LASTROW + "("
+					+ KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_ISIT+" INTEGER, " + KEY_TPOP + " VARCHAR(30) )";
+			db.execSQL(cr);
 			
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -580,5 +585,85 @@ public class StockVirtual extends SQLiteOpenHelper {
 
 		return res;
 	}
+	
+	/*************************************  Last row insert in offline ******************************/
+	public long addlastRow(int in,String tp) {
+		long id =-1;
+		try {
+
+			Log.e("INSERT date ","begin");
+			deleteLastRow(tp);
+
+			SQLiteDatabase db = this.getWritableDatabase();
+
+
+			ContentValues values = new ContentValues();
+			
+			 
+			
+			values.put(KEY_ISIT, in);
+			values.put(KEY_TPOP, tp);
+
+			// Inserting Row
+			id = db.insert(TABLE_LASTROW, null, values);
+			
+			Log.e("INSERT ","ID <<"+id);
+
+			db.close(); // Closing database connection
+
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("insert data","insert data");
+		}
+		return id;
+	}
+
+	public void	deleteLastRow(String tp) {
+		try {
+			//KEY_ISIT+" INTEGER, " + KEY_TPOP
+			Log.e("DELETE ","GO DELETE");
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL("DELETE FROM "+TABLE_LASTROW+" WHERE "+KEY_TPOP+" = "+tp);
+			db.close();
+			Log.e("DELETE ","GO DELETE");
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("error delete sysc ","sysc");
+		}
+	}
+	
+	public int getLastRow(String in) {
+		// Select All Query
+		int n = -1;
+		try {
+			String selectQuery = "";
+			String[] nm = new String[]{in};
+			selectQuery = "SELECT * FROM " + TABLE_LASTROW +" where "+KEY_TPOP+" = ?";
+
+
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor cursor = db.rawQuery(selectQuery, nm);
+
+			if(cursor.getCount() > 0){
+				if (cursor.moveToFirst()) {
+					do {
+						n = cursor.getInt(1);
+					} while (cursor.moveToNext());
+				}
+			} 
+			
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("errror sysc get ",e.getMessage() +"");
+			n = -1;
+			return n;
+		}
+
+		return n;
+	}   
+	
 
 }

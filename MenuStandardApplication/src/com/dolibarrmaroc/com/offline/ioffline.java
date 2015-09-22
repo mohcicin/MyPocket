@@ -35,6 +35,7 @@ import com.dolibarrmaroc.com.models.Reglement;
 import com.dolibarrmaroc.com.models.Services;
 import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.models.TotauxTicket;
+import com.dolibarrmaroc.com.models.Tournee;
 import com.dolibarrmaroc.com.utils.GpsTrackingServiceDao;
 import com.dolibarrmaroc.com.utils.ServiceDao;
 
@@ -77,6 +78,7 @@ public interface ioffline {
 	public long PutDeniededData(Object in,int cl);
 	public long PutDeniededDataFw(String in,int cl);
 	public long shynchornizeUpdateCmd(Commandeview cm); 
+	public long shynchornizeTournee(List<Tournee> in); 
 
 	
 	/* Load data from offline */
@@ -108,6 +110,7 @@ public interface ioffline {
 	public List<Prospection> LoadUpClients(String fl);
 	public List<String> LoadDenided(String fl);
 	public List<Commandeview> LoadUpdateCmdList(String fl);
+	public List<Tournee> LoadTourneeList(String fl);
 	
 	public Compte LoadCompte(String log,String pwd);
 	
@@ -142,6 +145,7 @@ public interface ioffline {
 	public void CleanUpClients();
 	public void CleanAllDeniededData();
 	public void CleanUpdateCmd();
+	public void CleanTournee();
 	
 	public List<Promotion> getPromotions(int idclt, int idprd);
 	public Client seeClient(List<Client> ls,String id);
