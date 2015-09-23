@@ -49,5 +49,10 @@ public class DefaultCommandeManager implements CommandeManager {
 		// TODO Auto-generated method stub
 		return dao.updateCommande(prds, cmd, compte);
 	}
+	@Override
+	public List<Commandeview> charger_commandesLast(Compte c, String in) {
+		// TODO Auto-generated method stub
+		return dao.charger_commandesLast(c, in);
+	}
 
 }

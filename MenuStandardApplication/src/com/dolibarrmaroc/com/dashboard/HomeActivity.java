@@ -657,7 +657,7 @@ public class HomeActivity extends Activity
 							if(compte.getProfile().toLowerCase().equals("vendeur")){
 								res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 0,manager);
 
-								CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 0);
+								CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 2);  //, 0);
 
 								TourneeDao tour = new TourneeDaoMysql();
 								List<Tournee> lstr = tour.consulterMesTournee(compte, sdf.format(new Date()));//"2015-09-11"

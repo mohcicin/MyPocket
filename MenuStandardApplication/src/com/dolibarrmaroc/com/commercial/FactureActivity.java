@@ -1119,7 +1119,7 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 				CommercialManager manager = CommercialManagerFactory.getCommercialManager();
 				
 				sv  = new StockVirtual(FactureActivity.this);
-				CheckOutSysc.ReloadProdClt(FactureActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 4,manager);
+				CheckOutSysc.ReloadProdClt(FactureActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 8,manager);		//4,manager);
 			}
 			
 			

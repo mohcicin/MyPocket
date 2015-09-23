@@ -619,7 +619,7 @@ public class UpdateClientActivity extends Activity implements OnClickListener,On
 					myoffline.SendOutData(compte);
 				}
 		
-			CheckOutSysc.RelaodClientSectInfoCommDicto(UpdateClientActivity.this, myoffline, compte, vendeurManager, managercom, 0);
+			CheckOutSysc.RelaodClientSectInfoCommDicto(UpdateClientActivity.this, myoffline, compte, vendeurManager, managercom, 3);  // 0);
 			return null;
 		}
 

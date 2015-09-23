@@ -376,6 +376,69 @@ public class CommandeDaoMysql implements CommandeDao {
 		
 		return stfomat;
 	}
+
+	@Override
+	public List<Commandeview> charger_commandesLast(Compte c, String in) {
+		// TODO Auto-generated method stub
+		Log.e("start", "json");
+		List<Commandeview> cmd = new ArrayList<>();
+		
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		nameValuePairs.add(new BasicNameValuePair("username",c.getLogin()));//c.getLogin()
+		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
+		nameValuePairs.add(new BasicNameValuePair("max",in));
+
+
+		try {
+			String json = parser.makeHttpRequest(urlData, "POST", nameValuePairs);
+			String stfomat = json.substring(json.indexOf("["),json.lastIndexOf("]")+1);
+
+
+			
+			Log.e("json",stfomat);
+			JSONArray jsr = new JSONArray(stfomat);
+
+			for (int i = 0; i < jsr.length(); i++) {
+				JSONObject obj = jsr.getJSONObject(i);
+
+				Commandeview cm = new Commandeview();
+				cm.setRowid(obj.getInt("rowid"));
+				cm.setRef(obj.getString("ref"));
+				
+				Client cl = new Client(obj.getJSONObject("socid").getInt("rowid"), obj.getJSONObject("socid").getString("name"), obj.getJSONObject("socid").getString("zip"), obj.getJSONObject("socid").getString("town"), obj.getJSONObject("socid").getString("email"), "", "");
+				cm.setClt(cl);
+				
+				cm.setDt(obj.getString("date_commande"));
+				cm.setTtc(obj.getDouble("total_ttc"));
+				cm.setHt(obj.getDouble("total_ht"));
+				cm.setTva(obj.getDouble("total_tva"));
+				
+				JSONArray p = obj.getJSONArray("products");
+				
+				List<Produit> pd = new ArrayList<>();
+				for (int j = 0; j < p.length(); j++) {
+					JSONObject ob = p.getJSONObject(j);
+					
+					//						(String ref, String desig, int qteDispo, String prixUnitaire,	int qtedemander, double prixttc, String tva_tx, String fk_tva)
+					Produit px = new Produit(ob.getString("ref"), ob.getString("libelle"), ob.getInt("qnt"), ob.getString("price_ht"), 0, ob.getDouble("price"), ob.getString("remise_percent"), "");
+					px.setId(ob.getInt("ref_id"));
+					pd.add(px);
+					
+				}
+				
+				cm.setLsprods(pd);
+				
+				cmd.add(cm);
+			}
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Log.e("json insert commande",e.getMessage() +" << ");
+		}
+
+		return cmd;
+	}
 	
 
 }

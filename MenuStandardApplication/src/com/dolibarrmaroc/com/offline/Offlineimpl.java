@@ -4500,6 +4500,8 @@ public class Offlineimpl implements ioffline {
 			CleanCommandeList();
 			file = new File(path, "/cmdlistedata.txt");
 			FileOutputStream outputStream;
+			
+			List<Integer> max = new ArrayList<>();
 
 			if(!file.exists()){
 				file.createNewFile();
@@ -4513,8 +4515,12 @@ public class Offlineimpl implements ioffline {
 				for (int i = 0; i < cmd.size(); i++) {
 					pout.println("["+gson.toJson(cmd.get(i),Commandeview.class)+"]");
 					ix =1;
+					max.add(cmd.get(i).getRowid());
 				}
 				pout.close();
+				
+				StockVirtual sv = new StockVirtual(context);
+				sv.addlastRow(max.get(max.size()-1), "cmd");
 			}
 
 

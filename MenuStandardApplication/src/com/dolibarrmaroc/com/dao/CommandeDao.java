@@ -12,6 +12,7 @@ import com.dolibarrmaroc.com.models.Remises;
 public interface CommandeDao {
 
 	public List<Commandeview> charger_commandes(Compte c);
+	public List<Commandeview> charger_commandesLast(Compte c,String in);
 	public String insertCommande(List<Produit> prd, String idclt,  Compte compte, Map<String, Remises> allremises);
 	public String CmdToFacture(Commandeview cv,Compte cp);
 	public String GetNumCommande();

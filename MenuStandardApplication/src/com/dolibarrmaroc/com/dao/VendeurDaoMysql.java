@@ -450,6 +450,7 @@ public class VendeurDaoMysql implements VendeurDao {
 		List<Client> list = new ArrayList<Client>();
 
 		Log.d("Json retourne >> ", jsonString);
+		lssociete = new ArrayList<>();
 		try{
 
 			JSONArray jArray = new JSONArray(jsonString);
@@ -487,6 +488,55 @@ public class VendeurDaoMysql implements VendeurDao {
 
 				listPromoByClient.put(json.getInt("rowid"), listP);
 				list.add(clt);
+				
+				/******************************* Load societe data **********************************/
+				Societe s = new Societe(json.getInt("rowid"), 
+						json.getString("name"), 
+						json.getString("address"), 
+						json.getString("town"), 
+						json.getString("phone"), 
+						json.getString("fax"), 
+						json.getString("email"), 
+						json.getInt("type"), 
+						json.getInt("company"), 
+						json.getDouble("latitude"), 
+						json.getDouble("longitude"));
+						s.setLogo(json.getString("logo"));
+						
+						if(json.getString("imgin").equals("ok") && !"".equals(json.getString("logo"))){
+							
+							String imageURL = UrlImage.urlimgclients+json.getString("logo");
+							//Log.e(">>> img",imageURL+"");
+							Bitmap bitmap = null;
+							try {
+								// Download Image from URL
+								InputStream input = new java.net.URL(imageURL).openStream();
+								// Decode Bitmap
+								bitmap = BitmapFactory.decodeStream(input);
+								
+								 File dir = new File(UrlImage.pathimg+"/client_img");
+								 if(!dir.exists())  dir.mkdirs();
+								 
+								     File file = new File(dir, "/"+json.getString("logo"));
+								     FileOutputStream fOut = new FileOutputStream(file);
+								     
+								     //Log.e(">>hotos ",produit.getPhoto());
+								     
+								     if(json.getString("logo").split("\\.")[1].equals("jpeg") || json.getString("logo").split("\\.")[1].equals("jpg") || json.getString("logo").split("\\.")[1].equals("jpe")){
+								    	  bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+								     }else{
+								    	  bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+								     }
+								   
+								     fOut.flush();
+								     fOut.close();
+							} catch (Exception e) {
+								e.printStackTrace();
+								Log.e(">> ","pic out clt "+e.getMessage());
+							}
+							
+						}
+						lssociete.add(s);
 
 			}
 		}catch(JSONException e){
