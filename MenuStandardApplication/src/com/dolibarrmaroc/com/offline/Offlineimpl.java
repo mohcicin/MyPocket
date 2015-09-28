@@ -2806,6 +2806,7 @@ public class Offlineimpl implements ioffline {
 		CleanCategorieClients();
 		CleanCommandeList();
 		CleanSocieteClients();
+		CleanTournee();
 		return vl;
 	}
 
@@ -5741,7 +5742,7 @@ public class Offlineimpl implements ioffline {
 		// TODO Auto-generated method stub
 		long ix = -1;
 		try {
-			CleanCategorieList();
+			CleanTournee();
 			file = new File(path, "/tournee.txt");
 			FileOutputStream outputStream;
 

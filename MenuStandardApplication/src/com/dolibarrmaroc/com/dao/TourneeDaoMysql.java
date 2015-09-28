@@ -1,6 +1,10 @@
 package com.dolibarrmaroc.com.dao;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -10,21 +14,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.R.integer;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Commandeview;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.Produit;
+import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.models.Tournee;
 import com.dolibarrmaroc.com.utils.JSONParser;
 import com.dolibarrmaroc.com.utils.URL;
+import com.dolibarrmaroc.com.utils.UrlImage;
 
 public class TourneeDaoMysql implements TourneeDao{
 
-	private static final String urlData = URL.URL+"json.php";
+	private static final String urlData = URL.URL+"gettour.php";
 	private JSONParser parser ;
 	
+	private HashMap<Integer, List<Integer>> listPromoByClient;
+	private List<Societe> lssociete;
 	
 	public TourneeDaoMysql(){
 		super();
@@ -44,7 +54,10 @@ public class TourneeDaoMysql implements TourneeDao{
 		nameValuePairs.add(new BasicNameValuePair("dt",dt));
 
 			Log.e("send durl mes tournee ",nameValuePairs.toString());
-
+			
+			listPromoByClient = new HashMap<>();
+			lssociete = new ArrayList<>();
+			
 		try {
 			String json = parser.makeHttpRequest(urlData, "POST", nameValuePairs);
 			
@@ -84,6 +97,69 @@ public class TourneeDaoMysql implements TourneeDao{
 					Client ct = new Client(o.getInt("rowid"), o.getString("name"), "", o.getString("town"), o.getString("email"), o.getString("phone"), o.getString("address"));
 					
 					lsclt.add(ct);
+					
+					/******************************* Load societe data **********************************/
+					Societe s = new Societe(o.getInt("rowid"), 
+							o.getString("name"), 
+							o.getString("address"), 
+							o.getString("town"), 
+							o.getString("phone"), 
+							o.getString("fax"), 
+							o.getString("email"), 
+							o.getInt("type"), 
+							o.getInt("company"), 
+							o.getDouble("latitude"), 
+							o.getDouble("longitude"));
+							s.setLogo(o.getString("logo"));
+							
+							if(o.getString("imgin").equals("ok") && !"".equals(o.getString("logo"))){
+								
+								String imageURL = UrlImage.urlimgclients+o.getString("logo");
+								//Log.e(">>> img",imageURL+"");
+								Bitmap bitmap = null;
+								try {
+									// Download Image from URL
+									InputStream input = new java.net.URL(imageURL).openStream();
+									// Decode Bitmap
+									bitmap = BitmapFactory.decodeStream(input);
+									
+									 File dir = new File(UrlImage.pathimg+"/client_img");
+									 if(!dir.exists())  dir.mkdirs();
+									 
+									     File file = new File(dir, "/"+o.getString("logo"));
+									     FileOutputStream fOut = new FileOutputStream(file);
+									     
+									     //Log.e(">>hotos ",produit.getPhoto());
+									     
+									     if(o.getString("logo").split("\\.")[1].equals("jpeg") || o.getString("logo").split("\\.")[1].equals("jpg") || o.getString("logo").split("\\.")[1].equals("jpe")){
+									    	  bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+									     }else{
+									    	  bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+									     }
+									   
+									     fOut.flush();
+									     fOut.close();
+								} catch (Exception e) {
+									e.printStackTrace();
+									Log.e(">> ","pic out clt "+e.getMessage());
+								}
+								
+							}
+							lssociete.add(s);
+							
+				  /*************************************** end ************************************************/
+					
+					int nombre_promos = o.getInt("nombre_promotion");
+					List<Integer> listP = new ArrayList<>();
+
+					if(nombre_promos>0){
+						for (int f = 0; f < nombre_promos; f++) {
+							int idp = Integer.parseInt(o.getString("id_promos"+f));
+							listP.add(idp);
+						}
+					}
+
+					listPromoByClient.put(o.getInt("rowid"), listP);
 				}
 				
 				tr.setLsclt(lsclt);
@@ -97,6 +173,9 @@ public class TourneeDaoMysql implements TourneeDao{
 				
 				tr.setRecur(lsrc);
 				
+				
+				
+				
 				tour.add(tr);
 				
 			}
@@ -108,6 +187,16 @@ public class TourneeDaoMysql implements TourneeDao{
 		}
 
 		return tour;
+	}
+	@Override
+	public HashMap<Integer, List<Integer>> getPromotionClients() {
+		// TODO Auto-generated method stub
+		return listPromoByClient;
+	}
+	@Override
+	public List<Societe> selectSociete() {
+		// TODO Auto-generated method stub
+		return lssociete;
 	}
 
 }

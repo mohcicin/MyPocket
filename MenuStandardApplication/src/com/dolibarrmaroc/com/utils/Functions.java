@@ -1,6 +1,7 @@
 package com.dolibarrmaroc.com.utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 import org.joda.time.DurationFieldType;
 import org.joda.time.Period;
+
+import android.util.Log;
 
 import com.dolibarrmaroc.com.models.Tournee;
 
@@ -92,7 +95,46 @@ public class Functions {
 		res.put(5, v);
 		res.put(6, s);
 
+		Log.e("laod days ",res.toString());
 		return res;
 
+	}
+	
+	public static int getNumberOfDay(Date in){
+		DateTime dt = new DateTime(in);
+		DateTime.Property pDoW = dt.dayOfWeek();
+
+		int n = 1;
+
+		switch (pDoW.getAsText().toLowerCase()) {
+		case "monday": 
+		case "lundi":
+			n = 1;
+			break;
+
+		case "tuesday ": 
+		case "mardi":
+			n = 2;
+			break;
+		case "wednesday": 
+		case "mercredi":
+			n = 3;
+			break;
+		case "thursday": 
+		case "jeudi":
+			n = 4;
+			break;
+		case "friday": 
+		case "vendredi":
+			n = 5;
+			break;
+		case "saturday": 
+		case "samedi":
+			n = 6;
+			break;
+		}
+		
+		Log.e(">daysss> ",n+"");
+		return n;
 	}
 }

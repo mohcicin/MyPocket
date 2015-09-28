@@ -168,6 +168,7 @@ public class HomeActivity extends Activity
 		myoffline = new Offlineimpl(getApplicationContext());
 		
 		
+		
 		//Log.e(">> clts ",myoffline.chargerInvoice_prospect(compte).toString());
 
 		if(CheckOutNet.isNetworkConnected(getApplicationContext())){
@@ -641,6 +642,7 @@ public class HomeActivity extends Activity
 			CategorieDao categorie = new CategorieDaoMysql(getApplicationContext());
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			
 			
 			try {
 				

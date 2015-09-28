@@ -295,6 +295,7 @@ public class SettingsynchroActivity extends Activity {
 								sv.cleantables("");// clean les produits echanges + rendus
 								sv.cleantablesSysc("");
 								sv.cleantablesCA("");
+								sv.cleantablesLR("");
 								
 								File fl = new File(Environment.getExternalStorageDirectory()+"/.datadolicachenew/storagevirtual");
 								if(fl.exists()){

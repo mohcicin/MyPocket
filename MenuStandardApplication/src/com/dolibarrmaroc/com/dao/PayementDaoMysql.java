@@ -123,7 +123,7 @@ public class PayementDaoMysql implements PayementDao{
 				url , "POST", nameValuePairs);
 
 		List<Payement> list = new ArrayList<Payement>();
-		Log.e(">>factures load ", jsonString);
+		Log.e(">>factures last send load ", nameValuePairs.toString());
 		try{
 
 			String stfomat = jsonString.substring(jsonString.indexOf("["),jsonString.lastIndexOf("]")+1);

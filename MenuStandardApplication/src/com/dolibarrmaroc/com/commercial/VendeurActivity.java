@@ -20,6 +20,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.joda.time.DateTime;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -89,9 +90,11 @@ import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
 import com.dolibarrmaroc.com.models.Prospection;
 import com.dolibarrmaroc.com.models.TotauxTicket;
+import com.dolibarrmaroc.com.models.Tournee;
 import com.dolibarrmaroc.com.utils.CaisseDolibarr;
 import com.dolibarrmaroc.com.utils.CheckOutNet;
 import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
+import com.dolibarrmaroc.com.utils.Functions;
 import com.dolibarrmaroc.com.utils.JSONParser;
 import com.dolibarrmaroc.com.utils.MyLocationListener;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
@@ -1162,7 +1165,23 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 
 			Log.e("begin offline from offline",">>start load");
 			
-			clients = myoffline.LoadClients("");
+			List<Tournee> trs = Functions.prepaTourneeData(myoffline.LoadTourneeList("")).get(Functions.getNumberOfDay(new Date()));
+			int n = trs.size();
+			
+			
+			
+			if(n > 0){
+				clients = new ArrayList<>();
+				for (int i = 0; i < trs.size(); i++) {
+					clients.addAll(trs.get(i).getLsclt());
+				}
+				Log.e(">>>tourne in  "," in in ");
+			}else{
+
+				clients = myoffline.LoadClients("");
+				
+			}
+			
 			
 			Log.e("star client 1pros ",myoffline.LoadProspection("").size()+"");
 			Log.e("star client clt ",clients.size()+"");

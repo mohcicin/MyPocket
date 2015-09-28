@@ -76,7 +76,7 @@ public class CheckOutSysc implements Serializable{
 	public static List<Payement> checkOutLastPayement(PayementManager payemnmanager,Compte c,StockVirtual sv){
 		int mx = sv.getLastRow("pay");
 		if(mx != -1){
-			return payemnmanager.getLastFactures(c, "pay");
+			return payemnmanager.getLastFactures(c, mx+"");
 		}
 		return payemnmanager.getFactures(c);
 	}

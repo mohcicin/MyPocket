@@ -1085,7 +1085,7 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 		return x;
 	}
 	
-	/******************************* synchronisation des commandes ****************************/
+	/******************************* Synchronisation des commandes ****************************/
 	
 	class ValidationTask extends AsyncTask<Void, Void, String> {
 
@@ -1096,6 +1096,8 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 
 			/*********************** offline ****************************************/
 			if(CheckOutNet.isNetworkConnected(getApplicationContext())){
+				
+				
 				if(myofline.checkAvailableofflinestorage() > 0){
 					myofline.SendOutData(compte);	
 				}

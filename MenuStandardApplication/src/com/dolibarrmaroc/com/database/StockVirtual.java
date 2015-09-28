@@ -266,7 +266,7 @@ public class StockVirtual extends SQLiteOpenHelper {
 			if(in == -1){
 				selectQuery = "SELECT  * FROM " + TABLE_PROD;
 			}else{
-				selectQuery = "SELECT  * FROM " + TABLE_PROD + " WHERE "+KEY_TYPE +" = "+in;
+				selectQuery = "SELECT  * FROM " + TABLE_PROD + " WHERE "+KEY_TYPE +" = '"+in+"'";
 				//nm = new String[] {in+""};
 			}
 
@@ -622,9 +622,9 @@ public class StockVirtual extends SQLiteOpenHelper {
 	public void	deleteLastRow(String tp) {
 		try {
 			//KEY_ISIT+" INTEGER, " + KEY_TPOP
-			Log.e("DELETE ","GO DELETE");
+			Log.e("DELETE ","DELETE FROM "+TABLE_LASTROW+" WHERE "+KEY_TPOP+" = "+tp);
 			SQLiteDatabase db = this.getWritableDatabase();
-			db.execSQL("DELETE FROM "+TABLE_LASTROW+" WHERE "+KEY_TPOP+" = "+tp);
+			db.execSQL("DELETE FROM "+TABLE_LASTROW+" WHERE "+KEY_TPOP+" = '"+tp+"'");
 			db.close();
 			Log.e("DELETE ","GO DELETE");
 		} catch (Exception e) {
@@ -664,6 +664,18 @@ public class StockVirtual extends SQLiteOpenHelper {
 
 		return n;
 	}   
+	
+	public long cleantablesLR(String tb){
+		long id =-1;
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL("delete from "+TABLE_LASTROW);
+			db.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return id;
+	}
 	
 
 }
