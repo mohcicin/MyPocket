@@ -36,6 +36,19 @@ public class Produit implements Serializable{
 		this.fk_tva = fk_tva;
 	}
 
+	public Produit(String ref, String desig, int qteDispo, String prixUnitaire,
+			int qtedemander, double prixttc, String tva_tx, String fk_tva,int id) {
+		super();
+		this.id = id;
+		this.ref = ref;
+		this.desig = desig;
+		this.qteDispo = qteDispo;
+		this.prixUnitaire = prixUnitaire;
+		this.qtedemander = qtedemander;
+		this.prixttc = prixttc;
+		this.tva_tx = tva_tx;
+		this.fk_tva = fk_tva;
+	}
 	public int getId() {
 		return id;
 	}

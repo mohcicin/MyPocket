@@ -13,6 +13,7 @@ import com.dolibarrmaroc.com.business.CommercialManager;
 import com.dolibarrmaroc.com.business.PayementManager;
 import com.dolibarrmaroc.com.business.VendeurManager;
 import com.dolibarrmaroc.com.commercial.FactureActivity;
+import com.dolibarrmaroc.com.commercial.NextEtapeActivity;
 import com.dolibarrmaroc.com.commercial.VendeurActivity;
 import com.dolibarrmaroc.com.dao.CategorieDao;
 import com.dolibarrmaroc.com.dao.CategorieDaoMysql;
@@ -72,6 +73,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
+
 public class CmdEditActivity extends Activity implements OnItemClickListener{
 
 	private ioffline myoffline;
@@ -101,6 +103,8 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 	private Commandeview v;
 
 	private SimpleAdapter adapter;
+	
+	private StockVirtual sv;
 
 	/******************     *****************************/
 	private Button facturePop,cancel,addprd,facture;
@@ -109,7 +113,7 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 	private View qntlayout;
 	private TextView qntview;
 	private AutoCompleteTextView spinnere;
-	private Produit produit;
+	private Produit produit,produitbup;
 	private List<String> listprd;
 
 	
@@ -185,13 +189,20 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 				imm.hideSoftInputFromInputMethod(parent.getWindowToken(), 0);
 				spinnere.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
 
-				Log.e("Selected Produit Spinner ",selected);
+				Log.e("Selected Produit Spinner ",selected+"");
 
-				for (int i = 0; i < stock.size(); i++) {
-					if (selected.equals(stock.get(i).getDesig())) {
+				for (Produit i:stock) {
+					if (selected.equals(i.getDesig())) {
 						produit = new Produit();
-						produit = stock.get(i);
-
+						produitbup = new Produit();
+						
+						produitbup = i;
+						produit = i;
+						
+						/*
+						produit.setQtedemander(0);
+						produitbup.setQtedemander(0);
+						*/
 						/*
 						if(panier.size() > 0){
 							if(panier.containsKey(products.get(i).getRef())){
@@ -365,9 +376,11 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 								int t = Integer.parseInt(qtep.getText().toString());
 								double prt = produit.getPrixttc()*t;
 
-								Log.e("panier begin ",panier.toString()+" >> "+panier.size()+"");
+								//Log.e("panier begin ",panier.toString()+" >> "+panier.size()+"");
 								
 								if(panier.size() == 0){
+									
+									Log.e("panier zero ","in zerp *********");
 									int qt = produit.getQteDispo() - t;
 
 									for (int i = 0; i < stock.size(); i++) {
@@ -377,7 +390,7 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 										}
 									}
 
-
+									
 
 									produit.setQtedemander(t);
 									panier.put(produit.getId(), produit);
@@ -385,40 +398,54 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 								}
 								else{
 									if(panier.containsKey(produit.getId())){
+										
+										
 										int qt = panier.get(produit.getId()).getQtedemander() + t;
-										produit.setQtedemander(qt);
 										
-										Log.e("produit in ",produit.toString()+"");
+										//Log.e("qnt in panier ", ">> "+panier.get(produit.getId()).getQtedemander());
+										
+										//produit.setQtedemander(qt);
+										
+									//	Log.e("produit in ",produit.toString()+"");
+										
+										panier.remove(produit.getId());
+										
+										 
 										
 										
-										panier.put(produit.getId(), produit);
+										panier.put(produit.getId(), new Produit(produit.getRef(), produit.getDesig(), produit.getQteDispo(), produit.getPrixUnitaire(), qt, produit.getPrixttc(), produit.getTva_tx(), produit.getFk_tva(),produit.getId()));
 
 									}else{
+										
 										int qt = produit.getQtedemander() + t;
-										produit.setQtedemander(qt);
 										
-										Log.e("produit not in  ",produit.toString()+"");
 										
-										panier.put(produit.getId(), produit);
+										//produit.setQtedemander(qt);
+										
+										//Log.e("produit not in  ",produit.toString()+"");
+										
+										panier.put(produit.getId(), new Produit(produit.getRef(), produit.getDesig(), produit.getQteDispo(), produit.getPrixUnitaire(), t, produit.getPrixttc(), produit.getTva_tx(), produit.getFk_tva(),produit.getId()));
 										
 									}
 
 								}
 								
-								HashMap<Integer, Produit> in = new HashMap<>();
-								in.putAll(panier);
-								Log.e("panier after ",panier.toString()+" >> "+panier.size()+"");
+								
+								//Log.e("panier after ",panier.toString()+" >> "+panier.size()+"");
 								
 								
-								adapter = getSimple(in);
+								adapter = getSimple(panier);
 								adapter.notifyDataSetChanged();
 								myhome.setAdapter(adapter);
 								
 
 								calcul_ca += prt;
 
-								produit.setQtedemander(t);
-								addBackup(produit);
+								 
+								  
+								//addBackup(produit,t);
+								addBackup(produitbup,t);
+								
 
 								qntlayout.setVisibility(View.GONE);
 								qtep.setEnabled(false);
@@ -718,8 +745,6 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 				panier = new HashMap<>();
 
 				for (int i = 0; i < v.getLsprods().size(); i++) {
-
-
 					v.getLsprods().get(i).setQtedemander( v.getLsprods().get(i).getQteDispo());
 					v.getLsprods().get(i).setQteDispo(0);
 					panier.put(v.getLsprods().get(i).getId(), v.getLsprods().get(i));
@@ -815,10 +840,18 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 
 	private int qnt_disponible(int id){
 		int x =0;
+		/*
 		for (int i = 0; i < stock.size(); i++) {
 			if(stock.get(i).getId() == id){
 				x += stock.get(i).getQtedemander();
 			}
+		}
+		*/
+		
+		
+		
+		if(backup.containsKey(id)){
+			x = backup.get(id).getQtedemander();
 		}
 		return x;
 	}
@@ -975,8 +1008,17 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 						
 						
 						if(backup.size() > 0){
+							
+							/*
 							Myinvoice me = new Myinvoice("0", new ArrayList<>(backup.values()), "0", 0, "", compte, "", "", "", 0, new ArrayList<MyProdRemise>(), null, "", "", "");
 							myoffline.updateProduits(me);
+							*/
+							
+							
+							List<Produit> lsprd_qnt = new ArrayList<>(backup.values());
+							for (int i = 0; i < lsprd_qnt.size(); i++) {
+								sv.addPdQtRow(lsprd_qnt.get(i).getId(), lsprd_qnt.get(i).getQtedemander());
+							}
 						}
 						
 						break;
@@ -1039,13 +1081,15 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 
 			
 			myoffline = new Offlineimpl(getApplicationContext());
+			sv = new StockVirtual(CmdEditActivity.this);
 			
-			//res = myoffline.shynchornizeUpdateCmd(new Commandeview(v.getRowid(), v.getRowid()+"", null, 0, 0, 0, "", new ArrayList<>(panier.values())));
-			res = -1;
-			
+			res = myoffline.shynchornizeUpdateCmd(new Commandeview(v.getRowid(), v.getRowid()+"", null, 0, 0, 0, "", new ArrayList<>(panier.values())));
+		 
+			/*
 			myoffline = new Offlineimpl(getApplicationContext());
 			Myinvoice me = new Myinvoice("0", new ArrayList<>(backup.values()), "0", 0, "", compte, "", "", "", 0,  new ArrayList<MyProdRemise>(), null, "", "", "");
 			Log.e("meinvo ",me.toString());
+			*/
 			return "success";
 		}
 
@@ -1065,9 +1109,18 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 					if(res == 1){
 						msg = getResources().getString(R.string.cmdtofc40);
 						if(backup.size() > 0){
+							
+							/*
 							myoffline = new Offlineimpl(getApplicationContext());
 							Myinvoice me = new Myinvoice("0", new ArrayList<>(backup.values()), "0", 0, "", compte, "", "", "", 0,  new ArrayList<MyProdRemise>(), null, "", "", "");
+							
 							myoffline.updateProduits(me);
+							*/
+							
+							List<Produit> lsprd_qnt = new ArrayList<>(backup.values());
+							for (int i = 0; i < lsprd_qnt.size(); i++) {
+								sv.addPdQtRow(lsprd_qnt.get(i).getId(), lsprd_qnt.get(i).getQtedemander());
+							}
 						}
 					}else{
 						msg = getResources().getString(R.string.cmdtofc39);
@@ -1107,20 +1160,29 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 
 	}
 	
-	private void addBackup(Produit p){
+	private void addBackup(Produit p,int qt){
 		
-		
+		p.setQtedemander(qt);
+		int id = p.getId();
+		//Log.e("start backup ",backup.toString()+"");
 		if(backup.size() == 0){
 			backup.put(p.getId(), p);
 		}else{
-			Produit ps = backup.get(p.getId());
+			Produit ps = backup.get(id);
+			
 			if(ps != null){
 				ps.setQtedemander(ps.getQtedemander() + p.getQtedemander());
-				backup.put(ps.getId(), ps);
+				//Log.e("ps in backup ",ps.toString()+"");
+				
+				backup.remove(id);
+				
+				backup.put(id, new Produit(ps.getRef(), ps.getDesig(), ps.getQteDispo(), ps.getPrixUnitaire(), ps.getQtedemander(), ps.getPrixttc(), ps.getTva_tx(), ps.getFk_tva(),ps.getId()));
 			}else{
 				backup.put(p.getId(), p);
 			}
 		}
+		
+		//Log.e("backup ",backup.toString()+"");
 	}
 
 }
