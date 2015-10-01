@@ -943,6 +943,12 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 						products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduits(-1).get(j).getQteDispo());
 					}
 				}
+				
+				for (int j = 0; j < sv.getAllProduitsVentes(-1).size(); j++) {
+					if(sv.getAllProduitsVentes(-1).get(j).getId() == products.get(i).getId()){
+						products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduitsVentes(-1).get(j).getQteDispo());
+					}
+				}
 			}
 
 			clients = vendeurManager.selectAllClient(compte);
@@ -1155,9 +1161,16 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 				p = products.get(i);
 				listprd.add(p.getDesig());
 
+				//reduce qnt from rendu et echange 
 				for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {
 					if(sv.getAllProduits(-1).get(j).getRef().equals(products.get(i).getRef())){
 						products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduits(-1).get(j).getQteDispo());
+					}
+				}
+				
+				for (int j = 0; j < sv.getAllProduitsVentes(-1).size(); j++) {
+					if(sv.getAllProduitsVentes(-1).get(j).getId() == products.get(i).getId()){
+						products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduitsVentes(-1).get(j).getQteDispo());
 					}
 				}
 				//Log.d("Produit "+i,p.toString());
@@ -1183,7 +1196,8 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 			}
 			
 			
-			Log.e("star client 1pros ",myoffline.LoadProspection("").size()+"");
+			
+			Log.e("star client 1pros ",clients.toString()+"");
 			Log.e("star client clt ",clients.size()+"");
 			
 			for (int i = 0; i < clients.size(); i++) {

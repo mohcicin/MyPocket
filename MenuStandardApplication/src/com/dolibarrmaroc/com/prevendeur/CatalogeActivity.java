@@ -1,6 +1,7 @@
 package com.dolibarrmaroc.com.prevendeur;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +34,10 @@ import com.dolibarrmaroc.com.models.Myinvoice;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
 import com.dolibarrmaroc.com.models.Prospection;
+import com.dolibarrmaroc.com.models.Tournee;
 import com.dolibarrmaroc.com.utils.CheckOutNet;
 import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
+import com.dolibarrmaroc.com.utils.Functions;
 import com.dolibarrmaroc.com.utils.JSONParser;
 import com.dolibarrmaroc.com.utils.MyLocationListener;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
@@ -1116,6 +1119,24 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 			
 			products = myoffline.LoadProduits("");
 			
+
+			
+			
+			for (int i = 0; i < products.size(); i++) {
+
+				for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {
+					if(sv.getAllProduits(-1).get(j).getRef().equals(products.get(i).getRef())){
+						products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduits(-1).get(j).getQteDispo());
+					}
+				}
+				//Log.d("Produit "+i,p.toString());
+				for (int j = 0; j < sv.getAllProduitsVentes(-1).size(); j++) {
+					if(sv.getAllProduitsVentes(-1).get(j).getId() == products.get(i).getId()){
+						products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduitsVentes(-1).get(j).getQteDispo());
+					}
+				}
+			}
+			
 		
 			for (int j = 0; j < lscats.size(); j++) {
 				for (int i = 0; i < lscats.get(j).getProducts().size(); i++) {
@@ -1132,8 +1153,25 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 			
 
 			Log.e("begin offline from offline",">>start load");
+			List<Tournee> trs = Functions.prepaTourneeData(myoffline.LoadTourneeList("")).get(Functions.getNumberOfDay(new Date()));
+			int n = trs.size();
 			
-			clients = myoffline.LoadClients("");
+			
+			
+			if(n > 0){
+				clients = new ArrayList<>();
+				for (int i = 0; i < trs.size(); i++) {
+					clients.addAll(trs.get(i).getLsclt());
+				}
+				Log.e(">>>tourne in  "," in in ");
+			}else{
+
+				clients = myoffline.LoadClients("");
+				
+			}
+			
+			
+			//clients = myoffline.LoadClients("");
 			
 			Log.e("star client 1pros ",myoffline.LoadProspection("").size()+"");
 			Log.e("star client clt ",clients.size()+"");

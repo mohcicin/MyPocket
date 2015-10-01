@@ -11,6 +11,7 @@ import com.dolibarrmaroc.com.models.Facture;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
 import com.dolibarrmaroc.com.models.Societe;
+import com.dolibarrmaroc.com.models.Tournee;
 
 public interface VendeurManager {
 	
@@ -30,4 +31,6 @@ public int insertFacture(Facture fac);
 	public List<Client> selectAllLastClient(Compte c, String in);
 	
 	public List<Societe> selectSociete();
+	
+	public List<Tournee> consulterMesTournee(Compte c, String dt);
 }

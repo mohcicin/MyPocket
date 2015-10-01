@@ -236,7 +236,7 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 
 						@Override
 						public void onClick(View v) {
-							adapter = getSimple();
+							adapter = getSimple(panier);
 							adapter.notifyDataSetChanged();
 							myhome.setAdapter(adapter);
 
@@ -256,7 +256,7 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 					cancel.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							adapter = getSimple();
+							adapter = getSimple(panier);
 							adapter.notifyDataSetChanged();
 							myhome.setAdapter(adapter);
 
@@ -365,8 +365,8 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 								int t = Integer.parseInt(qtep.getText().toString());
 								double prt = produit.getPrixttc()*t;
 
-
-								Log.e("panier size ",panier.toString()+" >> "+panier.size()+"");
+								Log.e("panier begin ",panier.toString()+" >> "+panier.size()+"");
+								
 								if(panier.size() == 0){
 									int qt = produit.getQteDispo() - t;
 
@@ -387,19 +387,33 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 									if(panier.containsKey(produit.getId())){
 										int qt = panier.get(produit.getId()).getQtedemander() + t;
 										produit.setQtedemander(qt);
+										
+										Log.e("produit in ",produit.toString()+"");
+										
+										
 										panier.put(produit.getId(), produit);
 
 									}else{
 										int qt = produit.getQtedemander() + t;
 										produit.setQtedemander(qt);
+										
+										Log.e("produit not in  ",produit.toString()+"");
+										
 										panier.put(produit.getId(), produit);
+										
 									}
 
 								}
-
-								adapter = getSimple();
+								
+								HashMap<Integer, Produit> in = new HashMap<>();
+								in.putAll(panier);
+								Log.e("panier after ",panier.toString()+" >> "+panier.size()+"");
+								
+								
+								adapter = getSimple(in);
 								adapter.notifyDataSetChanged();
 								myhome.setAdapter(adapter);
+								
 
 								calcul_ca += prt;
 
@@ -554,7 +568,7 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 
 
 
-	public SimpleAdapter getSimple(){
+	public SimpleAdapter getSimple(HashMap<Integer, Produit> in){
 		// create the grid item mapping
 		SimpleAdapter adap;
 		String[] from = new String[] {"desig","qte","pu","rem"};
@@ -563,7 +577,10 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 		// prepare the list of all records
 		List<HashMap<String, String>>  fillMaps2 = new ArrayList<HashMap<String, String>>();
 
-		List<Produit> data = new ArrayList<>(panier.values());
+		Log.e("getsimple ", in.toString()+"");
+		List<Produit> data = new ArrayList<>(in.values());
+		
+		
 
 		if(data.size() == 0){
 			HashMap<String, String> map = new HashMap<String, String>();
@@ -736,7 +753,7 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 
 
 					lc.setVisibility(View.VISIBLE);
-					adapter = getSimple();
+					adapter = getSimple(panier);
 					adapter.notifyDataSetChanged();
 					myhome.setAdapter(adapter);	
 
@@ -864,7 +881,7 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 					}
 
 
-					adapter = getSimple();
+					adapter = getSimple(panier);
 					adapter.notifyDataSetChanged();
 					myhome.setAdapter(adapter);
 
@@ -1023,7 +1040,12 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 			
 			myoffline = new Offlineimpl(getApplicationContext());
 			
-			res = myoffline.shynchornizeUpdateCmd(new Commandeview(v.getRowid(), v.getRowid()+"", null, 0, 0, 0, "", new ArrayList<>(panier.values())));
+			//res = myoffline.shynchornizeUpdateCmd(new Commandeview(v.getRowid(), v.getRowid()+"", null, 0, 0, 0, "", new ArrayList<>(panier.values())));
+			res = -1;
+			
+			myoffline = new Offlineimpl(getApplicationContext());
+			Myinvoice me = new Myinvoice("0", new ArrayList<>(backup.values()), "0", 0, "", compte, "", "", "", 0,  new ArrayList<MyProdRemise>(), null, "", "", "");
+			Log.e("meinvo ",me.toString());
 			return "success";
 		}
 

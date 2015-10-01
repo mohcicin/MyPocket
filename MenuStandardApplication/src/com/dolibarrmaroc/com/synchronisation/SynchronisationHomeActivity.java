@@ -193,7 +193,7 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 						//msg += "Debut de chargement des clients \n";
 						//msgres.setText(msg);
 						
-						clients = CheckOutSysc.checkOutClient(vendeurManager, compte); //   vendeurManager.selectAllClient(compte);
+						clients = CheckOutSysc.checkOutClient(vendeurManager, compte,myoffline); //   vendeurManager.selectAllClient(compte);
 
 						
 						if(clients.size() > 0){
@@ -299,7 +299,7 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 					//msgres.setText(msg);
 					
 					clients = new ArrayList<>();
-					clients = CheckOutSysc.checkOutClient(vendeurManager, compte); //   vendeurManager.selectAllClient(compte);
+					clients = CheckOutSysc.checkOutClient(vendeurManager, compte,myoffline); //   vendeurManager.selectAllClient(compte);
 
 					
 					if(clients.size() > 0){

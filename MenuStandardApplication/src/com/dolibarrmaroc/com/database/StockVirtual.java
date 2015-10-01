@@ -35,6 +35,7 @@ public class StockVirtual extends SQLiteOpenHelper {
 	private static final String TABLE_SYNERROR = "storagesyncroerror";
 	private static final String TABLE_HISTOOPS = "storageoperation";
 	private static final String TABLE_LASTROW = "storagelastrow";
+	private static final String TABLE_PRODQNT = "storageprodqnt";
 
 
 	// Table Columns names
@@ -85,6 +86,10 @@ public class StockVirtual extends SQLiteOpenHelper {
 			String cr = "CREATE TABLE " + TABLE_LASTROW + "("
 					+ KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_ISIT+" INTEGER, " + KEY_TPOP + " VARCHAR(30) )";
 			db.execSQL(cr);
+			
+			String pq = "CREATE TABLE " + TABLE_PRODQNT + "("
+					+ KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_ISIT+" INTEGER, " + KEY_QTE + " INTEGER )";
+			db.execSQL(pq);
 			
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -675,6 +680,110 @@ public class StockVirtual extends SQLiteOpenHelper {
 			// TODO: handle exception
 		}
 		return id;
+	}
+	
+	/*************************************  storage qte poducts in offline *****************EY_ISIT+" INTEGER, " + KEY_QTE*************/
+	public long addPdQtRow(int in,int qt) {
+		long id =-1;
+		try {
+
+		 
+			SQLiteDatabase db = this.getWritableDatabase();
+
+
+			ContentValues values = new ContentValues();
+			
+			 
+			
+			values.put(KEY_ISIT, in);
+			values.put(KEY_QTE, qt);
+
+			// Inserting Row
+			id = db.insert(TABLE_PRODQNT, null, values);
+			
+
+			db.close(); // Closing database connection
+
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("insert data qnt prod","insert data");
+		}
+		return id;
+	}
+
+	public void	deletePdQt(String tp) {
+		try {
+			//KEY_ISIT+" INTEGER, " + KEY_TPOP
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL("DELETE FROM "+TABLE_PRODQNT);
+			db.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("error delete all qte prod ","sysc");
+		}
+	}
+	
+	public int getPdQt(String in) {
+		// Select All Query
+		int n = 0;
+		try {
+			String selectQuery = "";
+			String[] nm = new String[]{in};
+			selectQuery = "SELECT * FROM " + TABLE_PRODQNT +" where "+KEY_ISIT+" = ?";
+
+
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor cursor = db.rawQuery(selectQuery, nm);
+
+			if(cursor.getCount() > 0){
+				if (cursor.moveToFirst()) {
+					do {
+						n += cursor.getInt(2);
+					} while (cursor.moveToNext());
+				}
+			} 
+			
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("errror get pd qte get ",e.getMessage() +"");
+			n = 0;
+			return n;
+		}
+
+		return n;
+	}   
+	
+	public List<Produit> getAllProduitsVentes(int in) {
+		List<Produit> contactList = new ArrayList<Produit>();
+		// Select All Query
+		try {
+			String selectQuery = "";
+			String[] nm = null;
+			selectQuery = "SELECT  * FROM " + TABLE_PRODQNT;
+
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor cursor = db.rawQuery(selectQuery, nm);
+
+			// looping through all rows and adding to list
+			if (cursor.moveToFirst()) {
+				do {
+					//EY_ISIT+" INTEGER, " + KEY_QTE
+											//String ref, String desig, int qteDispo, String prixUnitaire,int qtedemander, double prixttc, String tva_tx, String fk_tva
+					Produit p = new Produit("", "", cursor.getInt(2), "", cursor.getInt(2), 0.0, "", "");
+					p.setId(cursor.getInt(1));
+					contactList.add(p);
+				} while (cursor.moveToNext());
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			contactList = new ArrayList<Produit>();
+		}
+
+		// return  list
+		return contactList;
 	}
 	
 

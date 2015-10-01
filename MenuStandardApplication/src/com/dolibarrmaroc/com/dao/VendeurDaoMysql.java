@@ -31,6 +31,7 @@ import com.dolibarrmaroc.com.models.Facture;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
 import com.dolibarrmaroc.com.models.Societe;
+import com.dolibarrmaroc.com.models.Tournee;
 import com.dolibarrmaroc.com.utils.JSONParser;
 import com.dolibarrmaroc.com.utils.URL;
 import com.dolibarrmaroc.com.utils.UrlImage;
@@ -41,6 +42,7 @@ public class VendeurDaoMysql implements VendeurDao {
 	private String urlprd = URL.URL+"produit.php";
 	private String urlclt = URL.URL+"listclient.php";
 	private String urlcatclt = URL.URL+"seecategorieclients.php";
+	private static final String urlData = URL.URL+"gettour.php";
 
 	private static final String TAG_SUCCESS = "success";
 	private static final String TAG_ID = "id";
@@ -552,4 +554,152 @@ public class VendeurDaoMysql implements VendeurDao {
 	}
 
 
+	@Override
+	public List<Tournee> consulterMesTournee(Compte c, String dt) {
+		// TODO Auto-generated method stub
+		
+		List<Tournee> tour = new ArrayList<>();
+		
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		nameValuePairs.add(new BasicNameValuePair("user",c.getIduser()+""));//c.getLogin()
+		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
+		nameValuePairs.add(new BasicNameValuePair("action","android"));
+		nameValuePairs.add(new BasicNameValuePair("dt",dt));
+
+			Log.e("send durl mes tournee ",nameValuePairs.toString());
+			
+			listPromoByClient = new HashMap<>();
+			lssociete = new ArrayList<>();
+			
+		try {
+			String json = jsonParser.makeHttpRequest(urlData, "POST", nameValuePairs);
+			
+			Log.e("start", json);
+			
+			//[{"rowid":"1","label":"new task","dates":"2015-09-02","datee":"2015-09-19","color":"#0080ff","secteur":"CA","idsecteur":"18","clients":[],"grp":"vendeur","idgrp":"7","usr":"","recur":["1","3","6"]}]
+			String stfomat = json.substring(json.indexOf("["),json.lastIndexOf("]")+1);
+
+
+			
+			//Log.e("json",stfomat);
+			JSONArray jsr = new JSONArray(stfomat);
+
+			for (int i = 0; i < jsr.length(); i++) {
+				JSONObject obj = jsr.getJSONObject(i);
+
+				Tournee tr = new Tournee();
+				
+				tr.setRowid(obj.getLong("rowid"));
+				tr.setLabel(obj.getString("label"));
+				tr.setDebut(obj.getString("dates"));
+				tr.setFin(obj.getString("datee"));
+				tr.setColor(obj.getString("color"));
+				
+				tr.setSecteur(obj.getString("secteur"));
+				tr.setIdsecteur(obj.getLong("idsecteur"));
+				
+				
+				
+				tr.setGrp(obj.getString("grp"));
+				tr.setIdgrp(obj.getLong("idgrp"));
+				
+				JSONArray cl = obj.getJSONArray("clients");
+				List<Client> lsclt = new ArrayList<>();
+				for (int j = 0; j < cl.length(); j++) {
+					JSONObject o = cl.getJSONObject(j);
+					Client ct = new Client(o.getInt("rowid"), o.getString("name"), "", o.getString("town"), o.getString("email"), o.getString("phone"), o.getString("address"));
+					
+					lsclt.add(ct);
+					
+					/******************************* Load societe data **********************************/
+					Societe s = new Societe(o.getInt("rowid"), 
+							o.getString("name"), 
+							o.getString("address"), 
+							o.getString("town"), 
+							o.getString("phone"), 
+							o.getString("fax"), 
+							o.getString("email"), 
+							o.getInt("type"), 
+							o.getInt("company"), 
+							o.getDouble("latitude"), 
+							o.getDouble("longitude"));
+							s.setLogo(o.getString("logo"));
+							
+							if(o.getString("imgin").equals("ok") && !"".equals(o.getString("logo"))){
+								
+								String imageURL = UrlImage.urlimgclients+o.getString("logo");
+								//Log.e(">>> img",imageURL+"");
+								Bitmap bitmap = null;
+								try {
+									// Download Image from URL
+									InputStream input = new java.net.URL(imageURL).openStream();
+									// Decode Bitmap
+									bitmap = BitmapFactory.decodeStream(input);
+									
+									 File dir = new File(UrlImage.pathimg+"/client_img");
+									 if(!dir.exists())  dir.mkdirs();
+									 
+									     File file = new File(dir, "/"+o.getString("logo"));
+									     FileOutputStream fOut = new FileOutputStream(file);
+									     
+									     //Log.e(">>hotos ",produit.getPhoto());
+									     
+									     if(o.getString("logo").split("\\.")[1].equals("jpeg") || o.getString("logo").split("\\.")[1].equals("jpg") || o.getString("logo").split("\\.")[1].equals("jpe")){
+									    	  bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+									     }else{
+									    	  bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+									     }
+									   
+									     fOut.flush();
+									     fOut.close();
+								} catch (Exception e) {
+									e.printStackTrace();
+									Log.e(">> ","pic out clt "+e.getMessage());
+								}
+								
+							}
+							lssociete.add(s);
+							
+				  /*************************************** end ************************************************/
+					
+					int nombre_promos = o.getInt("nombre_promotion");
+					List<Integer> listP = new ArrayList<>();
+
+					if(nombre_promos>0){
+						for (int f = 0; f < nombre_promos; f++) {
+							int idp = Integer.parseInt(o.getString("id_promos"+f));
+							listP.add(idp);
+						}
+					}
+
+					listPromoByClient.put(o.getInt("rowid"), listP);
+				}
+				
+				tr.setLsclt(lsclt);
+				
+				JSONArray rc = obj.getJSONArray("recur");
+				List<Integer> lsrc = new ArrayList<>();
+				for (int j = 0; j < rc.length(); j++) {
+					
+					lsrc.add(rc.getInt(j));
+				}
+				
+				tr.setRecur(lsrc);
+				
+				
+				
+				
+				tour.add(tr);
+				
+			}
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			tour = new ArrayList<>();
+			Log.e("load tour error ",e.getMessage()+ "  <<");
+		}
+
+		return tour;
+	}
 }

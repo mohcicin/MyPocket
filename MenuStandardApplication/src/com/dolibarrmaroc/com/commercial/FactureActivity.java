@@ -1093,6 +1093,8 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 		@Override
 		protected String doInBackground(Void... arg0) {
 			myofline = new Offlineimpl(getApplicationContext());
+			
+			sv = new StockVirtual(getApplicationContext());
 
 			/*********************** offline ****************************************/
 			if(CheckOutNet.isNetworkConnected(getApplicationContext())){
@@ -1121,7 +1123,8 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 				CommercialManager manager = CommercialManagerFactory.getCommercialManager();
 				
 				sv  = new StockVirtual(FactureActivity.this);
-				CheckOutSysc.ReloadProdClt(FactureActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 8,manager);		//4,manager);
+				//CheckOutSysc.ReloadProdClt(FactureActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 8,manager);		//4,manager);
+				CheckOutSysc.ReloadProdClt(FactureActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 9,manager);		//4,manager);
 			}
 			
 			
@@ -1142,7 +1145,10 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 						res = getResources().getString(R.string.cmdtofc18);
 							Myinvoice me = new Myinvoice("0", produitsFacture, idclt, 0, "", compte, "", "", "", 0, prepaRemise(remise), null, "", "", "");
 							//Log.e("invo ",me.toString());
-							myofline.updateProduits(me);
+							//myofline.updateProduits(me);
+							for (int i = 0; i < produitsFacture.size(); i++) {
+								sv.addPdQtRow(produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander());
+							}
 						break;
 					case "-2":
 						res = getResources().getString(R.string.cmdtofc17);
@@ -1211,6 +1217,7 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 		protected String doInBackground(Void... arg0) {
 			myofline = new Offlineimpl(getApplicationContext());
 			database = new DatabaseHandler(getApplicationContext());
+			sv = new StockVirtual(getApplicationContext());
 
 			
 			Calendar cl = Calendar.getInstance();
@@ -1245,7 +1252,13 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 			if(data != -1){
 				Myinvoice me = new Myinvoice(cmd.getIdandro()+"", produitsFacture, idclt, 0, "", compte, "", "", "", 0, prepaRemise(remise), null, "", "", "");
 				//Log.e("invo ",me.toString());
-				myofline.updateProduits(me);
+				
+				
+				//myofline.updateProduits(me);
+				
+				for (int i = 0; i < produitsFacture.size(); i++) {
+					sv.addPdQtRow(produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander());
+				}
 			}
 
 

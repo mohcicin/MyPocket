@@ -12,6 +12,7 @@ import com.dolibarrmaroc.com.models.Facture;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
 import com.dolibarrmaroc.com.models.Societe;
+import com.dolibarrmaroc.com.models.Tournee;
 
 public class DefaultVendeurManager implements VendeurManager {
 
@@ -105,6 +106,13 @@ public class DefaultVendeurManager implements VendeurManager {
 	public List<Societe> selectSociete() {
 		// TODO Auto-generated method stub
 		return dao.selectSociete();
+	}
+
+
+	@Override
+	public List<Tournee> consulterMesTournee(Compte c, String dt) {
+		// TODO Auto-generated method stub
+		return dao.consulterMesTournee(c, dt);
 	}
 
 }

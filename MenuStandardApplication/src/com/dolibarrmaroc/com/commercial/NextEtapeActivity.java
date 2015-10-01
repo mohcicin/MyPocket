@@ -686,7 +686,10 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 						//myofline.updateProduits(meinvo);
 						
 						if(type_invoice == 0){
-							myofline.updateProduits(meinvo);
+							 // myofline.updateProduits(meinvo);
+							for (int i = 0; i < produitsFacture.size(); i++) {
+								sv.addPdQtRow(produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander());
+							}
 						}else {
 							for (int i = 0; i < produitsFacture.size(); i++) {
 								sv.addrow("", produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander(), type_invoice+"",produitsFacture.get(i).getDesig(),idclt);
@@ -697,8 +700,8 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 				}
 			}
 			
-			CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 2,managercom);
-			//CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
+			//CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 2,managercom);
+							//CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
 			CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 6,managercom);
 			
 			
@@ -780,7 +783,10 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 				
 				
 				if(type_invoice == 0){
-					myofline.updateProduits(meinvo);
+					//myofline.updateProduits(meinvo);
+					for (int i = 0; i < produitsFacture.size(); i++) {
+						sv.addPdQtRow(produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander());
+					}
 				}else {
 					for (int i = 0; i < produitsFacture.size(); i++) {
 						sv.addrow("", produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander(), type_invoice+"",produitsFacture.get(i).getDesig(),idclt);
@@ -870,7 +876,10 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 					if(meinvo != null){
 						//data = meinvo.getData();
 						if(type_invoice == 0){
-							myofline.updateProduits(meinvo);
+							//myofline.updateProduits(meinvo);
+							for (int i = 0; i < produitsFacture.size(); i++) {
+								sv.addPdQtRow(produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander());
+							}
 						}else {
 							for (int i = 0; i < produitsFacture.size(); i++) {
 								sv.addrow("", produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander(), type_invoice+"",produitsFacture.get(i).getDesig(),idclt);
@@ -884,8 +893,8 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 				
 			}
 			
-			CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 2,managercom);
-			//CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
+			//CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 2,managercom);
+					//CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
 			CheckOutSysc.ReloadProdClt(NextEtapeActivity.this, myofline, compte, vendeurManager, payemn, sv, categorie, managercmd, 6,managercom);
 
 			
@@ -957,7 +966,10 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 				myofline.shynchronizeGpsInvoice(new MyGpsInvoice(gps,imei,num,battery,compte,data.getErreur()));
 				
 				if(type_invoice == 0){
-					myofline.updateProduits(meinvo);
+					//myofline.updateProduits(meinvo);
+					for (int i = 0; i < produitsFacture.size(); i++) {
+						sv.addPdQtRow(produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander());
+					}
 				}else {
 					for (int i = 0; i < produitsFacture.size(); i++) {
 						sv.addrow("", produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander(), type_invoice+"",produitsFacture.get(i).getDesig(),idclt);

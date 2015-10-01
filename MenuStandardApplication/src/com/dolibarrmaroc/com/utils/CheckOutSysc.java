@@ -1,7 +1,9 @@
 package com.dolibarrmaroc.com.utils;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,6 +14,8 @@ import com.dolibarrmaroc.com.business.PayementManager;
 import com.dolibarrmaroc.com.business.VendeurManager;
 import com.dolibarrmaroc.com.dao.CategorieDao;
 import com.dolibarrmaroc.com.dao.CategorieDaoMysql;
+import com.dolibarrmaroc.com.dao.TourneeDao;
+import com.dolibarrmaroc.com.dao.TourneeDaoMysql;
 import com.dolibarrmaroc.com.dashboard.HomeActivity;
 import com.dolibarrmaroc.com.database.StockVirtual;
 import com.dolibarrmaroc.com.models.Categorie;
@@ -26,6 +30,7 @@ import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
 import com.dolibarrmaroc.com.models.ProspectData;
 import com.dolibarrmaroc.com.models.Societe;
+import com.dolibarrmaroc.com.models.Tournee;
 import com.dolibarrmaroc.com.offline.ioffline;
 
 import android.R.integer;
@@ -44,8 +49,28 @@ public class CheckOutSysc implements Serializable{
 		return vendeurManager.getDictionnaire();
 	}
 
-	public static List<Client> checkOutClient(VendeurManager vendeurManager,Compte c){
-		return  vendeurManager.selectAllClient(c);
+	public static List<Client> checkOutClient(VendeurManager vendeurManager,Compte c,ioffline myoffline){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		
+		String dt ="";
+		try {
+			dt=  sdf.format(new Date());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return  LoadClients(vendeurManager.consulterMesTournee(c,dt),myoffline);    //vendeurManager.selectAllClient(c);
+	}
+	
+	public static List<Client> LoadClients(List<Tournee> trs,ioffline myoffline){
+		
+		 myoffline.shynchornizeTournee(trs);
+
+		List<Client> clients = new ArrayList<>();
+		for (int i = 0; i < trs.size(); i++) {
+			clients.addAll(trs.get(i).getLsclt());
+		}
+		
+		return clients;
 	}
 
 	public static List<Client> checkOutLastClient(VendeurManager vendeurManager,Compte c,StockVirtual sv){
@@ -210,7 +235,7 @@ public class CheckOutSysc implements Serializable{
 				products =  checkOutProducts(vendeurManager, compte);//   vendeurManager.selectAllProduct(compte);
 
 				clients = new ArrayList<>();
-				clients = checkOutClient(vendeurManager, compte); //   vendeurManager.selectAllClient(compte);
+				clients = checkOutClient(vendeurManager, compte,myoffline); //   vendeurManager.selectAllClient(compte);
 				
 
 				societes = new ArrayList<>();
@@ -252,6 +277,7 @@ public class CheckOutSysc implements Serializable{
 							}
 						}
 					}
+					
 
 					for (int j = 0; j < lscats.size(); j++) {
 						for (int i = 0; i < lscats.get(j).getProducts().size(); i++) {
@@ -288,7 +314,7 @@ public class CheckOutSysc implements Serializable{
 				products =  checkOutProducts(vendeurManager, compte);//   vendeurManager.selectAllProduct(compte);
 
 				clients = new ArrayList<>();
-				clients = checkOutClient(vendeurManager, compte); //   vendeurManager.selectAllClient(compte);
+				clients = checkOutClient(vendeurManager, compte,myoffline); //   vendeurManager.selectAllClient(compte);
 
 
 				societes = new ArrayList<>();
@@ -374,7 +400,7 @@ public class CheckOutSysc implements Serializable{
 
 			case 3:
 				clients = new ArrayList<>();
-				clients = checkOutClient(vendeurManager, compte); //   vendeurManager.selectAllClient(compte);
+				clients = checkOutClient(vendeurManager, compte,myoffline); //   vendeurManager.selectAllClient(compte);
 
 				
 				societes = new ArrayList<>();
@@ -573,6 +599,14 @@ public class CheckOutSysc implements Serializable{
 				checkInCommandeview(myoffline, cm, compte);
 
 				//}
+				break;
+			case 9:
+				List<Commandeview> cm8 = new ArrayList<>();
+				cm8 = checkOutCommandesLast(managercmd, compte, sv);
+				cm8.addAll(myoffline.LoadCommandeList(""));
+				
+
+				checkInCommandeview(myoffline, cm8, compte);
 				break;
 			}
 
