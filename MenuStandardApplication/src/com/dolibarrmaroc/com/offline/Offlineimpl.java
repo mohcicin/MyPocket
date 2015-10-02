@@ -5822,4 +5822,18 @@ public class Offlineimpl implements ioffline {
 		}
 	}
 
+	@Override
+	public int updatePayData(long id, double pay) {
+		// TODO Auto-generated method stub
+		List<Payement> ls = this.LoadPayements("");
+		for (int i = 0; i < ls.size(); i++) {
+			if(ls.get(i).getId() == id){
+				double mt = ls.get(i).getAmount() + pay;
+				ls.get(i).setAmount(mt);
+			}
+		}
+		this.shynchronizePayement(ls);
+		return 0;
+	}
+
 }

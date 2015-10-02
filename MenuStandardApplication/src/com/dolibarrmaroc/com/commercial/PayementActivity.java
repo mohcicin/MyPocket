@@ -561,7 +561,7 @@ public class PayementActivity extends Activity implements OnItemSelectedListener
 						products = vendeurManager.selectAllProduct(compte);
 						for (int i = 0; i < products.size(); i++) {
 							for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {
-								if(sv.getAllProduits(-1).get(j).getRef().equals(products.get(i).getRef())){
+								if(Integer.parseInt(sv.getAllProduits(-1).get(j).getRef()) == products.get(i).getId()){
 									products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduits(-1).get(j).getQteDispo());
 								}
 							}
@@ -742,7 +742,10 @@ public class PayementActivity extends Activity implements OnItemSelectedListener
 			}else{
 				/*********************** offline ****************************************/
 				if(CheckOutNet.isNetworkConnected(PayementActivity.this)){
-					CheckOutSysc.ReloadProdClt(PayementActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
+					
+					//CheckOutSysc.ReloadProdClt(PayementActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
+					
+					myoffline.updatePayData(pay.getId(), reg.getAmount());
 				}
 				
 			}
@@ -1395,7 +1398,10 @@ public class PayementActivity extends Activity implements OnItemSelectedListener
 			}else{
 				/*********************** offline ****************************************/
 				if(CheckOutNet.isNetworkConnected(PayementActivity.this)){
-					CheckOutSysc.ReloadProdClt(PayementActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
+					
+					//CheckOutSysc.ReloadProdClt(PayementActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
+					
+					myoffline.updatePayData(pay.getId(), reg.getAmount());
 				}
 				
 			}

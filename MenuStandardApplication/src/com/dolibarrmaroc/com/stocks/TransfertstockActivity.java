@@ -287,7 +287,8 @@ public class TransfertstockActivity extends Activity implements OnClickListener,
 			
 			for (int i = 0; i < mystock.getLsprod().size(); i++) {
 				for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {
-					if(mystock.getLsprod().get(i).getRef().equals(sv.getAllProduits(-1).get(j).getId())){
+					//if(mystock.getLsprod().get(i).getRef().equals(sv.getAllProduits(-1).get(j).getId())){
+					if(mystock.getLsprod().get(i).getId() == Integer.parseInt(sv.getAllProduits(-1).get(j).getRef())){
 						mystock.getLsprod().get(i).setQteDispo(mystock.getLsprod().get(i).getQteDispo() - sv.getAllProduits(-1).get(j).getQteDispo());
 					}
 				}

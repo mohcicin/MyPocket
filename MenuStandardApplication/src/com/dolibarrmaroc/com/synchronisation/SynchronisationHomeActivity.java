@@ -163,6 +163,7 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 			
 			List<Produit> products = new ArrayList<>();
 			List<Client> clients = new ArrayList<>();
+			List<Societe> societes = new ArrayList<>();
 			
 			if(!myoffline.checkFolderexsiste()){
 				showmessageOffline();
@@ -179,7 +180,8 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 							nprod = products.size();
 							for (int i = 0; i < products.size(); i++) {
 								for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {
-									if(sv.getAllProduits(-1).get(j).getRef().equals(products.get(i).getId()+"")){
+									//if(sv.getAllProduits(-1).get(j).getRef().equals(products.get(i).getId()+"")){
+									if(Integer.parseInt(sv.getAllProduits(-1).get(j).getRef()) == products.get(i).getId()){
 										products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduits(-1).get(j).getQteDispo());
 									}
 								}
@@ -187,6 +189,8 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 							CheckOutSysc.checkInProductsPromotion(myoffline, compte, products, vendeurManager.getPromotionProduits());
 						} 
 
+						sv.deletePdQt("");
+						
 						//msg += "Fin de chargement des produits \n \n";
 						//msgres.setText(msg);
 						
@@ -202,6 +206,11 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 						}
 						
 						
+						societes = CheckOutSysc.checkOutAllSocieteNew(vendeurManager, compte);
+						if(societes.size() > 0){
+							CheckOutSysc.checkInSocietes(myoffline, societes, compte);
+						}
+
 						
 						//msg += "Fin de chargement des clients \n \n";
 						//msgres.setText(msg);
@@ -271,6 +280,8 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 					
 					
 					products =  myoffline.LoadProduits("");
+					
+					sv.deletePdQt("");
 					
 					for (int i = 0; i < products.size(); i++) {
 						for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {

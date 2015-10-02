@@ -242,6 +242,10 @@ public interface ioffline {
 	public long cleanForUpdate();
 	
 	
+	/************************* Tools Optmization Sysc **************************************/
+	public int updatePayData(long id,double pay); 
+	/************************* Tools Optmization Sysc **************************************/
+	
 	
 	
 }

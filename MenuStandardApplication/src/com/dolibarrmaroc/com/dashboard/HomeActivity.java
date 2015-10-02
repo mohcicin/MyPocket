@@ -666,6 +666,7 @@ public class HomeActivity extends Activity
 								List<Tournee> lstr = tour.consulterMesTournee(compte, sdf.format(new Date()));//"2015-09-11"
 								myoffline.shynchornizeTournee(lstr);
 								*/
+								sv.deletePdQt("");
 								
 								
 								nprod = res.get("prod");
@@ -678,6 +679,8 @@ public class HomeActivity extends Activity
 								nprod = res.get("prod");
 								
 								CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 1);
+								
+								sv.deletePdQt("");
 								
 							}else if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
 								nclt = 1;

@@ -282,7 +282,9 @@ public class StockVirtual extends SQLiteOpenHelper {
 			// looping through all rows and adding to list
 			if (cursor.moveToFirst()) {
 				do {
-					contactList.add(new Produit(""+cursor.getInt(1), cursor.getString(3), cursor.getInt(2), "", cursor.getInt(6), cursor.getInt(0), cursor.getString(5), cursor.getString(4)));
+					Produit p = new Produit(""+cursor.getInt(1), cursor.getString(3), cursor.getInt(2), "", cursor.getInt(6), cursor.getInt(0), cursor.getString(5), cursor.getString(4));
+					p.setId(cursor.getInt(1));
+					contactList.add(p);
 				} while (cursor.moveToNext());
 			}
 		} catch (Exception e) {

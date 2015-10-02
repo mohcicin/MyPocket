@@ -938,7 +938,7 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 
 				//Log.d("Produit "+i,p.toString());qq
 				for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {
-					if(sv.getAllProduits(-1).get(j).getRef().equals(products.get(i).getId()+"")){
+					if(Integer.parseInt(sv.getAllProduits(-1).get(j).getRef()) == products.get(i).getId()){
 						Log.e("is me ",sv.getAllProduits(-1).get(j).getRef()+" ## "+products.get(i).getRef());
 						products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduits(-1).get(j).getQteDispo());
 					}
@@ -1153,7 +1153,9 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 			
 			dico = myoffline.LoadDeco("");
 			
-			//Log.e(">> DICO << ",dico.toString());
+			Log.e(">> R/E << ",sv.getAllProduits(-1).toString());
+			
+			//Log.e("Produit 1 ",products.toString());
 
 			for (int i = 0; i < products.size(); i++) {
 				Produit p = new Produit();
@@ -1163,20 +1165,37 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 
 				//reduce qnt from rendu et echange 
 				for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {
-					if(sv.getAllProduits(-1).get(j).getRef().equals(products.get(i).getRef())){
+					if(Integer.parseInt(sv.getAllProduits(-1).get(j).getRef()) == products.get(i).getId()){
 						products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduits(-1).get(j).getQteDispo());
 					}
 				}
 				
+				/*
 				for (int j = 0; j < sv.getAllProduitsVentes(-1).size(); j++) {
 					if(sv.getAllProduitsVentes(-1).get(j).getId() == products.get(i).getId()){
 						products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduitsVentes(-1).get(j).getQteDispo());
 					}
 				}
-				//Log.d("Produit "+i,p.toString());
+				*/
+				
 			}
+			
+			//Log.e("Produit s3 ",products.toString());
+			
+			Log.e("Produit in cache ",sv.getAllProduitsVentes(-1).toString());
+			
+			for (int i = 0; i < products.size(); i++) {
 
-			Log.e("begin offline from offline",">>start load");
+				for (int j = 0; j < sv.getAllProduitsVentes(-1).size(); j++) {
+					if(sv.getAllProduitsVentes(-1).get(j).getId() == products.get(i).getId()){
+						products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduitsVentes(-1).get(j).getQteDispo());
+					}
+				}
+			}
+			
+			//Log.e("Produit 3 ",products.toString());
+
+			//Log.e("begin offline from offline",">>start load "+products.toString());
 			
 			List<Tournee> trs = Functions.prepaTourneeData(myoffline.LoadTourneeList("")).get(Functions.getNumberOfDay(new Date()));
 			int n = trs.size();
@@ -1190,9 +1209,7 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 				}
 				Log.e(">>>tourne in  "," in in ");
 			}else{
-
 				clients = myoffline.LoadClients("");
-				
 			}
 			
 			

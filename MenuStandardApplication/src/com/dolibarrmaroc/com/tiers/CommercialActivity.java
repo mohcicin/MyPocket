@@ -1078,7 +1078,8 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 						
 						for (int i = 0; i < products.size(); i++) {
 							for (int j = 0; j < sv.getAllProduits(-1).size(); j++) {
-								if(sv.getAllProduits(-1).get(j).getRef().equals(products.get(i).getId())){
+								//if(sv.getAllProduits(-1).get(j).getRef().equals(products.get(i).getId())){
+								if(Integer.parseInt(sv.getAllProduits(-1).get(j).getRef()) == products.get(i).getId()){
 									products.get(i).setQteDispo(products.get(i).getQteDispo() - sv.getAllProduits(-1).get(j).getQteDispo());
 								}
 							}

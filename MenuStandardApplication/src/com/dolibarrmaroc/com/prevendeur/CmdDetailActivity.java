@@ -480,9 +480,12 @@ public class CmdDetailActivity extends Activity {
 			
 			myoffline = new Offlineimpl(CmdDetailActivity.this);
 			
+			
+			/*
 			if(CheckOutNet.isNetworkConnected(CmdDetailActivity.this)){
 				CheckOutSysc.ReloadProdClt(CmdDetailActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
 			}
+			*/
 			
 
 			return "success";
