@@ -521,14 +521,17 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 			if (v.getId() == R.id.comm_etape) {
 				
 				//checkRequiredFields();
+				client.setEmail(email.getText().toString());
 				if(email.getText().toString().length() == 0 || email.getText().toString().equals("")){
 					
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(new Date()); 
 					
 					client.setEmail(calendar.getTime().getTime()+"_anonyme@gmail.com");
-					email.setText(calendar.getTime().getTime()+"_anonyme@gmail.com");
+					//email.setText(calendar.getTime().getTime()+"_anonyme@gmail.com");
 				}
+				
+				Log.e("eml ",client.getEmail()+"");
 				
 				if(checkRequiredFields().size() > 0){
 					alertinvonan();
@@ -1206,7 +1209,7 @@ public class CommercialActivity extends Activity implements OnClickListener,OnIt
 				}
 
 				if(st.equals("email")){
-					if(email.getText().toString().length() == 0){
+					if(client.getEmail().length() == 0 || "".equals(client.getEmail())){//if(email.getText().toString().length() == 0){
 						res.add(getResources().getString(R.string.comerciallab9));
 					}
 				}

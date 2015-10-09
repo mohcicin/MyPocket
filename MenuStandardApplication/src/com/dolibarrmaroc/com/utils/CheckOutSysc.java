@@ -58,7 +58,12 @@ public class CheckOutSysc implements Serializable{
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		return  LoadClients(vendeurManager.consulterMesTournee(c,dt),myoffline);    //vendeurManager.selectAllClient(c);
+		
+		if(URL.is_tour){
+			return  LoadClients(vendeurManager.consulterMesTournee(c,dt),myoffline);
+		}else{
+			return vendeurManager.selectAllClient(c);
+		}
 	}
 	
 	public static List<Client> LoadClients(List<Tournee> trs,ioffline myoffline){
@@ -66,8 +71,20 @@ public class CheckOutSysc implements Serializable{
 		 myoffline.shynchornizeTournee(trs);
 
 		List<Client> clients = new ArrayList<>();
+		
+		HashMap<Integer, Client> srt = new HashMap<>();
 		for (int i = 0; i < trs.size(); i++) {
 			clients.addAll(trs.get(i).getLsclt());
+		}
+		
+		for (int i = 0; i < clients.size(); i++) {
+			srt.put(clients.get(i).getId(), clients.get(i));
+		}
+		
+		 clients = new ArrayList<>();
+		 
+		 for (Integer i:srt.keySet()) {
+			clients.add(srt.get(i));
 		}
 		
 		return clients;

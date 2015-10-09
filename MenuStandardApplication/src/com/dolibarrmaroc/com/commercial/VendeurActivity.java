@@ -104,6 +104,8 @@ import com.dolibarrmaroc.com.dashboard.HomeActivity;
 import com.dolibarrmaroc.com.database.StockVirtual;
  
 import com.dolibarrmaroc.com.offline.Offlineimpl;
+import com.dolibarrmaroc.com.prevendeur.CmdDetailActivity;
+import com.dolibarrmaroc.com.prevendeur.CmdViewActivity;
 
 
 public class VendeurActivity extends android.support.v4.app.FragmentActivity implements OnClickListener,OnItemSelectedListener{
@@ -1135,6 +1137,8 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 
 	class OfflineTask extends AsyncTask<Void, Void, String> {
 
+		
+		private int is_tr;
 
 		@Override
 		protected String doInBackground(Void... params) {
@@ -1196,21 +1200,29 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 			//Log.e("Produit 3 ",products.toString());
 
 			//Log.e("begin offline from offline",">>start load "+products.toString());
-			
-			List<Tournee> trs = Functions.prepaTourneeData(myoffline.LoadTourneeList("")).get(Functions.getNumberOfDay(new Date()));
-			int n = trs.size();
-			
-			
-			
-			if(n > 0){
-				clients = new ArrayList<>();
-				for (int i = 0; i < trs.size(); i++) {
-					clients.addAll(trs.get(i).getLsclt());
+			if(com.dolibarrmaroc.com.utils.URL.is_tour){
+				List<Tournee> trs = Functions.prepaTourneeData(myoffline.LoadTourneeList("")).get(Functions.getNumberOfDay(new Date()));
+				int n = trs.size();
+				
+				Log.e(">>>tourne in  "," in in "+n);
+				is_tr = n;
+				if(n > 0){
+					clients = new ArrayList<>();
+					for (int i = 0; i < trs.size(); i++) {
+						clients.addAll(trs.get(i).getLsclt());
+					}
+					
 				}
-				Log.e(">>>tourne in  "," in in ");
+				/*
+				else{
+					clients = myoffline.LoadClients("");
+				}
+				*/
 			}else{
 				clients = myoffline.LoadClients("");
 			}
+			
+			
 			
 			
 			
@@ -1256,6 +1268,19 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 					addItemsOnSpinnerCustom(clientspinner,1);
 					addItemsOnSpinnerCustom(categoriepinner	,-1);
 					firstexecution = 1989;
+					
+					if(is_tr == 0 && com.dolibarrmaroc.com.utils.URL.is_tour){
+						new AlertDialog.Builder(VendeurActivity.this)
+					    .setTitle(getResources().getString(R.string.cmdtofc12))
+					    .setMessage(getResources().getString(R.string.task6))
+					    .setNegativeButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+					        public void onClick(DialogInterface dialogc, int which) { 
+					        	dialogc.dismiss();
+					        }
+					     })
+					     .setCancelable(true)
+					     .show();
+					}
 				}
 
 			} catch (Exception e) {

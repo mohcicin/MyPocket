@@ -22,9 +22,6 @@ import com.dolibarrmaroc.com.models.Myinvoice;
 import com.dolibarrmaroc.com.models.Prospection;
 import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.offline.Offlineimpl;
-import com.dolibarrmaroc.com.prevendeur.CatalogeActivity;
-import com.dolibarrmaroc.com.prevendeur.CmdDetailActivity;
-import com.dolibarrmaroc.com.prevendeur.CmdViewActivity;
 import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
 import com.dolibarrmaroc.com.utils.UrlImage;
 
@@ -228,8 +225,6 @@ public class PersonnePhysiqueActivity extends Activity  implements OnItemClickLi
 		lisview.invalidateViews();
 		lisview.setAdapter(factadapter);
 		lisview.refreshDrawableState();
-		
-		
 	}
 	
 	public void FilterSearch(String st){
@@ -249,7 +244,14 @@ public class PersonnePhysiqueActivity extends Activity  implements OnItemClickLi
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		// TODO Auto-generated method stub
-		final MyClientAdapter selectedfact = cltdata.get(position);
+	    MyClientAdapter selectedfact = new MyClientAdapter();
+		
+		if(factadapter.fitredData() != null){
+			selectedfact = factadapter.fitredData().get(position);
+		}else{
+			selectedfact = cltdata.get(position);
+		}
+		
 		 Log.e("You've selected : ",selectedfact.toString());
 
 		mysoc = myclts.get((int)selectedfact.getRefclient());

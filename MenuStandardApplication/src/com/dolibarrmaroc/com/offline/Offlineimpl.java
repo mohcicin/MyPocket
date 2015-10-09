@@ -39,6 +39,8 @@ import com.google.android.gms.internal.fo;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.dolibarrmaroc.com.dao.TourneeDao;
+import com.dolibarrmaroc.com.dao.TourneeDaoMysql;
 import com.dolibarrmaroc.com.database.DataErreur;
 import com.dolibarrmaroc.com.database.StockVirtual;
 import com.dolibarrmaroc.com.business.CommandeManager;
@@ -58,6 +60,7 @@ import com.dolibarrmaroc.com.models.ConfigGps;
 import com.dolibarrmaroc.com.models.Dictionnaire;
 import com.dolibarrmaroc.com.models.FileData;
 import com.dolibarrmaroc.com.models.GpsTracker;
+import com.dolibarrmaroc.com.models.Motifs;
 import com.dolibarrmaroc.com.models.Mouvement;
 import com.dolibarrmaroc.com.models.MouvementGrabage;
 import com.dolibarrmaroc.com.models.MyClientPromo;
@@ -107,6 +110,7 @@ public class Offlineimpl implements ioffline {
 	private PayementManager managerpayement;
 	private CommandeManager cmdmanager;
 	private MouvementManager stockManager;
+	private TourneeDao managertourne;
 
 	private StandardPBEStringEncryptor encryptor;
 
@@ -175,6 +179,7 @@ public class Offlineimpl implements ioffline {
 		cmdmanager = CommandeManagerFactory.getManager();
 		stockManager = MouvementManagerFactory.getManager();
 
+		managertourne = new TourneeDaoMysql();
 
 		file = new File(path+"/");
 
@@ -2807,6 +2812,8 @@ public class Offlineimpl implements ioffline {
 		CleanCommandeList();
 		CleanSocieteClients();
 		CleanTournee();
+		//CleanClsCmd();
+		 
 		return vl;
 	}
 
@@ -2859,6 +2866,8 @@ public class Offlineimpl implements ioffline {
 		x += LoadMouvement("").size();
 		x += LoadUpClients("").size(); 
 		x += LoadUpdateCmdList("").size();
+		x += LoadClsCmdList("").size();
+		x += LoadMotifsList("").size();
 
 		Log.e("nbr >>",x+"");
 
@@ -3966,6 +3975,9 @@ public class Offlineimpl implements ioffline {
 			CleanAlldataOut(dataeror3, compte);
 
 			sendUpClients(compte);
+			sendClsCmd(compte);
+			
+			sendOutMotifs(compte);
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -4929,8 +4941,7 @@ public class Offlineimpl implements ioffline {
 	}
 
 	@Override
-	public HashMap<Commande, String> chargerCmd_client(
-			HashMap<String, HashMap<Prospection, List<Commande>>> da, Compte cp) {
+	public HashMap<Commande, String> chargerCmd_client(HashMap<String, HashMap<Prospection, List<Commande>>> da, Compte cp) {
 		// TODO Auto-generated method stub
 		List<Commande> me = this.LoadCmdList("");
 
@@ -5833,6 +5844,228 @@ public class Offlineimpl implements ioffline {
 			}
 		}
 		this.shynchronizePayement(ls);
+		return 0;
+	}
+
+	@Override
+	public void cancelCmd(Commandeview id, Compte cp) {
+		// TODO Auto-generated method stub
+		List<Commandeview> res = this.LoadCommandeList("");
+		
+		List<Commandeview> tmp = new ArrayList<>();
+		
+		for (int i = 0; i < res.size(); i++) {
+			if(res.get(i).getRowid() == id.getRowid()){
+				res.get(i).setStatuts(-100);
+			}
+			tmp.add(res.get(i));
+		}
+		
+		Log.e("ls1>>> ",res.toString());
+		if(tmp.size() > 0){
+			this.shynchronizeCommandeList(tmp);
+		}
+		Log.e("ls2>>> ",tmp.toString());
+		
+	}
+
+	@Override
+	public long shynchronizeClsCmd(Commandeview cv, Compte cp) {
+		// TODO Auto-generated method stub
+		long ix = -1;
+		try {
+			//CleanClsCmd();
+			file = new File(path, "/clscmd.txt");
+			FileOutputStream outputStream;
+
+			if(!file.exists()){
+				file.createNewFile();
+				file.mkdir();
+			}
+
+			if(file.exists()){
+				FileWriter fw = new FileWriter(file, true);
+				PrintWriter pout = new PrintWriter(fw);
+						pout.println("["+gson.toJson(cv,Commandeview.class)+"]");
+						ix =1;
+				pout.close();
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("save cls cmd",e.getMessage()  +" << ");
+			ix =-1;
+		}
+		return ix;
+	}
+
+	@Override
+	public List<Commandeview> LoadClsCmdList(String fl) {
+		// TODO Auto-generated method stub
+		List<Commandeview> list = new ArrayList<Commandeview>();
+
+		try{
+			int n;
+
+			File file = new File(path, "/clscmd.txt");
+			if(file.exists()){
+				//Log.e("data loaded exist  ",file.getAbsolutePath());
+				File secondInputFile = new File(file.getAbsolutePath());
+				InputStream secondInputStream = new BufferedInputStream(new FileInputStream(secondInputFile));
+				BufferedReader r = new BufferedReader(new InputStreamReader(secondInputStream));
+				StringBuilder total = new StringBuilder();
+				String line;
+
+				while ((line = r.readLine()) != null) {
+
+					JSONArray jr = new JSONArray(line);
+					for (int i = 0; i < jr.length(); i++) {
+						JSONObject json = jr.getJSONObject(i);
+						Commandeview c = new Commandeview();
+						c = gson.fromJson(json.toString(), Commandeview.class);
+						
+						//if(c.getStatuts() != -100){
+							list.add(c);
+						//}
+					}
+				}
+			}
+
+		}catch(Exception e){
+			Log.e("load cls cmd save",e.getMessage()  +" << ");
+		}
+		return list;
+	}
+
+	@Override
+	public void CleanClsCmd() {
+		// TODO Auto-generated method stub
+		try {
+			File file = new File(path, "/clscmd.txt");
+			if(file.exists()){
+				FileWriter fw = new FileWriter(file,false);
+				PrintWriter pout = new PrintWriter(fw);
+				pout.print("");
+				pout.close();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	@Override
+	public long sendClsCmd(Compte cp) {
+		// TODO Auto-generated method stub
+		
+		List<Commandeview> cmd = new ArrayList<>();
+		cmd = this.LoadClsCmdList("");
+		
+		Log.e(">> cmd cls ",cmd.toString() +" ##");
+		for (int i = 0; i < cmd.size(); i++) {
+			cmdmanager.CancelCmd(cmd.get(i), cp);
+		}
+		
+		CleanClsCmd();
+		return 0;
+	}
+
+	@Override
+	public long shynchronizeMotifs(Motifs cv, Compte cp) {
+		// TODO Auto-generated method stub
+		long ix = -1;
+		
+		Log.e("motif ",cv.toString());
+		try {
+			//CleanClsCmd();
+			file = new File(path, "/motifs.txt");
+			FileOutputStream outputStream;
+
+			if(!file.exists()){
+				file.createNewFile();
+				file.mkdir();
+			}
+
+			if(file.exists()){
+				FileWriter fw = new FileWriter(file, true);
+				PrintWriter pout = new PrintWriter(fw);
+						pout.println("["+gson.toJson(cv,Motifs.class)+"]");
+						ix =1;
+				pout.close();
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("save Motifs",e.getMessage()  +" << ");
+			ix =-1;
+		}
+		return ix;
+	}
+
+	@Override
+	public List<Motifs> LoadMotifsList(String fl) {
+		// TODO Auto-generated method stub
+		List<Motifs> list = new ArrayList<Motifs>();
+
+		try{
+			int n;
+
+			File file = new File(path, "/motifs.txt");
+			if(file.exists()){
+				//Log.e("data loaded exist  ",file.getAbsolutePath());
+				File secondInputFile = new File(file.getAbsolutePath());
+				InputStream secondInputStream = new BufferedInputStream(new FileInputStream(secondInputFile));
+				BufferedReader r = new BufferedReader(new InputStreamReader(secondInputStream));
+				StringBuilder total = new StringBuilder();
+				String line;
+
+				while ((line = r.readLine()) != null) {
+
+					JSONArray jr = new JSONArray(line);
+					for (int i = 0; i < jr.length(); i++) {
+						JSONObject json = jr.getJSONObject(i);
+						Motifs c = new Motifs();
+						c = gson.fromJson(json.toString(), Motifs.class);
+						
+						//if(c.getStatuts() != -100){
+							list.add(c);
+						//}
+					}
+				}
+			}
+
+		}catch(Exception e){
+			Log.e("load Motifs",e.getMessage()  +" << ");
+		}
+		return list;
+	}
+
+	@Override
+	public void CleanMotif() {
+		// TODO Auto-generated method stub
+		try {
+			File file = new File(path, "/motifs.txt");
+			if(file.exists()){
+				FileWriter fw = new FileWriter(file,false);
+				PrintWriter pout = new PrintWriter(fw);
+				pout.print("");
+				pout.close();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	@Override
+	public long sendOutMotifs(Compte cp) {
+		// TODO Auto-generated method stub
+		List<Motifs> mt = new ArrayList<>();
+		mt = this.LoadMotifsList("");
+		
+		for (int i = 0; i < mt.size(); i++) {
+			managertourne.sendMotifs(mt.get(i), cp, "add");
+		}
+		
+		CleanMotif();
 		return 0;
 	}
 

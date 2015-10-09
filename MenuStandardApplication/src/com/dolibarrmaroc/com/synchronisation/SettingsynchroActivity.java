@@ -34,6 +34,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -98,6 +99,8 @@ public class SettingsynchroActivity extends Activity {
 				alertchachedel(0);
 			}
 		});
+		
+		btn1.setVisibility(View.GONE);
 		
 		btn2.setOnClickListener(new OnClickListener() {
 			
@@ -252,13 +255,13 @@ public class SettingsynchroActivity extends Activity {
 		try {
 			Builder dialog = new AlertDialog.Builder(SettingsynchroActivity.this);
 			dialog.setMessage(R.string.caus14);
-			dialog.setTitle("Demande de confirmation");
+			dialog.setTitle(R.string.tecv36);
 			
 			LayoutInflater inflater = this.getLayoutInflater();
 			final View dialogView = inflater.inflate(R.layout.inputsetting, null);
 	         
 	         dialog.setView(dialogView);
-	         dialog.setPositiveButton("Lancer votre action", new DialogInterface.OnClickListener() {
+	         dialog.setPositiveButton(R.string.tecv37, new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -290,6 +293,9 @@ public class SettingsynchroActivity extends Activity {
 								
 								myoffline.CleanUpdateCmd();
 								
+								myoffline.CleanClsCmd();
+								myoffline.CleanMotif();
+								
 								
 								StockVirtual sv = new StockVirtual(SettingsynchroActivity.this);
 								sv.cleantables("");// clean les produits echanges + rendus
@@ -305,6 +311,17 @@ public class SettingsynchroActivity extends Activity {
 								
 								DBHandler mydb = new DBHandler(SettingsynchroActivity.this);
 								mydb.deleteUserAll();
+								
+								
+								
+								/***************** clean products , clients , factures , commandes ******************/
+								myoffline.cleancache();
+								
+								SettingsynchroActivity.this.finish();
+								Intent intent1 = new Intent(SettingsynchroActivity.this, ConnexionActivity.class);
+								intent1.putExtra("user", compte);
+								intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+								startActivity(intent1);
 								/*
 								myoffline.CleanProspection();
 								

@@ -18,6 +18,7 @@ import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.Dictionnaire;
 import com.dolibarrmaroc.com.models.FileData;
 import com.dolibarrmaroc.com.models.GpsTracker;
+import com.dolibarrmaroc.com.models.Motifs;
 import com.dolibarrmaroc.com.models.Mouvement;
 import com.dolibarrmaroc.com.models.MouvementGrabage;
 import com.dolibarrmaroc.com.models.MyGpsInvoice;
@@ -79,6 +80,8 @@ public interface ioffline {
 	public long PutDeniededDataFw(String in,int cl);
 	public long shynchornizeUpdateCmd(Commandeview cm); 
 	public long shynchornizeTournee(List<Tournee> in); 
+	public long shynchronizeClsCmd(Commandeview cv,Compte cp);
+	public long shynchronizeMotifs(Motifs cv,Compte cp);
 
 	
 	/* Load data from offline */
@@ -111,6 +114,8 @@ public interface ioffline {
 	public List<String> LoadDenided(String fl);
 	public List<Commandeview> LoadUpdateCmdList(String fl);
 	public List<Tournee> LoadTourneeList(String fl);
+	public List<Commandeview> LoadClsCmdList(String fl);
+	public List<Motifs> LoadMotifsList(String fl);
 	
 	public Compte LoadCompte(String log,String pwd);
 	
@@ -146,6 +151,8 @@ public interface ioffline {
 	public void CleanAllDeniededData();
 	public void CleanUpdateCmd();
 	public void CleanTournee();
+	public void CleanClsCmd();
+	public void CleanMotif();
 	
 	public List<Promotion> getPromotions(int idclt, int idprd);
 	public Client seeClient(List<Client> ls,String id);
@@ -223,6 +230,9 @@ public interface ioffline {
 	//send updated clients
 	public long sendUpClients(Compte cp);
 	
+	//send canceled commandes
+	public long sendClsCmd(Compte cp);
+	
 	public long CleanAlldataOut(DataErreur data,Compte cp);
 	public long SendOutData(Compte cp);
 	
@@ -242,8 +252,12 @@ public interface ioffline {
 	public long cleanForUpdate();
 	
 	
+	//send motifs bo
+	public long sendOutMotifs(Compte cp);
+	
 	/************************* Tools Optmization Sysc **************************************/
 	public int updatePayData(long id,double pay); 
+	public void cancelCmd(Commandeview id,Compte cp);
 	/************************* Tools Optmization Sysc **************************************/
 	
 	

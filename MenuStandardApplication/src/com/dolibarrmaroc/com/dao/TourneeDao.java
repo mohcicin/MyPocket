@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
+import com.dolibarrmaroc.com.models.Motifs;
 import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.models.Tournee;
 
@@ -15,4 +16,6 @@ public interface TourneeDao {
 	public HashMap<Integer, List<Integer>> getPromotionClients();
 	
 	public List<Societe> selectSociete();
+	
+	public String sendMotifs(Motifs mt,Compte cp,String tp);
 }

@@ -18,4 +18,5 @@ public interface CommandeManager {
 	public String GetNumCommande();
 	public List<FactureGps> charger_commandes_gps(Compte c,String imei);
 	public String updateCommande(List<Produit> prds, String cmd, Compte compte);
+	public String CancelCmd(Commandeview cv, Compte c);
 }

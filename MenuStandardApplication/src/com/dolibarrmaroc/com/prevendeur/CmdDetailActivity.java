@@ -406,6 +406,7 @@ public class CmdDetailActivity extends Activity {
 				Intent intent1 = new Intent(CmdDetailActivity.this, CmdViewActivity.class);
 				intent1.putExtra("user", compte);
 				intent1.putExtra("cmd", "0");
+				intent1.putExtra("editcmd", "0");
 				intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
 				startActivity(intent1);
 			}
@@ -432,6 +433,8 @@ public class CmdDetailActivity extends Activity {
 			
 			Intent intent1 = new Intent(CmdDetailActivity.this, CmdViewActivity.class);
 			intent1.putExtra("user", compte);
+			intent1.putExtra("cmd", "0");
+			intent1.putExtra("editcmd", "0");
 			intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			startActivity(intent1);
 

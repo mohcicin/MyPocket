@@ -20,6 +20,7 @@ import com.dolibarrmaroc.com.business.CommercialManager;
 import com.dolibarrmaroc.com.business.PayementManager;
 import com.dolibarrmaroc.com.business.VendeurManager;
 import com.dolibarrmaroc.com.commercial.FactureActivity;
+import com.dolibarrmaroc.com.commercial.VendeurActivity;
 import com.dolibarrmaroc.com.dao.CategorieDao;
 import com.dolibarrmaroc.com.dao.CategorieDaoMysql;
 import com.dolibarrmaroc.com.models.Categorie;
@@ -42,6 +43,7 @@ import com.dolibarrmaroc.com.utils.JSONParser;
 import com.dolibarrmaroc.com.utils.MyLocationListener;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
 import com.dolibarrmaroc.com.utils.TinyDB;
+import com.dolibarrmaroc.com.utils.URL;
 import com.dolibarrmaroc.com.utils.UrlImage;
 import com.dolibarrmaroc.com.utils.VendeurManagerFactory;
 import com.dolibarrmaroc.com.dashboard.HomeActivity;
@@ -409,6 +411,7 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 
 						for (int i = 0; i < products.size(); i++) {
 							Produit p = products.get(i);
+							p.setQteDispo(p.getQteDispo() - qnt_disponible(p.getId()));
 							intent.putExtra("products"+i, p);
 							Log.d("Product Spinner >> "+i, p.toString());
 						}
@@ -517,6 +520,8 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 		try {
 			Builder dialog = new AlertDialog.Builder(CatalogeActivity.this);
 			//dialog.setMessage(R.string.caus14);
+			
+			
 			dialog.setTitle(produit.getDesig());
 		    
 			LayoutInflater inflater = this.getLayoutInflater();
@@ -526,6 +531,7 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 			final TextView t1 = (TextView)dialogView.findViewById(R.id.textView1w);
 			int dx = produit.getQteDispo() - qnt_disponible(produit.getId());
 			t1.setText(""+dx);
+			
 			
 			final TextView t2 = (TextView)dialogView.findViewById(R.id.txw3);
 			final TextView t3 = (TextView)dialogView.findViewById(R.id.textView22w);
@@ -598,6 +604,8 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 
 						}
 
+						
+						
 						produit = new Produit();
 						
 						Log.e(">>>>>> --------",">>> Secondly "+produit.getQteDispo());
@@ -616,13 +624,16 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 						if(!s.toString().equals("-") && !s.toString().equals(".")){
 							String prix = "";
 							double pr = 0;
+							
+							int dx = produit.getQteDispo() - qnt_disponible(produit.getId());
+							
 							if("".equals(txt.getText().toString())){
 								t2.setText("0");
 							}else {
 								prix = txt.getText().toString();
 								pr = Double.parseDouble(produit.getPrixUnitaire())* Integer.parseInt(prix);
 
-								if (produit.getQteDispo() >= Integer.parseInt(prix)) {
+								if (dx >= Integer.parseInt(prix)) { //produit.getQteDispo()
 									t2.setText(pr+"");
 								}else{
 									if(produit.getId() != 0){
@@ -1108,7 +1119,7 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 
 		int nclt;
 		int nprod;
-		
+		private int is_tr;
 		@Override
 		protected String doInBackground(Void... params) {
 
@@ -1153,22 +1164,31 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 			
 
 			Log.e("begin offline from offline",">>start load");
-			List<Tournee> trs = Functions.prepaTourneeData(myoffline.LoadTourneeList("")).get(Functions.getNumberOfDay(new Date()));
-			int n = trs.size();
 			
-			
-			
-			if(n > 0){
-				clients = new ArrayList<>();
-				for (int i = 0; i < trs.size(); i++) {
-					clients.addAll(trs.get(i).getLsclt());
-				}
-				Log.e(">>>tourne in  "," in in ");
-			}else{
-
-				clients = myoffline.LoadClients("");
+			if(URL.is_tour){
+				List<Tournee> trs = Functions.prepaTourneeData(myoffline.LoadTourneeList("")).get(Functions.getNumberOfDay(new Date()));
+				int n = trs.size();
 				
+				
+				is_tr = n;
+				if(n > 0){
+					clients = new ArrayList<>();
+					for (int i = 0; i < trs.size(); i++) {
+						clients.addAll(trs.get(i).getLsclt());
+					}
+					Log.e(">>>tourne in  "," in in ");
+				}
+				/*
+				else{
+
+					clients = myoffline.LoadClients("");
+					
+				}
+				*/
+			}else{
+				clients = myoffline.LoadClients("");
 			}
+			
 			
 			
 			//clients = myoffline.LoadClients("");
@@ -1222,6 +1242,19 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 			        
 					addItemsOnSpinner(clientspinner,1);
 					Log.e("end ","end cnx task");
+					
+					if(is_tr == 0 && com.dolibarrmaroc.com.utils.URL.is_tour){
+						new AlertDialog.Builder(CatalogeActivity.this)
+					    .setTitle(getResources().getString(R.string.cmdtofc12))
+					    .setMessage(getResources().getString(R.string.task6))
+					    .setNegativeButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+					        public void onClick(DialogInterface dialogc, int which) { 
+					        	dialogc.dismiss();
+					        }
+					     })
+					     .setCancelable(true)
+					     .show();
+					}
 				}
 
 			} catch (Exception e) {

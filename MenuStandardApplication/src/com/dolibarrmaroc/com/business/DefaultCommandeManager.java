@@ -54,5 +54,10 @@ public class DefaultCommandeManager implements CommandeManager {
 		// TODO Auto-generated method stub
 		return dao.charger_commandesLast(c, in);
 	}
+	@Override
+	public String CancelCmd(Commandeview cv, Compte c) {
+		// TODO Auto-generated method stub
+		return dao.CancelCmd(cv, c);
+	}
 
 }

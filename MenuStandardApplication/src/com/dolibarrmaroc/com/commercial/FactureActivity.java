@@ -316,6 +316,7 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 							produit = new Produit();
 							produit = prdsvient.get(i);
 							
+							Log.e("sel prods ",produit.toString());
 							/*
 							if(panier.size() > 0){
 								if(panier.containsKey(products.get(i).getRef())){
@@ -330,7 +331,17 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 							
 							qntlayout.setVisibility(View.VISIBLE);
 							
-							int d = produit.getQteDispo() - qnt_disponible(produit.getId());
+							int d = 0;
+							/*
+							if(produit.getQteDispo() > qnt_disponible(produit.getId())){
+								d = produit.getQteDispo() - qnt_disponible(produit.getId());
+							}else if(produit.getQteDispo() < qnt_disponible(produit.getId())){
+								d = qnt_disponible(produit.getId()) - produit.getQteDispo();
+							}else{
+								d = produit.getQteDispo() - qnt_disponible(produit.getId());
+							}
+							*/
+							d = produit.getQteDispo();
 							
 							qntview.setText(d+"");
 							qtep.setEnabled(true);
@@ -421,6 +432,8 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 	public void onClick(View v) {
 		if(v.getId() == R.id.retour){
 			//Button facture = (Button) dialog.findViewById(R.id.facturedialog);
+			
+			Log.e("in prods ",prdsvient.toString());
 			facturePop.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -637,6 +650,12 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 								panier.put(produit.getRef(), qt);
 							}
 
+						}
+						
+						for (int i = 0; i < prdsvient.size(); i++) {
+							if(prdsvient.get(i).getId() == produit.getId()){
+								prdsvient.get(i).setQteDispo(prdsvient.get(i).getQteDispo() - t);
+							}
 						}
 						
 						adapter = getSimple(produitsFacture.size());
@@ -1077,11 +1096,14 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 	
 	private int qnt_disponible(int id){
 		int x =0;
+		
+		
 		for (int i = 0; i < produitsFacture.size(); i++) {
 			if(produitsFacture.get(i).getId() == id){
 				x += produitsFacture.get(i).getQtedemander();
 			}
 		}
+		Log.e("qnt_disp "+x,produitsFacture.toString());
 		return x;
 	}
 	

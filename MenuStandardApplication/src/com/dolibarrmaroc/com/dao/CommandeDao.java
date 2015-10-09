@@ -18,4 +18,5 @@ public interface CommandeDao {
 	public String GetNumCommande();
 	public List<FactureGps> charger_commandes_gps(Compte c,String imei);
 	public String updateCommande(List<Produit> prd,String cmd,Compte compte);
+	public String CancelCmd(Commandeview cv, Compte c);
 }

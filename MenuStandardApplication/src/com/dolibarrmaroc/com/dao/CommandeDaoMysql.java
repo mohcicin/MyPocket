@@ -33,6 +33,8 @@ public class CommandeDaoMysql implements CommandeDao {
 	
 	private static final String cmdgps = URL.URL+"getCmdDataGps.php";
 	
+	private static final String cancelcmd = URL.URL+"cancelcmd.php";
+	
 	private JSONParser parser ;
 	
 	private String numcmd ="";
@@ -70,6 +72,7 @@ public class CommandeDaoMysql implements CommandeDao {
 				Commandeview cm = new Commandeview();
 				cm.setRowid(obj.getInt("rowid"));
 				cm.setRef(obj.getString("ref"));
+				cm.setStatuts(obj.getInt("statuts"));
 				
 				Client cl = new Client(obj.getJSONObject("socid").getInt("rowid"), obj.getJSONObject("socid").getString("name"), obj.getJSONObject("socid").getString("zip"), obj.getJSONObject("socid").getString("town"), obj.getJSONObject("socid").getString("email"), "", "");
 				cm.setClt(cl);
@@ -440,5 +443,40 @@ public class CommandeDaoMysql implements CommandeDao {
 		return cmd;
 	}
 	
+	@Override
+	public String CancelCmd(Commandeview cv, Compte c) {
+		// TODO Auto-generated method stub
+		String res = "ko";
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		nameValuePairs.add(new BasicNameValuePair("username",c.getLogin()));//c.getLogin()
+		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
+		nameValuePairs.add(new BasicNameValuePair("cmd",cv.getRowid()+""));
+		nameValuePairs.add(new BasicNameValuePair("cancel","cancel"));
+
+
+		try {
+			String json = parser.makeHttpRequest(cancelcmd, "POST", nameValuePairs);
+			String stfomat = json.substring(json.indexOf("{"),json.lastIndexOf("}")+1);
+
+
+			
+			Log.e("json",stfomat);
+			JSONObject obj = new JSONObject(stfomat);
+			
+			res = obj.getString("msg");
+			
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Log.e("json cls commande",e.getMessage() +" << ");
+			res ="-100";
+			return res;
+		}
+
+		return res;
+	}
+
+ 
 
 }

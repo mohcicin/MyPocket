@@ -1,9 +1,13 @@
-package com.dolibarrmaroc.com;
+package com.dolibarrmaroc.com.tour;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.dolibarrmaroc.com.R;
+import com.dolibarrmaroc.com.R.id;
+import com.dolibarrmaroc.com.R.layout;
+import com.dolibarrmaroc.com.R.string;
 import com.dolibarrmaroc.com.adapter.MyFactureAdapterView;
 import com.dolibarrmaroc.com.adapter.TourneeAdapter;
 import com.dolibarrmaroc.com.commercial.OfflineActivity;
@@ -208,7 +212,7 @@ public class TourneeViewerActivity extends Activity implements OnItemClickListen
         // Include dialog.xml file
        // dialog.setContentView(R.layout.reglementoffline);//listreglementoffline
         // Set dialog title
-        dialog.setTitle(getResources().getString(R.string.task4));
+        dialog.setTitle(getResources().getString(R.string.task5));
 
         
         List<String> data = new ArrayList<>();

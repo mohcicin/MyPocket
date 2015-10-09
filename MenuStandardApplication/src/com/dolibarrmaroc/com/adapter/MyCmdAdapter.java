@@ -153,5 +153,9 @@ public class MyCmdAdapter extends BaseAdapter implements Filterable{
 	}
 
 	
+	public List<MyfactureAdapter> fitredData(){
+		return facts;
+	}
+	
 
 }

@@ -3,6 +3,7 @@ package com.dolibarrmaroc.com.dao;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ import android.util.Log;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Commandeview;
 import com.dolibarrmaroc.com.models.Compte;
+import com.dolibarrmaroc.com.models.Motifs;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.models.Tournee;
@@ -31,6 +33,7 @@ import com.dolibarrmaroc.com.utils.UrlImage;
 public class TourneeDaoMysql implements TourneeDao{
 
 	private static final String urlData = URL.URL+"gettour.php";
+	private static final String urlmot = URL.URL+"createmotifs.php";
 	private JSONParser parser ;
 	
 	private HashMap<Integer, List<Integer>> listPromoByClient;
@@ -197,6 +200,55 @@ public class TourneeDaoMysql implements TourneeDao{
 	public List<Societe> selectSociete() {
 		// TODO Auto-generated method stub
 		return lssociete;
+	}
+	@Override
+	public String sendMotifs(Motifs mt, Compte c, String tp) {
+		// TODO Auto-generated method stub
+		String msg = "ko";
+		
+		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		nameValuePairs.add(new BasicNameValuePair("user",c.getIduser()+""));//c.getLogin()
+		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
+		nameValuePairs.add(new BasicNameValuePair(tp,tp+""));
+		nameValuePairs.add(new BasicNameValuePair("tour",mt.getTour().getRowid()+""));
+		nameValuePairs.add(new BasicNameValuePair("soc",mt.getClt().getId()+""));
+		
+		try {
+			nameValuePairs.add(new BasicNameValuePair("dt",sdf.format(mt.getDt())));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		nameValuePairs.add(new BasicNameValuePair("note",mt.getComment()));
+		nameValuePairs.add(new BasicNameValuePair("motf",mt.getMt()));
+		nameValuePairs.add(new BasicNameValuePair("data", c.getIduser()+"#"+c.getPassword()+"#"+tp+"#"+mt.getTour().getRowid()+"#"+mt.getClt().getId()+"#"+sdf.format(mt.getDt())+"#"+mt.getComment()+"#"+mt.getMt()+""));
+		
+		
+
+			Log.e("send durl mes motifs ",nameValuePairs.toString());
+			 
+			
+		try {
+			String json = parser.makeHttpRequest(urlmot, "POST", nameValuePairs);
+			
+			Log.e("motifs json ", json);
+			
+			//[{"rowid":"1","label":"new task","dates":"2015-09-02","datee":"2015-09-19","color":"#0080ff","secteur":"CA","idsecteur":"18","clients":[],"grp":"vendeur","idgrp":"7","usr":"","recur":["1","3","6"]}]
+			String stfomat = json.substring(json.indexOf("{"),json.lastIndexOf("}")+1);
+			
+			JSONObject ob = new JSONObject(stfomat);
+			
+			msg = ob.getString("msg");
+			
+		}catch(Exception e){
+			msg = "ko";
+			return msg;
+		}
+		
+		return msg;
 	}
 
 }

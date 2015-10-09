@@ -160,6 +160,8 @@ public class MyUpCltAdapter extends BaseAdapter implements Filterable{
 
 	}
 
-	
+	public List<MyClientAdapter> fitredData(){
+		return facts;
+	}
 
 }

@@ -939,7 +939,6 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 	
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_ENTER) {
 			if (keyCode == KeyEvent.KEYCODE_BACK) {
 				Intent intent = new Intent(this, CmdViewActivity.class);
 				intent.putExtra("user", compte);
@@ -949,8 +948,6 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 				this.finish();
 			}
 			return true;
-		}
-		return false;
 	}
 
 	class UpdateTask extends AsyncTask<Void, Void, String> {
@@ -1083,7 +1080,7 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 			myoffline = new Offlineimpl(getApplicationContext());
 			sv = new StockVirtual(CmdEditActivity.this);
 			
-			res = myoffline.shynchornizeUpdateCmd(new Commandeview(v.getRowid(), v.getRowid()+"", null, 0, 0, 0, "", new ArrayList<>(panier.values())));
+			res = myoffline.shynchornizeUpdateCmd(new Commandeview(v.getRowid(), v.getRowid()+"", null, 0, 0, 0, "", new ArrayList<>(panier.values()),0));
 		 
 			/*
 			myoffline = new Offlineimpl(getApplicationContext());

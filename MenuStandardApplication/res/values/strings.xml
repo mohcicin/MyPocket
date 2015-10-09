@@ -308,7 +308,7 @@
     <string name="caus11">Vider vos transactions hors ligne </string>
     <string name="caus12">Vider votre cache hors ligne</string>
     <string name="caus13">Cette action va supprimer tout votre cache télécharger depuis le serveur tel que (les produits,les clients,les paiements ..) \n \n Veuillez saisir votre mot de passe</string>
-    <string name="caus14">Cette action va supprimer tout vos factures et clients et tickets en hors ligne  \n \n Veuillez saisir votre mot de passe</string>
+    <string name="caus14">Vous êtes sur le point de réinitialiser le cache de votre application. \nSi vous effectuez cette action tous vos données vont être supprimées tels que: Les factures, les commandes,les règlements,les produits,les clients ... \n \n Veuillez saisir votre mot de passe</string>
     <string name="caus15">Synchronisation avec le serveur</string>
     <string name="caus16">Ce référence client est déja enregistrer</string>
     <string name="caus17">La carte n\'est pas disponible</string>
@@ -519,23 +519,53 @@
     <string name="edcmd1">Ajouter produit</string>
     <string name="edcmd2">Appliquer</string>
     <string name="edcmd3">Modifier les commandes</string>
+    <string name="edcmd4">Annuler cette commande</string>
+    <string name="edcmd5">Editer cette commande</string>
+    <string name="edcmd6">Vous ne pouvez pas annuler une commande dans le statut brouillon. Pensez à passer cette commande au statut valider pour l\'annuler</string>
+    <string name="edcmd7">Etes-vous sur de vouloir annuler cette commande ?</string>
+    <string name="edcmd8">Vous ne disposez pas d\'un stock. Consulter votre administrateur </string>
+    <string name="edcmd9">L\'annulation de votre commande n\'est pas terminé. Une erreur system est survenu cote backoffice</string>
+    <string name="edcmd10">Votre transaction est bien terminer </string>
     <string name="title_activity_cmd_edit">Modifier la commande</string>
     <string name="title_activity_tournee_viewer">Consulter tournées</string>
-    
-    
+
     <!-- gestion tournee -->
     <string name="task1">Tournee</string>
     <string name="task2">Periode</string>
     <string name="task3">Recurrence</string>
+
     <string-array name="task4">
         <item name="-1">All</item>
-		<item name="1">Lun</item>
-		<item name="2">Mar</item>
-		<item name="3">Mer</item>
-		<item name="4">Jeu</item>
-		<item name="5">Ven</item>
-		<item name="6">Sam</item>        
+        <item name="1">Lun</item>
+        <item name="2">Mar</item>
+        <item name="3">Mer</item>
+        <item name="4">Jeu</item>
+        <item name="5">Ven</item>
+        <item name="6">Sam</item>
     </string-array>
-    <string name="task4">Liste des clients</string>
 
+    <string name="task5">Liste des clients</string>
+    <string name="task6">Vous n\'avez aucune tournée planifier pour le moment. Demander à votre magasiner de vous accorder à des tournées.</string>
+    <string name="title_activity_motif_touree">Declaration des motifs</string>
+    <string name="task7">Tournee</string>
+    <string name="task8">Client</string>
+    <string name="task9">Motif</string>
+    <string name="task10">Commentaire</string>
+    <string name="task11">Valider votre motif</string>
+    <string-array name="task12">
+        <item name="7">Autres</item>
+        <item name="1">Erreur de manipulation (pas une visite)</item>
+        <item name="2">Magasin ferme</item>
+        <item name="3">Absence patron</item>
+        <item name="4">Stock suffisant</item>
+        <item name="5">Taux de perime eleve</item>
+        <item name="6">Client a problemes</item>
+    </string-array>
+	<string name="task13">Veuillez choisir une tournée</string>
+	<string name="task14">Vous ne pouvez pas déclarer un motif de tournée. Acun tournée disponible pour le moment</string>
+	<string name="task15">Le choix du client est obligatoire</string>
+	<string name="task16">Le choix du tournée et du client est obligatoire</string>
+	<string name="task17">Votre motif est enregistré</string>
+	<string name="task18">Votre motif n\'est pas enregistré. refaire à nouveau</string>
+	
 </resources>

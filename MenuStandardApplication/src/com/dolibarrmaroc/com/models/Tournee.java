@@ -117,6 +117,22 @@ public class Tournee implements Serializable{
 		this.idgrp = idgrp;
 		this.recur = recur;
 	}
+
+	public Tournee(long rowid, String label, String color, String debut,
+			String fin, String secteur, long idsecteur, String grp, long idgrp,
+			List<Integer> recur) {
+		super();
+		this.rowid = rowid;
+		this.label = label;
+		this.color = color;
+		this.debut = debut;
+		this.fin = fin;
+		this.secteur = secteur;
+		this.idsecteur = idsecteur;
+		this.grp = grp;
+		this.idgrp = idgrp;
+		this.recur = recur;
+	}
 	
 	
 }

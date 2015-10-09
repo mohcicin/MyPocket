@@ -13,13 +13,14 @@ public class Commandeview implements Serializable{
 	private double ht;
 	private double tva;
 	private String dt;
+	private int statuts;
 	private List<Produit> lsprods = new ArrayList<>();
 	public Commandeview() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public Commandeview(int rowid, String ref, Client clt, double ttc,
-			double ht, double tva, String dt, List<Produit> lsprods) {
+			double ht, double tva, String dt, List<Produit> lsprods,int status) {
 		super();
 		this.rowid = rowid;
 		this.ref = ref;
@@ -29,6 +30,7 @@ public class Commandeview implements Serializable{
 		this.tva = tva;
 		this.dt = dt;
 		this.lsprods = lsprods;
+		this.statuts = status;
 	}
 	public int getRowid() {
 		return rowid;
@@ -82,7 +84,13 @@ public class Commandeview implements Serializable{
 	public String toString() {
 		return "Commandeview [rowid=" + rowid + ", ref=" + ref + ", clt=" + clt
 				+ ", ttc=" + ttc + ", ht=" + ht + ", tva=" + tva + ", dt=" + dt
-				+ ", lsprods=" + lsprods + "]";
+				+ ", statuts=" + statuts + ", lsprods=" + lsprods + "]";
+	}
+	public int getStatuts() {
+		return statuts;
+	}
+	public void setStatuts(int statuts) {
+		this.statuts = statuts;
 	}
 	
 }

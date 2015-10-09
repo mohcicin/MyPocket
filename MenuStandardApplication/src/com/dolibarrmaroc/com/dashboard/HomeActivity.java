@@ -43,7 +43,6 @@ import com.dolibarrmaroc.com.R;
 import com.dolibarrmaroc.com.R.id;
 import com.dolibarrmaroc.com.R.layout;
 import com.dolibarrmaroc.com.R.string;
-import com.dolibarrmaroc.com.TourneeViewerActivity;
 import com.dolibarrmaroc.com.business.CommandeManager;
 import com.dolibarrmaroc.com.business.CommercialManager;
 import com.dolibarrmaroc.com.business.PayementManager;
@@ -80,6 +79,8 @@ import com.dolibarrmaroc.com.synchronisation.SynchronisationHomeActivity;
 import com.dolibarrmaroc.com.tiers.CommercialActivity;
 import com.dolibarrmaroc.com.tiers.PersonnePhysiqueActivity;
 import com.dolibarrmaroc.com.tiers.UpdateClientActivity;
+import com.dolibarrmaroc.com.tour.MotifToureeActivity;
+import com.dolibarrmaroc.com.tour.TourneeViewerActivity;
 import com.dolibarrmaroc.com.utils.CheckOutNet;
 import com.dolibarrmaroc.com.utils.CheckOutSysc;
 import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
@@ -168,8 +169,7 @@ public class HomeActivity extends Activity
 		myoffline = new Offlineimpl(getApplicationContext());
 		
 		
-		
-		//Log.e(">> clts ",myoffline.chargerInvoice_prospect(compte).toString());
+		Log.e(">> cls ",myoffline.LoadClsCmdList("").toString());
 
 		if(CheckOutNet.isNetworkConnected(getApplicationContext())){
 			/*
@@ -294,6 +294,7 @@ public class HomeActivity extends Activity
 	public void onClickFeature(View v) {
 		// TODO Auto-generated method stub
 
+		
 		myoffline = new Offlineimpl(HomeActivity.this);
 
 		int id = v.getId ();
@@ -384,15 +385,12 @@ public class HomeActivity extends Activity
 				intentfc4.putExtra("user", compte);
 				com.dolibarrmaroc.com.models.AlertDialog updatefc4 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc4, getString(R.string.title_activity_reglement_offline), "invoice_pay");
 				
-				Intent intentfc5 = new Intent(getApplicationContext(), TourneeViewerActivity.class);
-				intentfc5.putExtra("user", compte);
-				com.dolibarrmaroc.com.models.AlertDialog updatefc5 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc5, getString(R.string.title_activity_tournee_viewer), "invoice_pay");
+				
 
 				alertfc2.add(createfc1);
 				alertfc2.add(updatefc2);
 				alertfc2.add(updatefc3);
 				alertfc2.add(updatefc4);
-				alertfc2.add(updatefc5);
 				new AlertDialogList(HomeActivity.this, alertfc2).show();
 
 			}else{
@@ -479,11 +477,24 @@ public class HomeActivity extends Activity
 				intentc4.putExtra("cmd", "1");
 				intentc4.putExtra("editcmd", "1");
 				com.dolibarrmaroc.com.models.AlertDialog updatec4 = new com.dolibarrmaroc.com.models.AlertDialog(intentc4, getString(R.string.edcmd3), "update_cmd");
+				
+				
+				
+				Intent intentfc5 = new Intent(getApplicationContext(), TourneeViewerActivity.class);
+				intentfc5.putExtra("user", compte);
+				com.dolibarrmaroc.com.models.AlertDialog updatefc5 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc5, getString(R.string.title_activity_tournee_viewer), "tour1");
+				
+				Intent intentfc6 = new Intent(getApplicationContext(), MotifToureeActivity.class);
+				intentfc6.putExtra("user", compte);
+				com.dolibarrmaroc.com.models.AlertDialog updatefc6 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc6, getString(R.string.title_activity_motif_touree), "tour2");
+				
 
 				alertc2.add(createc1);
 				alertc2.add(updatec2);
 				alertc2.add(updatec3);
 				alertc2.add(updatec4);
+				alertc2.add(updatefc5);
+				alertc2.add(updatefc6);
 				new AlertDialogList(HomeActivity.this, alertc2).show();
 			}else{
 				alertPrdClt(getString(R.string.syscl8));
@@ -628,9 +639,10 @@ public class HomeActivity extends Activity
 		int nprod;
 
 		@Override
-		protected String doInBackground(Void... params) {
+		protected String doInBackground(Void... params){
 
 			//getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			
 
 			Log.e("Compte User ",compte.toString());
 			sv  = new StockVirtual(HomeActivity.this);

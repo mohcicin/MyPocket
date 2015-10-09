@@ -1,5 +1,6 @@
 package com.dolibarrmaroc.com.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -61,30 +62,49 @@ public class Functions {
 		List<Tournee> v = new ArrayList<>();
 		List<Tournee> s = new ArrayList<>();
 
+		Date dt = new Date();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date dt2 = new Date();
+		Date dt3 = new Date();
+		
+		
 		for (int i = 0; i < in.size(); i++) {
 
-			for (int j = 0; j < in.get(i).getRecur().size(); j++) {
-				switch (in.get(i).getRecur().get(j)) {
-				case 1:
-					l.add(in.get(i));
-					break;
-				case 2:
-					m.add(in.get(i));
-					break;
-				case 3:
-					mr.add(in.get(i));
-					break;
-				case 4:
-					jd.add(in.get(i));
-					break;
-				case 5:
-					v.add(in.get(i));
-					break;
-				default:
-					s.add(in.get(i));
-					break;
+			try {
+				dt = sdf.parse(sdf.format(new Date()));
+				dt2 = sdf.parse(in.get(i).getFin());
+				dt3 = sdf.parse(in.get(i).getDebut());
+				
+				if(dt2.getTime() >= dt.getTime() && dt.getTime() >= dt3.getTime()){
+					for (int j = 0; j < in.get(i).getRecur().size(); j++) {
+						switch (in.get(i).getRecur().get(j)) {
+						case 1:
+							l.add(in.get(i));
+							break;
+						case 2:
+							m.add(in.get(i));
+							break;
+						case 3:
+							mr.add(in.get(i));
+							break;
+						case 4:
+							jd.add(in.get(i));
+							break;
+						case 5:
+							v.add(in.get(i));
+							break;
+						default:
+							s.add(in.get(i));
+							break;
+						}
+					}
 				}
+				
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
+			
 		}
 		
 		HashMap<Integer, List<Tournee>> res = new HashMap<>();

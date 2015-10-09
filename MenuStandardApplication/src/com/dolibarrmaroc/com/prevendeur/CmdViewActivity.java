@@ -1,6 +1,6 @@
 package com.dolibarrmaroc.com.prevendeur;
 
-import java.io.IOException;
+import android.app.Activity;import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,7 +15,13 @@ import com.dolibarrmaroc.com.R.string;
 import com.dolibarrmaroc.com.adapter.MyCmdAdapter;
 import com.dolibarrmaroc.com.adapter.MyFactureAdapterView;
 import com.dolibarrmaroc.com.business.CommandeManager;
+import com.dolibarrmaroc.com.business.CommercialManager;
+import com.dolibarrmaroc.com.business.PayementManager;
+import com.dolibarrmaroc.com.business.VendeurManager;
+import com.dolibarrmaroc.com.dao.CategorieDao;
+import com.dolibarrmaroc.com.dao.CategorieDaoMysql;
 import com.dolibarrmaroc.com.dashboard.HomeActivity;
+import com.dolibarrmaroc.com.database.StockVirtual;
 import com.dolibarrmaroc.com.models.Commandeview;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.MyTicketBluetooth;
@@ -25,6 +31,9 @@ import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Reglement;
 import com.dolibarrmaroc.com.utils.CheckOutNet;
 import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
+import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
+import com.dolibarrmaroc.com.utils.PayementManagerFactory;
+import com.dolibarrmaroc.com.utils.VendeurManagerFactory;
 import com.dolibarrmaroc.com.offline.Offlineimpl;
 import com.dolibarrmaroc.com.offline.ioffline;
 import com.dolibarrmaroc.com.ticket.FactureTicketActivity;
@@ -74,7 +83,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class CmdViewActivity extends Activity implements OnItemClickListener{
+public class CmdViewActivity  extends Activity implements OnItemClickListener{
 
 	private Compte compte;
 	private ListView lisview;
@@ -85,6 +94,8 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 	private Myinvoice meinvo;
 	
 	private ProgressDialog dialog;
+	
+	private CommandeManager manager;
 	
 	
 	private List<MyfactureAdapter> factdata;
@@ -98,8 +109,6 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 	private HashMap<Integer, Commandeview> mycmd;
 	private List<Commandeview> cmddata;
 
-	private CommandeManager manager;
-	
 	private Commandeview cicin;
 	
 	private int edite_cmd;
@@ -153,24 +162,41 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 			@Override
 			public boolean onQueryTextChange(String newText) {
 				// TODO Auto-generated method stub
-				Log.e("search data",""+newText);
+				
 				Log.e("util", TextUtils.isEmpty(newText)+"");
 				if (TextUtils.isEmpty(newText))
 				{
+					Log.e("search empty ",""+factdatafilter.size());
 					lisview.clearTextFilter();
+					/*
+					factdata.clear();
+					factdata.addAll(factdatafilter);
+					*/
 					remplireListview(factdata, 0);
 				}
 				else
 				{
+					
 					lisview.setFilterText(newText.toString());
 					factadapter.getFilter().filter(newText.toString());
 					
 					
 					//bindingData = new BinderData(WeatherActivity.this, bindingData.getMap());
 					factadapter.notifyDataSetChanged();
+					
+					
+					/*
+					factdata = factadapter.returnSort();
+					
+					if(factdata.size() == 0){
+						factdata.addAll(factdatafilter);
+					}
+					*/
+					
 					lisview.invalidateViews();
 					lisview.setAdapter(factadapter);
 					lisview.refreshDrawableState();
+					
 				}
 
 				return true;
@@ -197,7 +223,6 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 	public void remplireListview(List<MyfactureAdapter> fc,int n){
 		 
 		if(n == 0){
-		Log.e("fc siz****e ",factdata.size()+"");
 		factadapter = new MyCmdAdapter(this, fc);
 		
 		factadapter.notifyDataSetChanged();
@@ -327,6 +352,7 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 					for (int i = 0; i < cmddata.size(); i++) {
 						mycmd.put(cmddata.get(i).getRowid(), cmddata.get(i));
 						factdata.add(new MyfactureAdapter(cmddata.get(i).getClt().getName(), cmddata.get(i).getRef(), cmddata.get(i).getTtc()+"",cmddata.get(i).getDt()+"", cmddata.get(i).getRowid()));
+						factdatafilter.add(new MyfactureAdapter(cmddata.get(i).getClt().getName(), cmddata.get(i).getRef(), cmddata.get(i).getTtc()+"",cmddata.get(i).getDt()+"", cmddata.get(i).getRowid()));
 					}
 
 					remplireListview(factdata,0);
@@ -350,12 +376,19 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		// TODO Auto-generated method stub
 		
-		final MyfactureAdapter selectedfact = factdata.get(position);
-		 Log.e("You've selected : ",selectedfact.toString());
+		
+		MyfactureAdapter selectedfact = new MyfactureAdapter();
+		if(factadapter.fitredData() != null){
+			selectedfact = factadapter.fitredData().get(position);
+		}else{
+			selectedfact = factdata.get(position);
+		}
+		
+		 
 
 		 cicin = mycmd.get(selectedfact.getIdfact());
 		 
-		 
+		 Log.e("You've selected : ",cicin.toString());
 		 if(edite_cmd == 0){
 			 new AlertDialog.Builder(this)
 			    .setTitle(getResources().getString(R.string.cmdtofc12))
@@ -373,13 +406,57 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 		 }else{
 			 new AlertDialog.Builder(this)
 			    .setTitle(getResources().getString(R.string.cmdtofc12))
-			    .setNegativeButton(R.string.tecv4, new DialogInterface.OnClickListener() {
+			    .setNegativeButton(R.string.edcmd5, new DialogInterface.OnClickListener() {
 			        public void onClick(DialogInterface dialog, int which) { 
 			        	Intent intent1 = new Intent(CmdViewActivity.this, CmdEditActivity.class);
 		    			intent1.putExtra("user", compte);
 		    			intent1.putExtra("vc", cicin);
 		    			intent1.putExtra("lscmd", mycmd);
 		    			startActivity(intent1);
+			        }
+			     })
+			     .setPositiveButton(R.string.edcmd4, new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int which) { 
+		    			
+		    			if(cicin.getStatuts() == 0){
+		    					new AlertDialog.Builder(CmdViewActivity.this)
+							    .setTitle(getResources().getString(R.string.cmdtofc10))
+							    .setMessage(R.string.edcmd6)
+							    .setNegativeButton(R.string.cmdtofc11, new DialogInterface.OnClickListener() {
+							        public void onClick(DialogInterface dialog, int which) { 
+							        	dialog.dismiss();
+							        }
+							     })
+							     .setCancelable(true)
+							     .show();
+		    			}else{
+			    				new AlertDialog.Builder(CmdViewActivity.this)
+							    .setTitle(getResources().getString(R.string.cmdtofc10))
+							    .setMessage(R.string.edcmd7)
+							    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+							        public void onClick(DialogInterface d, int which) { 
+							        	d.dismiss();
+							        }
+							     })
+							     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+							        public void onClick(DialogInterface dialogc, int which) { 
+							        	if(CheckOutNet.isNetworkConnected(getApplicationContext())){
+							        		 
+											new CancelTask().execute();
+											
+											dialogc.dismiss();
+							        	}else{
+							        		 
+											new CancelOfflineTask().execute();
+											
+											dialogc.dismiss();
+							        	}
+							        }
+							     })
+							     .setCancelable(true)
+							     .show();
+		    			}
+		    			
 			        }
 			     })
 			     .setCancelable(true)
@@ -406,7 +483,7 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 
 			//myoffline.shynchronizeCommandeList(cmddata);
 			
-			cmddata = myoffline.LoadCommandeList("");
+			cmddata = prepa_cmd(prepa_cmd_cls(myoffline.LoadCommandeList("")));
 			 
 
 			factdata = new ArrayList<>();
@@ -448,11 +525,239 @@ public class CmdViewActivity extends Activity implements OnItemClickListener{
 
 	}
 	
+	
+	class CancelTask extends AsyncTask<Void, Void, String> {
+
+		private int in;
+		private String res="";
+
+		@Override
+		protected String doInBackground(Void... params) {
+
+			manager = new CommandeManagerFactory().getManager();
+			
+			VendeurManager vendeurManager = VendeurManagerFactory.getClientManager();
+			PayementManager payemn = PayementManagerFactory.getPayementFactory();
+			CategorieDao categorie = new CategorieDaoMysql(getApplicationContext());
+			CommandeManager managercmd =  new CommandeManagerFactory().getManager();
+			CommercialManager managercom = CommercialManagerFactory.getCommercialManager();
+			
+			StockVirtual sv  = new StockVirtual(CmdViewActivity.this);
+			
+			myoffline = new Offlineimpl(CmdViewActivity.this);
+			
+			in = Integer.parseInt(manager.CancelCmd(cicin, compte));
+			
+			switch (in) {
+			case -1:
+				res = getResources().getString(R.string.edcmd8);
+				break;
+
+			case 100:
+				res = getResources().getString(R.string.edcmd10);
+				
+				cicin.setStatuts(-100);
+				myoffline.cancelCmd(cicin, compte);
+				
+				
+				break;
+			case -100: case 0:
+				res = getResources().getString(R.string.edcmd9);
+				break;
+			}
+			
+			if(myoffline.checkAvailableofflinestorage() > 0){
+				myoffline.SendOutData(compte);	
+			}
+			
+			
+			
+			
+			/*
+			if(CheckOutNet.isNetworkConnected(CmdDetailActivity.this)){
+				CheckOutSysc.ReloadProdClt(CmdDetailActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 5,managercom);
+			}
+			*/
+			
+
+			return "success";
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... unsued) {
+
+		}
+
+		@Override
+		protected void onPostExecute(String sResponse) {
+			try {
+
+					 new AlertDialog.Builder(CmdViewActivity.this)
+					    .setTitle(getResources().getString(R.string.cmdtofc10))
+					    .setMessage(res)
+					    .setNegativeButton(R.string.cmdtofc11, new DialogInterface.OnClickListener() {
+					        public void onClick(DialogInterface dialogc, int which) { 
+					        	
+					        	cmddata = prepa_cmd(prepa_cmd_cls(myoffline.LoadCommandeList("")));
+								 
+								factdata = new ArrayList<>();
+								
+								mycmd = new HashMap<>();
+
+								for (int i = 0; i < cmddata.size(); i++) {
+									mycmd.put(cmddata.get(i).getRowid(), cmddata.get(i));
+									factdata.add(new MyfactureAdapter(cmddata.get(i).getClt().getName(), cmddata.get(i).getRef(), cmddata.get(i).getTtc()+"",cmddata.get(i).getDt()+"", cmddata.get(i).getRowid()));
+								}
+
+								remplireListview(factdata,0);
+								dialogc.dismiss();
+					        }
+					     })
+					     .setCancelable(false)
+					     .show();
+					 
+
+			        	
+
+
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(),
+						e.getMessage() +" << ",
+						Toast.LENGTH_LONG).show();
+				Log.e(e.getClass().getName(), e.getMessage() +" << ", e);
+			}
+		}
+
+	}
+	
+	class CancelOfflineTask extends AsyncTask<Void, Void, String> {
+
+		private int in;
+		private String res="";
+
+		@Override
+		protected String doInBackground(Void... params) {
+
+			
+			myoffline = new Offlineimpl(CmdViewActivity.this);
+			
+			in = (int)myoffline.shynchronizeClsCmd(cicin,compte);
+			Log.e("ids>>> ",in+" >>> "+cicin.getRowid());
+			
+			switch (in) {
+			case -1:
+				res = getResources().getString(R.string.edcmd9);
+				break;
+
+			case 1:
+				res = getResources().getString(R.string.edcmd10);
+				myoffline.cancelCmd(cicin, compte);
+				break;
+			
+			}
+			
+		 
+			return "success";
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... unsued) {
+
+		}
+
+		@Override
+		protected void onPostExecute(String sResponse) {
+			try {
+
+					 new AlertDialog.Builder(CmdViewActivity.this)
+					    .setTitle(getResources().getString(R.string.cmdtofc10))
+					    .setMessage(res)
+					    .setNegativeButton(R.string.cmdtofc11, new DialogInterface.OnClickListener() {
+					        public void onClick(DialogInterface dialogc, int which) { 
+					        	
+					        		cmddata = prepa_cmd(prepa_cmd_cls(myoffline.LoadCommandeList("")));
+					        		
+									factdata = new ArrayList<>();
+									
+									mycmd = new HashMap<>();
+					
+									for (int i = 0; i < cmddata.size(); i++) {
+										mycmd.put(cmddata.get(i).getRowid(), cmddata.get(i));
+										factdata.add(new MyfactureAdapter(cmddata.get(i).getClt().getName(), cmddata.get(i).getRef(), cmddata.get(i).getTtc()+"",cmddata.get(i).getDt()+"", cmddata.get(i).getRowid()));
+									}
+					
+									remplireListview(factdata,0);
+					        	
+								dialogc.dismiss();
+					        }
+					     })
+					     .setCancelable(false)
+					     .show();
+					 
+
+			        	
+
+
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(),
+						e.getMessage() +" << ",
+						Toast.LENGTH_LONG).show();
+				Log.e(e.getClass().getName(), e.getMessage() +" << ", e);
+			}
+		}
+
+	}
+	
 	public void onClickHome(View v){
 		Intent intent = new Intent(this, HomeActivity.class);
 		intent.putExtra("user", compte);
 		intent.setFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity (intent);
 		this.finish();
+	}
+	
+	public List<Commandeview> prepa_cmd(List<Commandeview> in){
+		List<Commandeview> tmp = new ArrayList<>();
+		
+		List<Commandeview> clscmd = new ArrayList<>();
+		clscmd = myoffline.LoadClsCmdList("");
+		
+		boolean is = false;
+		
+		if(clscmd.size() > 0){
+			for (int i = 0; i < in.size(); i++) {
+				
+				for (int j = 0; j < clscmd.size(); j++) {
+					if(in.get(i).getRowid() == clscmd.get(j).getRowid()){
+						is = true;
+						break;
+					}
+				}
+				
+				if(!is){
+					tmp.add(in.get(i));
+				}
+			}
+		}else{
+			tmp = in;
+		}
+		
+		
+		return tmp;
+		
+	}
+	
+	public List<Commandeview> prepa_cmd_cls(List<Commandeview> in){
+		List<Commandeview> tmp = new ArrayList<>();
+
+		boolean is = false;
+		for (int i = 0; i < in.size(); i++) {
+			if(in.get(i).getStatuts() != -100){
+				tmp.add(in.get(i));
+			}
+		}
+		
+		return tmp;
+
 	}
 }	
