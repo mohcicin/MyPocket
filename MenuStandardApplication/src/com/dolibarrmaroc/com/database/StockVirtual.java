@@ -1,6 +1,7 @@
 package com.dolibarrmaroc.com.database;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,8 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
+import com.dolibarrmaroc.com.models.DataSerial;
 import com.dolibarrmaroc.com.models.Produit;
+import com.dolibarrmaroc.com.models.Serial1;
 
+import android.R.integer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -512,9 +516,40 @@ public class StockVirtual extends SQLiteOpenHelper {
 		return -1;
 	}   
 	
-	
+	 
 	/*********************************** Creatae Operations data ******************************************************************/
-	public long addOperation(String tp,double mtn) {
+		public long addOperation_virtual(String tp,double mtn,int i) {
+			long id =-1;
+			try {
+				SQLiteDatabase db = this.getWritableDatabase();
+				
+				Calendar celebration = Calendar.getInstance();
+			    celebration.setTime(new Date());
+			    celebration.add(Calendar.DATE, i);
+
+			    
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				
+				ContentValues values = new ContentValues();
+				values.put(KEY_DTOP, sdf.format(celebration.getTime()));
+				values.put(KEY_MTN, mtn);
+				values.put(KEY_TPOP, tp);
+				
+
+				// Inserting Row
+				id = db.insert(TABLE_HISTOOPS, null, values);
+
+				db.close(); // Closing database connection
+
+
+			} catch (Exception e) {
+				// TODO: handle exception
+				Log.e("insert data","insert opeartion "+e.getMessage());
+			}
+			return id;
+		}
+	    
+	    public long addOperation(String tp,double mtn) {
 		long id =-1;
 		try {
 			SQLiteDatabase db = this.getWritableDatabase();
@@ -575,8 +610,11 @@ public class StockVirtual extends SQLiteOpenHelper {
 			
 			db.close();
 			
-			res.put("FC", fc);
-			res.put("PY", py);
+			DecimalFormat df = new DecimalFormat(".##");
+
+			
+			res.put("FC", Double.parseDouble(df.format(fc).replaceAll(",", ".")));
+			res.put("PY", Double.parseDouble(df.format(py).replaceAll(",", ".")));
 			res.put("NFC", nbrfc);
 			res.put("NPY", nbrpy);
 			
@@ -591,6 +629,117 @@ public class StockVirtual extends SQLiteOpenHelper {
 		}
 
 		return res;
+	}
+	
+	public DataSerial calculCAGraph(String in,String tp){
+		List<String> day = new ArrayList<>();
+		List<Double> val = new ArrayList<>();
+		try {
+			  
+			
+			String selectQuery = "";
+			selectQuery = "SELECT strftime('%d', "+KEY_DTOP+"), SUM("+KEY_MTN+") FROM " + TABLE_HISTOOPS+" where strftime('%m', "+KEY_DTOP+") = ? AND "+KEY_TPOP+" = ?"+" AND strftime('%Y', "+KEY_DTOP+") = ?  GROUP BY strftime('%d', "+KEY_DTOP+") ORDER BY strftime('%d', "+KEY_DTOP+") ASC"; 
+			//selectQuery = "SELECT * FROM " + TABLE_HISTOOPS;
+
+
+			Calendar celebration = Calendar.getInstance();
+		    celebration.setTime(new Date());
+		    
+		    Log.e("input data ",in+" >>> "+tp+" >> "+celebration.get(Calendar.YEAR)+"");
+		    
+			String[] nm = new String[]{in,tp,celebration.get(Calendar.YEAR)+""};
+			//String[] nm = new String[]{};
+
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor cursor = db.rawQuery(selectQuery, nm);
+			
+			DecimalFormat df = new DecimalFormat(".##");
+
+			if (cursor.moveToFirst()) {
+				do {
+					//Log.e(">>> graph ",cursor.getString(1)+ " >> ");
+					day.add(cursor.getString(0));
+					val.add(Double.parseDouble(df.format(cursor.getDouble(1)).replaceAll(",", ".")));
+				} while (cursor.moveToNext());
+			}
+			
+		 
+			db.close();
+			
+			 
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("errror CA get ",e.getMessage() +"");
+		}
+
+		List<Serial1> s1 = new ArrayList<>();
+		Serial1 s = new Serial1();
+		s.setData(val);
+		
+		s1.add(s);
+		
+		DataSerial data = new DataSerial(s1, day);
+		return data;
+	}
+	
+	public List<Integer> calculCAGraphMotifs(String in){
+		List<Integer> val = new ArrayList<>();
+		try {
+			  
+			HashMap<Double, Integer> data = new HashMap<>();
+			String selectQuery = "";
+			selectQuery = "SELECT "+KEY_MTN+", COUNT("+KEY_MTN+") FROM " + TABLE_HISTOOPS+" where "+KEY_TPOP+" = ?"+" GROUP BY "+KEY_MTN+" ORDER BY "+KEY_MTN+" ASC"; 
+			//selectQuery = "SELECT * FROM " + TABLE_HISTOOPS;
+
+
+			Calendar celebration = Calendar.getInstance();
+		    celebration.setTime(new Date());
+		    
+		    
+			String[] nm = new String[]{in};
+			//String[] nm = new String[]{};
+
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor cursor = db.rawQuery(selectQuery, nm);
+			
+
+			if (cursor.moveToFirst()) {
+				do {
+					Log.e(">> "+cursor.getDouble(0), ">> "+ cursor.getInt(1));
+					//val.add(cursor.getInt(1));
+					data.put(cursor.getDouble(0), cursor.getInt(1));
+				} while (cursor.moveToNext());
+			}
+			
+			
+			if(data.size() > 0){
+				for (int i = 1; i < 8; i++) {
+					if(!data.containsKey(new Double(i))){
+						val.add(0);
+					}else{
+						val.add(data.get(new Double(i)));
+					}
+				}
+			}else{
+				for (int i = 0; i < 7; i++) {
+					val.add(0);
+				}
+			}
+		 
+			db.close();
+			
+			 
+			Log.e("val motifs ",val.toString() +"");
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("errror CA get ",e.getMessage() +"");
+		}
+
+		
+		return val;
 	}
 	
 	/*************************************  Last row insert in offline ******************************/

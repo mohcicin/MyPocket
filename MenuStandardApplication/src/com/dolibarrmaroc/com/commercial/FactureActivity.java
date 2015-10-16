@@ -1161,6 +1161,7 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 					dialog.dismiss();
 					String res ="";
 					
+					double mtn = 0;
 					
 					switch (data) {
 					case "10":
@@ -1170,7 +1171,10 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 							//myofline.updateProduits(me);
 							for (int i = 0; i < produitsFacture.size(); i++) {
 								sv.addPdQtRow(produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander());
+								mtn += produitsFacture.get(i).getPrixttc() * produitsFacture.get(i).getQtedemander();
 							}
+							
+							sv.addOperation("CMD", mtn);
 						break;
 					case "-2":
 						res = getResources().getString(R.string.cmdtofc17);
@@ -1275,12 +1279,14 @@ public class FactureActivity extends Activity implements OnItemClickListener,OnC
 				Myinvoice me = new Myinvoice(cmd.getIdandro()+"", produitsFacture, idclt, 0, "", compte, "", "", "", 0, prepaRemise(remise), null, "", "", "");
 				//Log.e("invo ",me.toString());
 				
-				
+				double mtn = 0;
 				//myofline.updateProduits(me);
 				
 				for (int i = 0; i < produitsFacture.size(); i++) {
 					sv.addPdQtRow(produitsFacture.get(i).getId(), produitsFacture.get(i).getQtedemander());
+					mtn += produitsFacture.get(i).getPrixttc() * produitsFacture.get(i).getQtedemander();
 				}
+				sv.addOperation("CMD", mtn);
 			}
 
 

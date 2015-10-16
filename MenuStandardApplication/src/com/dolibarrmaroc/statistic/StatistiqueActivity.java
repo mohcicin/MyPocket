@@ -32,6 +32,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TabHost;
+import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +58,7 @@ public class StatistiqueActivity extends Activity {
 	
 	private TextView txt1,txt2,txt3,txt4,txt5,txt6,txt7,txt8,txt9,txt10;
 	
+	
 	//Asynchrone avec connexion 
 	private ProgressDialog dialog;
 
@@ -75,6 +78,7 @@ public class StatistiqueActivity extends Activity {
 		if (objetbunble != null) {
 			compte = (Compte) getIntent().getSerializableExtra("user");
 		}
+		
 		
 		
 		txt1 = (TextView)findViewById(R.id.instc1);

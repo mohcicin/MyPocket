@@ -90,7 +90,9 @@ import com.dolibarrmaroc.com.utils.PayementManagerFactory;
 import com.dolibarrmaroc.com.utils.URL;
 import com.dolibarrmaroc.com.utils.UrlImage;
 import com.dolibarrmaroc.com.utils.VendeurManagerFactory;
+import com.dolibarrmaroc.statistic.HomeStatisticActivity;
 import com.dolibarrmaroc.statistic.StatistiqueActivity;
+import com.dolibarrmaroc.statistic.VentesActivity;
 import com.karouani.cicin.widget.alert.AlertDialogList;
 
 
@@ -201,6 +203,34 @@ public class HomeActivity extends Activity
 		 * Check tournee
 		 */
 		
+		sv  = new StockVirtual(HomeActivity.this);
+		//sv.calculCAGraphMotifs("MTF");
+		
+		/*
+		sv.addOperation_virtual("MTF", 1, 0);
+		sv.addOperation_virtual("MTF", 4, 1);
+		sv.addOperation_virtual("MTF", 3, 3);
+		sv.addOperation_virtual("MTF", 1, 8);
+		sv.addOperation_virtual("MTF", 2, 10);
+		sv.addOperation_virtual("MTF", 5, 6);
+		sv.addOperation_virtual("MTF", 2, 1);
+		
+		sv.addOperation_virtual("CMD", 145, 0);
+		sv.addOperation_virtual("CMD", 45, 1);
+		sv.addOperation_virtual("CMD", 345, 3);
+		sv.addOperation_virtual("CMD", 17, 8);
+		sv.addOperation_virtual("CMD", 28, 10);
+		sv.addOperation_virtual("CMD", 54, 6);
+		sv.addOperation_virtual("CMD", 72, 1);
+		
+		sv.addOperation_virtual("FC", 145, 0);
+		sv.addOperation_virtual("FC", 45, 1);
+		sv.addOperation_virtual("FC", 345, 3);
+		sv.addOperation_virtual("FC", 17, 8);
+		sv.addOperation_virtual("FC", 28, 10);
+		sv.addOperation_virtual("FC", 54, 6);
+		sv.addOperation_virtual("FC", 72, 1);
+		*/
 		
 	}
 
@@ -355,14 +385,45 @@ public class HomeActivity extends Activity
 			if("Administrateur magasinier".toLowerCase().equals(compte.getProfile().toLowerCase())){
 				alertPrdClt(getString(R.string.syscl9));
 			}else{
-				Intent intentsts = new Intent(HomeActivity.this, StatistiqueActivity.class);
-				intentsts.putExtra("user", compte);
-				startActivity(intentsts);
+				List<com.dolibarrmaroc.com.models.AlertDialog> alertfc2 = new ArrayList<>();
+				Intent intentfc1 = new Intent(getApplicationContext(), StatistiqueActivity.class); //CatalogeActivity.class  //CmdViewActivity
+				intentfc1.putExtra("user", compte);
+				com.dolibarrmaroc.com.models.AlertDialog createfc1 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc1, getString(R.string.title_activity_statistique), "invoice_see");
+
+				alertfc2.add(createfc1);
+				
+				if(("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) && compte.getPermissionbl() != 0) || (compte.getPermissionbl() != 0 && "vendeur".equals(compte.getProfile().toLowerCase()))){
+					Intent intentfc2 = new Intent(getApplicationContext(), VentesActivity.class);
+					intentfc2.putExtra("user", compte);
+					intentfc2.putExtra("val", "2");
+					com.dolibarrmaroc.com.models.AlertDialog updatefc2 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc2, getString(R.string.stati8), "chartf");
+					
+					Intent intentfc3 = new Intent(getApplicationContext(), VentesActivity.class);
+					intentfc3.putExtra("user", compte);
+					intentfc3.putExtra("val", "1");
+					com.dolibarrmaroc.com.models.AlertDialog updatefc3 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc3, getString(R.string.stati9), "chartf");
+					
+					
+					Intent intentfc4 = new Intent(getApplicationContext(), VentesActivity.class);
+					intentfc4.putExtra("user", compte);
+					intentfc4.putExtra("val", "3");
+					com.dolibarrmaroc.com.models.AlertDialog updatefc4 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc4, getString(R.string.stati3), "charts");
+					
+					alertfc2.add(updatefc3);
+					alertfc2.add(updatefc2);
+					alertfc2.add(updatefc4);
+				}
+				
+
+
+				
+				
+				new AlertDialogList(HomeActivity.this, alertfc2).show();
 			}
 			
 			break;
 		case R.id.home_btn_livraison :
-			//startActivity (new Intent(getApplicationContext(), VendeurActivity.class));
+			//startActivity (new Intent(getApplicationContext(), VendeurActivity.class));)
 			if(compte.getPermissionbl() == 0 || "vendeur".equals(compte.getProfile().toLowerCase())){
 				List<com.dolibarrmaroc.com.models.AlertDialog> alertfc2 = new ArrayList<>();
 				Intent intentfc1 = new Intent(getApplicationContext(), VendeurActivity.class); //CatalogeActivity.class  //CmdViewActivity
@@ -644,7 +705,7 @@ public class HomeActivity extends Activity
 			//getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			
 
-			Log.e("Compte User ",compte.toString());
+			Log.e("Compte >> User ",compte.toString());
 			sv  = new StockVirtual(HomeActivity.this);
 			vendeurManager = VendeurManagerFactory.getClientManager();
 			myoffline = new Offlineimpl(HomeActivity.this);
@@ -655,6 +716,7 @@ public class HomeActivity extends Activity
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			
+		
 			
 			try {
 				

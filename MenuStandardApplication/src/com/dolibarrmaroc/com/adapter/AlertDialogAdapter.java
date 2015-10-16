@@ -74,12 +74,13 @@ public class AlertDialogAdapter extends BaseAdapter{
 		Drawable image ;
 		try {
 			String uri = "drawable/"+ al.getImage();
+			Log.e("IMAGES ", uri+"");
 			int imageResource = context.getApplicationContext().getResources().getIdentifier(uri.toLowerCase(), null, context.getApplicationContext().getPackageName());
 			
 			image = convertView.getResources().getDrawable(imageResource);
 		} catch (Exception e) {
 			// TODO: handle exception
-			String uri = "drawable/nophoto.png";
+			String uri = "drawable/nophoto.jpg";
 			int imageResource = context.getApplicationContext().getResources().getIdentifier(uri, null, context.getApplicationContext().getPackageName());
 			Log.e("IMAGES ", imageResource+"");
 			image = convertView.getResources().getDrawable(imageResource);

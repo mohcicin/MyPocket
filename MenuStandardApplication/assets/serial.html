@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Example</title>
+
+		<script type="text/javascript" src="js/jQuery-1.11.2.js"></script>
+		<link rel="stylesheet" href="css/style.css" type="text/css">
+		<script type="text/javascript">
+$(function () {
+
+var inme = AndroidFunction.serial(); //'[{"categories":["C1","C2","C3","C4"],"s1":[{"data":[40.0,10.0,10.21,21.3],"names":"cicin"}]}]';
+
+
+//{"categories":["C1","C2","C3","C4"],"s1":[{"data":[40.0,10.0,10.21,21.3],"name":"cicin"}],"subtitle":"serial chart","title":"Cicin chart","ydata":"MAD"}
+
+
+var cat = [];
+var name1;
+var data1 = [];
+var title;
+var subtitle;
+var yData;
+var xData;
+			    $.each(JSON.parse(inme), function(idx, v) {
+ 				 
+					$.each(v.categories, function(i1, v1) {
+					cat.push([v1]);
+					});
+					
+					
+					$.each(v.s1, function(i3, v3) {
+						name1 = v3.name;
+						$.each(v3.data, function(i2, v2) {
+						data1.push([v2]);
+						});
+					});
+					
+					 title = v.title;
+					 subtitle = v.subtitle;
+					 yData = v.ydata;
+					 name1 = v.xdata;
+					
+				});
+				
+				if(name1.split(" ").length == 4){
+					xData = 'Les jours du mois '+name1.split(" ")[3];
+				}else{
+					xData = 'Les jours du mois';
+				}
+
+					 
+					 
+    $('#container').highcharts({
+        title: {
+            text: title,
+            x: -20 //center
+        },
+        subtitle: {
+            text: subtitle,
+            x: -20
+        },
+        xAxis: {
+            categories: cat,
+            title: {
+                text: xData
+            }
+        },
+        yAxis: {
+            title: {
+                text: yData
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: ' DH'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: [{
+            name: name1,
+            data: data1
+        }]
+    });
+});
+		</script>
+	</head>
+	<body>
+<script src="js/highcharts.js"></script>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+	</body>
+</html>
+
+				

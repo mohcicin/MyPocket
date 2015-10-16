@@ -356,9 +356,21 @@
             android:theme="@style/Theme.D1" >
         </activity>
         <activity
-            android:name="com.dolibarrmaroc.com.tour.MotifToureeActivity"
+            android:name=".tour.MotifToureeActivity"
             android:label="@string/title_activity_motif_touree"
             android:screenOrientation="portrait"
+            android:theme="@style/Theme.D1" >
+        </activity>
+        <activity
+            android:name="com.dolibarrmaroc.statistic.HomeStatisticActivity"
+            android:label="@string/title_activity_home_statistic"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.D1" >
+        </activity>
+        <activity
+            android:name="com.dolibarrmaroc.statistic.VentesActivity"
+            android:label="@string/title_activity_ventes"
+            android:screenOrientation="landscape"
             android:theme="@style/Theme.D1" >
         </activity>
     </application>
@@ -385,7 +397,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <!--
      The following two permissions are not required to use
-     Google Maps Android API v2, but are recommended.
+     Google Maps Android API v2, but are recommended.
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

@@ -1,0 +1,52 @@
+body {
+	font-family: Tahoma,Arial,Verdana;
+	font-size: 12px;
+	color: black;
+}
+a[href^='http://www.amcharts.com']  {
+    display: none !important;
+}
+
+text[text-anchor*='end']  {
+    display: none !important;
+}
+a:link {color: #84c4e2;}
+a:visited {color:#84c4e2;}
+a:hover {color: #cd82ad;}
+a:active {color: #84c4e2;}
+.cicin {
+	width: 50%; 
+	height: 100%;
+}
+
+ /* width: 600 */
+@media (max-width: 799px) {
+    .cicin {
+	width: 80%; 
+	height: 100%;
+}
+}
+ 
+/* width: 400 */
+@media (max-width: 599px) {
+    .cicin {
+	width: 70%; 
+	height: 100%;
+}
+}
+ 
+/* width: 360 */
+@media (max-width: 399px) {
+    .cicin {
+	width: 60%; 
+	height: 100%;
+}
+}
+ 
+/* width: 320 */
+@media (max-width: 359px) {
+    .cicin {
+	width: 50%; 
+	height: 100%;
+}
+}

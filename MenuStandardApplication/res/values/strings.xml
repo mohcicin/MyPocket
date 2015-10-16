@@ -552,6 +552,7 @@
     <string name="task9">Motif</string>
     <string name="task10">Commentaire</string>
     <string name="task11">Valider votre motif</string>
+
     <string-array name="task12">
         <item name="7">Autres</item>
         <item name="1">Erreur de manipulation (pas une visite)</item>
@@ -561,11 +562,42 @@
         <item name="5">Taux de perime eleve</item>
         <item name="6">Client a problemes</item>
     </string-array>
-	<string name="task13">Veuillez choisir une tournée</string>
-	<string name="task14">Vous ne pouvez pas déclarer un motif de tournée. Acun tournée disponible pour le moment</string>
-	<string name="task15">Le choix du client est obligatoire</string>
-	<string name="task16">Le choix du tournée et du client est obligatoire</string>
-	<string name="task17">Votre motif est enregistré</string>
-	<string name="task18">Votre motif n\'est pas enregistré. refaire à nouveau</string>
-	
+
+    <string name="task13">Veuillez choisir une tournée</string>
+    <string name="task14">Vous ne pouvez pas déclarer un motif de tournée. Acun tournée disponible pour le moment</string>
+    <string name="task15">Le choix du client est obligatoire</string>
+    <string name="task16">Le choix du tournée et du client est obligatoire</string>
+    <string name="task17">Votre motif est enregistré</string>
+    <string name="task18">Votre motif n\'est pas enregistré. refaire à nouveau</string>
+    
+    
+    <!-- Menu statistic -->
+    <string name="title_activity_home_statistic">HomeStatisticActivity</string>
+    <string name="title_activity_ventes">Accueil des statistiques</string>
+    <string name="stati1">Chiffre d\'affaire des Commandes (DH/Jr)</string>
+    <string name="stati2">Chiffre d\'affaire des Factures (DH/Jr)</string>
+    <string name="stati3">Declaration des motifs</string>
+    <string name="stati4">Dispersion des declarations des motifs de visite</string>
+    <string name="stati5">Liste des motifs</string>
+    <string name="stati6">montant en (DH)</string>
+    <string name="stati7">Nbr </string>
+    <string name="stati8">CA des Commandes</string>
+    <string name="stati9">CA des Factures</string>
+    
+    <string-array name="months">
+        <item name="00">Mois</item>
+        <item name="01">Jan</item>
+        <item name="02">Fev</item>
+        <item name="03">Mar</item>
+        <item name="04">Avr</item>
+        <item name="05">Mai</item>
+        <item name="06">Juin</item>
+        <item name="07">Juil</item>
+        <item name="08">Août</item>
+        <item name="09">Sep</item>
+        <item name="10">Oct</item>
+        <item name="11">Nov</item>
+        <item name="12">Dec</item>
+    </string-array>
+
 </resources>

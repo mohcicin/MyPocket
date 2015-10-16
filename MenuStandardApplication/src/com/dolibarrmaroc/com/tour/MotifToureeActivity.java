@@ -2,6 +2,7 @@ package com.dolibarrmaroc.com.tour;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import com.dolibarrmaroc.com.R;
@@ -13,6 +14,7 @@ import com.dolibarrmaroc.com.commercial.VendeurActivity;
 import com.dolibarrmaroc.com.dao.TourneeDao;
 import com.dolibarrmaroc.com.dao.TourneeDaoMysql;
 import com.dolibarrmaroc.com.dashboard.HomeActivity;
+import com.dolibarrmaroc.com.database.StockVirtual;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.Motifs;
@@ -54,6 +56,7 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 	private ioffline myoffline;
 	private Compte compte;
 	private TourneeDao managertourne;
+	private StockVirtual sv;
 	
 	private Spinner cltour;
 	private Spinner clclt;
@@ -74,6 +77,7 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 	private ProgressDialog dialog;
 	private WakeLock wakelock;
 	
+	private HashMap<String, Double> bo_mtf;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -195,6 +199,15 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 				getResources().getString(R.string.msg_wait), true);
 		
 			new offlineTask().execute();
+	
+		bo_mtf = new HashMap<>();
+		bo_mtf.put("Autres", 1D);
+        bo_mtf.put("Erreur de manipulation (pas une visite)", 2D);
+        bo_mtf.put("Magasin ferme", 3D);
+        bo_mtf.put("Absence patron", 4D);
+        bo_mtf.put("Stock suffisant", 5D);
+        bo_mtf.put("Taux de perime eleve", 6D);
+        bo_mtf.put("Client a problemes", 7D);
 	}
 	
 	
@@ -249,6 +262,7 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 		protected String doInBackground(Void... params) {
 
 			myoffline = new Offlineimpl(MotifToureeActivity.this);
+			sv = new StockVirtual(MotifToureeActivity.this); 
 
 			ix = myoffline.shynchronizeMotifs(new Motifs(new Tournee(tr.getRowid(), tr.getLabel(), tr.getColor(), tr.getDebut(), tr.getFin(), tr.getSecteur(), tr.getIdsecteur(), tr.getGrp(), tr.getIdgrp(), tr.getRecur()), clt, new Date(), motf, commentaire.getText().toString()), compte);
 			
@@ -268,6 +282,7 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 					
 					if(ix > 0){
 						showMsg(getResources().getString(R.string.task17),1);
+						sv.addOperation("MTF", bo_mtf.get(motf));
 					}else{
 						showMsg(getResources().getString(R.string.task18),0);
 					}
@@ -318,6 +333,7 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 					
 					Log.e(">> res ",ix+ "");
 					if(ix.equals("ok")){
+						sv.addOperation("MTF", bo_mtf.get(motf));
 						showMsg(getResources().getString(R.string.task17),1);
 					}else{
 						showMsg(getResources().getString(R.string.task18),0);
@@ -426,4 +442,5 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 		sp.refreshDrawableState();
 		sp.setAdapter(spadapter);
 	}
+	 
 }

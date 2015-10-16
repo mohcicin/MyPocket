@@ -3805,6 +3805,7 @@ public class Offlineimpl implements ioffline {
 		CleanUpdateCmd();
 
 
+		System.out.println(">> error data "+data.toString());
 		for (int i = 0; i < data.getPros().size(); i++) {
 			//shynchronizeProspection_out(data.getPros().get(i), cp);
 			PutDeniededData(data.getPros().get(i), 1);

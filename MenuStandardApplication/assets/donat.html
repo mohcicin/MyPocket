@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Example</title>
+
+		<script type="text/javascript" src="js/jQuery-1.11.2.js"></script>
+		<link rel="stylesheet" href="css/style.css" type="text/css">
+		<script type="text/javascript">
+$(function () {
+
+	var dataW = [];
+           
+          
+          
+          var in_put = JSON.parse(AndroidFunction.donat());
+          /*
+          dataW.push(['Bananas', in_put[0]]);
+           dataW.push(['Kiwi', in_put[1]]);
+           dataW.push(['Clementines', in_put[2]]);
+           dataW.push(['Reddish (bag)', in_put[3]]);
+           dataW.push(['Oranges', in_put[4]]);
+           */
+           
+            dataW.push(['Autres',in_put.data2[0]]);
+	        dataW.push(['Erreur de manipulation',in_put.data2[1]]);
+	        dataW.push(['Magasin ferme',in_put.data2[2]]);
+	        dataW.push(['Absence patron',in_put.data2[3]]);
+	        dataW.push(['Stock suffisant',in_put.data2[4]]);
+	        dataW.push(['Taux de perime eleve',in_put.data2[5]]);
+	        dataW.push(['Client a problemes',in_put.data2[6]]);
+     
+          
+ 
+     $('#container').highcharts({
+        chart: {
+            type: 'pie',
+            options3d: {
+                enabled: true,
+                alpha: 45
+            }
+        },
+        title: {
+            text: in_put.name
+        },
+        subtitle: {
+            text: in_put.subname
+        },
+        plotOptions: {
+            pie: {
+                innerSize: 100,
+                depth: 45
+            }
+        },
+        series: [{
+            name: in_put.label,
+            data: dataW
+        }]
+    });
+     
+});
+		</script>
+	</head>
+	<body>
+<script src="js/highcharts.js"></script>
+
+<div class="cicin">
+<div id="container"></div>
+</div>
+	</body>
+</html>
+
+				

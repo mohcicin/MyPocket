@@ -53,7 +53,8 @@ public class DataErreur implements Serializable{
 	@Override
 	public String toString() {
 		return "DataErreur [pros=" + pros + ", invo=" + invo + ", lsreg="
-				+ lsreg + "]";
+				+ lsreg + ", msgps=" + msgps + ", cmd=" + cmd + ", cmdview="
+				+ cmdview + ", upcmdview=" + upcmdview + "]";
 	}
 	public List<MyGpsInvoice> getMsgps() {
 		return msgps;
