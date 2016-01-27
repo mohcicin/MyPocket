@@ -908,7 +908,7 @@ public class StockVirtual extends SQLiteOpenHelper {
 
 		return n;
 	}   
-	
+	 
 	public List<Produit> getAllProduitsVentes(int in) {
 		List<Produit> contactList = new ArrayList<Produit>();
 		// Select All Query
