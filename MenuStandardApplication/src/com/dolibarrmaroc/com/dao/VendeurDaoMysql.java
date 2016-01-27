@@ -16,7 +16,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.graphics.Bitmap;
@@ -28,6 +27,7 @@ import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.Dictionnaire;
 import com.dolibarrmaroc.com.models.Facture;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
 import com.dolibarrmaroc.com.models.Societe;
@@ -111,7 +111,7 @@ public class VendeurDaoMysql implements VendeurDao {
 
 		listPromoByProduits = new HashMap<>();
 
-		Log.d("Json retourne >> ", jsonString);
+		Log.e("Json retourne >> ", jsonString);
 		try{
 
 			JSONArray jArray = new JSONArray(jsonString);
@@ -180,8 +180,9 @@ public class VendeurDaoMysql implements VendeurDao {
 				}
 
 			}
-		}catch(JSONException e){
-			Log.e("log_tag", "Error parsing data " + e.toString());
+		}catch(Exception e){
+			Log.e("VendeurDaoMysql log_tag", "Error parsing data selectAllProduct " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "selectAllProduct", nameValuePairs.toString(), e.toString());
 		}
 
 		dicot.setDico(mapsss);
@@ -223,7 +224,7 @@ public class VendeurDaoMysql implements VendeurDao {
 		
 		lssociete = new ArrayList<>();
 
-		Log.d("Json retourne >> ", jsonString);
+		Log.e("Json retourne >> ", jsonString);
 		try{
 
 			JSONArray jArray = new JSONArray(jsonString);
@@ -312,8 +313,9 @@ public class VendeurDaoMysql implements VendeurDao {
 						lssociete.add(s);
 
 			}
-		}catch(JSONException e){
-			Log.e("log_tag", "Error parsing data " + e.toString());
+		}catch(Exception e){
+			Log.e("VendeurDaoMysql log_tag", "Error parsing data selectAllClient " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "selectAllClient", nameValuePairs.toString(), e.toString());
 		}
 		return list;
 	}
@@ -349,8 +351,9 @@ public class VendeurDaoMysql implements VendeurDao {
 					}
 
 			}
-		}catch(JSONException e){
-			Log.e("log_tag", "Error parsing data " + e.toString());
+		}catch(Exception e){
+			Log.e("VendeurDaoMysql log_tag", "Error parsing data getDictionnaire " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "getDictionnaire", nameValuePairs.toString(), e.toString());
 		}
 
 		dicot.setDico(mapsss);
@@ -428,8 +431,9 @@ public class VendeurDaoMysql implements VendeurDao {
 			Log.e("secto  "," "+res.size());
 		} catch (Exception e) {
 			// TODO: handle exception
-			Log.e("error parse secteur ",e.getMessage()+"  ");
+			Log.e("VendeurDaoMysql error parse secteur getAllCategorieCustomer ",e.getMessage()+"  ");
 			res = new ArrayList<>();
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "getAllCategorieCustomer", nameValuePairs.toString(), e.toString());
 		}
 
 
@@ -451,7 +455,7 @@ public class VendeurDaoMysql implements VendeurDao {
 
 		List<Client> list = new ArrayList<Client>();
 
-		Log.d("Json retourne >> ", jsonString);
+		Log.e("Json retourne >> ", jsonString);
 		lssociete = new ArrayList<>();
 		try{
 
@@ -541,8 +545,9 @@ public class VendeurDaoMysql implements VendeurDao {
 						lssociete.add(s);
 
 			}
-		}catch(JSONException e){
-			Log.e("log_tag", "Error parsing data " + e.toString());
+		}catch(Exception e){
+			Log.e("VendeurDaoMysql log_tag", "Error parsing data selectAllLastClient " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "selectAllLastClient", nameValuePairs.toString(), e.toString());
 		}
 		return list;
 	}
@@ -694,10 +699,11 @@ public class VendeurDaoMysql implements VendeurDao {
 				
 			}
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			tour = new ArrayList<>();
-			Log.e("load tour error ",e.getMessage()+ "  <<");
+			Log.e("VendeurDaoMysql load tour error consulterMesTournee ",e.getMessage()+ "  <<");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "consulterMesTournee", nameValuePairs.toString(), e.toString());
 		}
 
 		return tour;

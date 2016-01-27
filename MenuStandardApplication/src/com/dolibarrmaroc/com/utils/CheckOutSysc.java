@@ -59,7 +59,7 @@ public class CheckOutSysc implements Serializable{
 			// TODO: handle exception
 		}
 		
-		if(URL.is_tour){
+		if(c.getIstour() == 1){//URL.is_tour){
 			return  LoadClients(vendeurManager.consulterMesTournee(c,dt),myoffline);
 		}else{
 			return vendeurManager.selectAllClient(c);

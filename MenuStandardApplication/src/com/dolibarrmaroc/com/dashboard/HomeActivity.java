@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -23,6 +24,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.PowerManager;
@@ -32,6 +34,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -65,6 +68,7 @@ import com.dolibarrmaroc.com.models.CategorieCustomer;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.Dictionnaire;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.models.Tournee;
@@ -156,7 +160,14 @@ public class HomeActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
+		
+		 requestWindowFeature(Window.FEATURE_NO_TITLE);
+		    this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+		 
 		setContentView(R.layout.activity_home);
+		
 
 		mydb = new DBHandler(this);
 
@@ -389,19 +400,24 @@ public class HomeActivity extends Activity
 				Intent intentfc1 = new Intent(getApplicationContext(), StatistiqueActivity.class); //CatalogeActivity.class  //CmdViewActivity
 				intentfc1.putExtra("user", compte);
 				com.dolibarrmaroc.com.models.AlertDialog createfc1 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc1, getString(R.string.title_activity_statistique), "invoice_see");
-
 				alertfc2.add(createfc1);
 				
+				Intent intentfc3 = new Intent(getApplicationContext(), VentesActivity.class);
+				intentfc3.putExtra("user", compte);
+				intentfc3.putExtra("val", "1");
+				com.dolibarrmaroc.com.models.AlertDialog updatefc3 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc3, getString(R.string.stati9), "chartf");
+				alertfc2.add(updatefc3);
+				
 				if(("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) && compte.getPermissionbl() != 0) || (compte.getPermissionbl() != 0 && "vendeur".equals(compte.getProfile().toLowerCase()))){
+					
+					
+					
+					
 					Intent intentfc2 = new Intent(getApplicationContext(), VentesActivity.class);
 					intentfc2.putExtra("user", compte);
 					intentfc2.putExtra("val", "2");
 					com.dolibarrmaroc.com.models.AlertDialog updatefc2 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc2, getString(R.string.stati8), "chartf");
 					
-					Intent intentfc3 = new Intent(getApplicationContext(), VentesActivity.class);
-					intentfc3.putExtra("user", compte);
-					intentfc3.putExtra("val", "1");
-					com.dolibarrmaroc.com.models.AlertDialog updatefc3 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc3, getString(R.string.stati9), "chartf");
 					
 					
 					Intent intentfc4 = new Intent(getApplicationContext(), VentesActivity.class);
@@ -409,7 +425,7 @@ public class HomeActivity extends Activity
 					intentfc4.putExtra("val", "3");
 					com.dolibarrmaroc.com.models.AlertDialog updatefc4 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc4, getString(R.string.stati3), "charts");
 					
-					alertfc2.add(updatefc3);
+					
 					alertfc2.add(updatefc2);
 					alertfc2.add(updatefc4);
 				}

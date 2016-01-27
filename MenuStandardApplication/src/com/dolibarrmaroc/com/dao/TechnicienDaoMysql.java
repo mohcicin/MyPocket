@@ -12,7 +12,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Base64;
@@ -26,6 +25,7 @@ import com.dolibarrmaroc.com.models.FactureGps;
 import com.dolibarrmaroc.com.models.FileData;
 import com.dolibarrmaroc.com.models.ImageTechnicien;
 import com.dolibarrmaroc.com.models.LabelService;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Services;
 import com.dolibarrmaroc.com.utils.JSONParser;
 import com.dolibarrmaroc.com.utils.URL;
@@ -84,8 +84,9 @@ public class TechnicienDaoMysql implements TechnicienDao{
 				list.add(s);
 
 			}
-		}catch(JSONException e){
-			Log.e("log_tag", "Error parsing data " + e.toString());
+		}catch(Exception e){
+			Log.e("log_tag TechnicienDaoMysql allServices", "Error parsing data " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "allServices", nameValuePairs.toString(), e.toString());
 		}
 		return list;
 	}
@@ -119,7 +120,9 @@ public class TechnicienDaoMysql implements TechnicienDao{
 			String stfomat = jsonString.substring(jsonString.indexOf("{"),jsonString.lastIndexOf("}")+1);
 			JSONObject json = new JSONObject(stfomat);
 			return json.getString("lien");
-		} catch (JSONException e) {
+		} catch (Exception e) {
+			Log.e("TechnicienDaoMysql insertBordereau ",e.getMessage()+"");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "insertBordereau", nameValuePairs.toString(), e.toString());
 			e.printStackTrace();
 			return null;
 		}
@@ -155,6 +158,8 @@ public class TechnicienDaoMysql implements TechnicienDao{
 			stfomat = jsonString.substring(jsonString.indexOf("{"),jsonString.lastIndexOf("}")+1);
 		} catch (Exception e) {
 			e.printStackTrace();
+			Log.e("TechnicienDaoMysql insertBordereauoff ",e.getMessage()+"");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "insertBordereauoff", nameValuePairs.toString(), e.toString());
 			return "no";
 		}
 
@@ -194,8 +199,9 @@ public class TechnicienDaoMysql implements TechnicienDao{
 				list.add(fact);
 
 			}
-		}catch(JSONException e){
-			Log.e("log_tag", "Error parsing data " + e.toString());
+		}catch(Exception e){
+			Log.e(" TechnicienDaoMysql selectAllBordereau", "Error parsing data " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "selectAllBordereau", nameValuePairs.toString(), e.toString());
 		}
 
 		return list;
@@ -212,7 +218,11 @@ public class TechnicienDaoMysql implements TechnicienDao{
 			nameValuePairs.add(new BasicNameValuePair("cmd",imgs.get(i).getName()));
 			nameValuePairs.add(new BasicNameValuePair("path",lien));
 			nameValuePairs.add(new BasicNameValuePair("image",imgs.get(i).getImageCode()));
+			try{
 			jsonParser.newmakeHttpRequest(li, "POST", nameValuePairs);
+			}catch(Exception e){
+				MyDebug.WriteLog(this.getClass().getSimpleName(), "inesrtImage", nameValuePairs.toString(), e.toString());
+			}
 		}
 
 	}
@@ -224,6 +234,7 @@ public class TechnicienDaoMysql implements TechnicienDao{
 
 		nameValuePairs.add(new BasicNameValuePair("username",c.getLogin()));
 		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
+		
 
 		String jsonString =  jsonParser.makeHttpRequest(
 				urlclt, "POST", nameValuePairs);
@@ -231,7 +242,7 @@ public class TechnicienDaoMysql implements TechnicienDao{
 
 		List<Client> list = new ArrayList<Client>();
 
-		Log.d("Json retourne >> ", jsonString);
+		Log.e("Json retourne >> ", jsonString);
 		try{
 
 			JSONArray jArray = new JSONArray(jsonString);
@@ -255,8 +266,9 @@ public class TechnicienDaoMysql implements TechnicienDao{
 				list.add(clt);
 
 			}
-		}catch(JSONException e){
-			Log.e("log_tag", "Error parsing data " + e.toString());
+		}catch(Exception e){
+			Log.e("TechnicienDaoMysql selectAllClient", "Error parsing data " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "selectAllClient", nameValuePairs.toString(), e.toString());
 		}
 		return list;
 	}

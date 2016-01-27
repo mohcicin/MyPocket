@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.PixelFormat;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -38,13 +39,18 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dolibarrmaroc.com.business.AuthentificationManager;
@@ -52,8 +58,10 @@ import com.dolibarrmaroc.com.dashboard.HomeActivity;
 import com.dolibarrmaroc.com.database.DBHandler;
 import com.dolibarrmaroc.com.gps.ShowLocationActivity;
 import com.dolibarrmaroc.com.gps.TrackingActivity;
+import com.dolibarrmaroc.com.logger.LogerrorsActivity;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.ConfigGps;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Services;
 import com.dolibarrmaroc.com.offline.Offlineimpl;
 import com.dolibarrmaroc.com.utils.CheckOutNet;
@@ -78,6 +86,7 @@ public class ConnexionActivity extends Activity implements OnClickListener {
 	private EditText password;
 	private Button connexion;
 	private Button test;
+	private TextView email;
 
 	private Offlineimpl myoffline;
 
@@ -123,6 +132,33 @@ public class ConnexionActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		/*
+		 WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+		            WindowManager.LayoutParams.MATCH_PARENT,
+		            WindowManager.LayoutParams.MATCH_PARENT,
+		            WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+		            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|
+		            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+		                    | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+		                    | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+		            PixelFormat.TRANSLUCENT);
+		 
+		 params.gravity = Gravity.TOP | Gravity.RIGHT;
+		    WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+		    LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+		    View myView = inflater.inflate(R.layout.activity_connexion, null);
+		    myView.setOnTouchListener(new OnTouchListener() {
+		       @Override
+		       public boolean onTouch(View v, MotionEvent event) {
+		           Log.d("ttc", "touch me");
+		           return true;
+		       }
+
+		     });
+
+		    // Add layout to window manager
+		    wm.addView(myView, params);
+		    */
 		setContentView(R.layout.activity_connexion);
 		db = new TinyDB(this);
 		db.clear();
@@ -245,6 +281,35 @@ public class ConnexionActivity extends Activity implements OnClickListener {
 			myoffline.FreeMemory();
 
 			getGpsApplication();
+			
+			email = (TextView)findViewById(R.id.txtmail);
+			email.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub service.errors.geocom@gmail.com
+					
+				    
+				    Intent intent1 = new Intent(ConnexionActivity.this, LogerrorsActivity.class);
+					startActivity(intent1);
+				}
+			});
+			
+			File file = new File(Environment.getExternalStorageDirectory()+com.dolibarrmaroc.com.utils.URL.path+"/"+com.dolibarrmaroc.com.utils.URL.path_log);
+		    ArrayList<Uri> pngUri = new ArrayList<>();
+			if(file.exists()){
+				 
+				if(file.listFiles().length == 0){
+					LinearLayout linar = (LinearLayout) findViewById(R.id.lmail);
+					linar.setVisibility(View.GONE);
+				}
+			}else{
+				LinearLayout linar = (LinearLayout) findViewById(R.id.lmail);
+				linar.setVisibility(View.GONE);
+			}
+			
+			
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -252,6 +317,9 @@ public class ConnexionActivity extends Activity implements OnClickListener {
 
 
 	}
+
+	
+	 
 
 
 

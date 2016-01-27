@@ -6,12 +6,12 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
 
 import com.dolibarrmaroc.com.models.Compte;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Payement;
 import com.dolibarrmaroc.com.models.Reglement;
 import com.dolibarrmaroc.com.utils.JSONParser;
@@ -58,8 +58,9 @@ public class PayementDaoMysql implements PayementDao{
 				//{"rowid":"2095","facnumber":"2015-02436","amount":1000,"total_ttc":"2700.00000000","soc":"67"}]
 				list.add(pay);
 			}
-		}catch(JSONException e){
-			Log.e("log_tag", "Error parsing data " + e.toString());
+		}catch(Exception e){
+			Log.e("PayementDaoMysql log_tag", "Error parsing data getFactures " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "getFactures", nameValuePairs.toString(), e.toString());
 		}
 
 		Log.e("List DAta",list.toString()+"");
@@ -103,7 +104,8 @@ public class PayementDaoMysql implements PayementDao{
 		} catch (Exception e) {
 			// TODO: handle exception
 			res ="no";
-			Log.e("error parseing "+obj,e.getMessage() +" << ");
+			Log.e(" PayementDaoMysql error parseing insertPayement "+obj,e.getMessage() +" << ");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "insertPayement", nameValuePairs.toString(), e.toString());
 		}
 		Log.e("Reponse Paiement 2 ",res);
 		return res;
@@ -141,8 +143,9 @@ public class PayementDaoMysql implements PayementDao{
 				//{"rowid":"2095","facnumber":"2015-02436","amount":1000,"total_ttc":"2700.00000000","soc":"67"}]
 				list.add(pay);
 			}
-		}catch(JSONException e){
-			Log.e("log_tag", "Error parsing data " + e.toString());
+		}catch(Exception e){
+			Log.e("PayementDaoMysql log_tag", "Error parsing data getLastFactures " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "getLastFactures", nameValuePairs.toString(), e.toString());
 		}
 
 		Log.e("List DAta",list.toString()+"");

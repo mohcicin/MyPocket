@@ -306,7 +306,7 @@ public class VentesActivity extends Activity {
 			//html = getResources().getString(R.string.stati1);
 			 setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			 choose.setVisibility(View.GONE);
-			myBrowser.loadUrl("file:///android_asset/donat.html");
+			 myBrowser.loadUrl("file:///android_asset/donat.html");
 		}
 	}
 }

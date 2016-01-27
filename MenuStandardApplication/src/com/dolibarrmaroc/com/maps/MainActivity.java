@@ -76,6 +76,7 @@ import com.dolibarrmaroc.com.dashboard.HomeActivity;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.FactureGps;
+import com.dolibarrmaroc.com.utils.CheckOutNet;
 import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
 import com.dolibarrmaroc.com.utils.FactureManagerFactory;
 import com.dolibarrmaroc.com.utils.ForcerActivationGps;
@@ -108,8 +109,9 @@ OnMyLocationButtonClickListener,DCACallBack{
 	//INTERFACTE UI
 	private Button factbtn;
 	private Button clientbtn;
-	private Spinner clientspinner,facturespinner;
+	private Spinner facturespinner;//clientspinner
 	private AutoCompleteTextView factcomplete;
+	private AutoCompleteTextView clientspinner;
 
 	//Spinner Remplissage
 	private List<String> listclt;
@@ -164,8 +166,11 @@ OnMyLocationButtonClickListener,DCACallBack{
 		facture = new FactureGps();
 		cmd = new FactureGps();
 		client = new Client();
+		clientLocation = new Client();
 
 		mesPositions = new ArrayList<>();
+		
+		//forcer = new ForcerActivationGps(getApplicationContext());
 	}
 
 	@Override
@@ -200,6 +205,8 @@ OnMyLocationButtonClickListener,DCACallBack{
 				StrictMode.setThreadPolicy(policy);
 			}
 
+			forcer = new ForcerActivationGps(getApplicationContext());
+			
 			if(isNetworkConnected(this)){
 				//map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 
@@ -243,6 +250,8 @@ OnMyLocationButtonClickListener,DCACallBack{
 				 */
 
 				myHomDialog();
+				
+				
 
 			}else{
 				erreurNetwork();
@@ -277,6 +286,8 @@ OnMyLocationButtonClickListener,DCACallBack{
 	}
 
 	private void createGpsDisabledAlert() {
+		Log.e("gps forcer ",forcer + "");
+		
 		forcer.turnGPSOn();
 		AlertDialog.Builder localBuilder = new AlertDialog.Builder(this);
 		localBuilder
@@ -707,264 +718,298 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		/************************MENU Client *****************************************/
-		case R.id.pointerClt:
-			clientspinner = (Spinner) dialogbtnclt.findViewById(R.id.produitpointer);
-
-			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_spinner_item, listclt);
-			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			clientspinner.setAdapter(dataAdapter);
-
-			Log.i("Clients ", clients.toString());
-			Log.d("List pour spinner ", listclt.toString());
-
-			Button annul = (Button) dialogbtnclt.findViewById(R.id.annulershowme); 
-			annul.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					dialogbtnclt.dismiss();
+		Log.e("item", "msg");
+			switch (item.getItemId()) {
+			/************************MENU Client *****************************************/
+			case R.id.pointerClt:
+				
+				 
+				clientspinner = (AutoCompleteTextView) dialogbtnclt.findViewById(R.id.produitpointer);
+				
+				if(!clientspinner.hasFocus()){
+					hideSoftKeyboard();
 				}
-			});
 
-			clientspinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-				@Override
-				public void onItemSelected(AdapterView<?> parent, View arg1,int pos, long arg3) {
-					String selected = parent.getItemAtPosition(pos).toString();
+				ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+						android.R.layout.simple_spinner_item, listclt);
+				dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+				clientspinner.setAdapter(dataAdapter);
+				clientspinner.setThreshold(1);
+				clientspinner.setTextColor(Color.RED); 
 
-					for (int i = 0; i < clients.size(); i++) {
-						if(selected.equals(clients.get(i).getName())){
-							clientLocation = clients.get(i);
-							Log.e("Client selected",clientLocation.toString());
-							break;
+				///Log.i("Clients ", clients.toString());
+				//Log.d("List pour spinner ", listclt.toString());
+
+				Button annul = (Button) dialogbtnclt.findViewById(R.id.annulershowme); 
+				annul.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						dialogbtnclt.dismiss();
+					}
+				});
+
+				clientspinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+					@Override
+					public void onItemSelected(AdapterView<?> parent, View view,int pos, long arg3) {
+						//String selected = parent.getItemAtPosition(pos).toString();
+
+						 
+						clientspinner.showDropDown();
+						String selected = (String) parent.getItemAtPosition(pos);
+						final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
+
+						factcomplete.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
+						//Toast.makeText(MainActivity.this, selected, Toast.LENGTH_LONG).show();
+
+						for (int i = 0; i < factures.size(); i++) {
+							if(selected.equals(factures.get(i).getNumero())){
+								clientLocation = clients.get(i);
+								break;
+							}
 						}
 					}
-					/*
-					for (Client clt : clients) {
-						if(selected.equals(clt.getName())){
-							clientLocation = clt;
-							Log.e("Client selected",clt.toString());
-							break;
+
+					@Override
+					public void onNothingSelected(AdapterView<?> arg0) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+
+				Button showm = (Button) dialogbtnclt.findViewById(R.id.clientshowme);
+				showm.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+
+						Log.e("Client Location",clientLocation.toString()+"");
+						if(clientLocation != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(clientLocation.getLatitude() != 0){
+								myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
+							}else{
+								myClient = myPosition;
+							}
+
+
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myClient)
+							.zoom(zoom)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
+
+
+							MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_GREEN));
+							/*
+							 *	map.addMarker(markMe);
+							 */
+
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							dialogbtnclt.dismiss();
+						}else{
+							Log.e("client","null");
+							alertmaps();
 						}
+						
 					}
-					 */
-				}
+				});
 
-				@Override
-				public void onNothingSelected(AdapterView<?> arg0) {
-					// TODO Auto-generated method stub
+				Button itinere = (Button) dialogbtnclt.findViewById(R.id.itenermoiclient);
+				itinere.setOnClickListener(new OnClickListener() {
 
-				}
-			});
+					@Override
+					public void onClick(View arg0) {
+						//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+						Log.e("Client itener",clientLocation.toString());
+						if(clientLocation != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(clientLocation.getLatitude() != 0){
+								myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
+							}else{
+								myClient = myPosition;
+							}
 
-			Button showm = (Button) dialogbtnclt.findViewById(R.id.clientshowme);
-			showm.setOnClickListener(new OnClickListener() {
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myClient)
+							.zoom(zoom)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
 
-				@Override
-				public void onClick(View v) {
 
-					Log.e("Client Location",clientLocation.toString());
-					if(clientLocation.getLatitude() != 0){
-						myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
-					}else{
-						myClient = myPosition;
+							MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_YELLOW));
+							/*
+							 *	map.addMarker(markMe);
+							 */
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							getDirections(myPosition,myClient);
+							dialogbtnclt.dismiss();
+						}else{
+							Log.e("clint ","null");
+							alertmaps();
+						}
+						
+
+
 					}
+				});
 
+				dialogbtnclt.show();
+				break;
 
-					CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(myClient)
-					.zoom(zoom)// Sets the zoom
-					.build();    // Creates a CameraPosition from the builder
-					map.animateCamera(CameraUpdateFactory.newCameraPosition(
-							cameraPosition));
+				/************************MENU FACTURE *****************************************/
+			case R.id.pointerFact:
+				//facturespinner= (Spinner) dialogbtnfact.findViewById(R.id.facturepointer);
+				factcomplete = (AutoCompleteTextView) dialogbtnfact.findViewById(R.id.autocomplate);
 
-
-					MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
-							.icon(BitmapDescriptorFactory.defaultMarker(
-									BitmapDescriptorFactory.HUE_GREEN));
-					/*
-					 *	map.addMarker(markMe);
-					 */
-
-
-					mesPositions.add(markMe);
-					clearMap(map);
-
-					dialogbtnclt.dismiss();
+				if(!factcomplete.hasFocus()){
+					hideSoftKeyboard();
 				}
-			});
 
-			Button itinere = (Button) dialogbtnclt.findViewById(R.id.itenermoiclient);
-			itinere.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View arg0) {
-					//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+				ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<String>(this,
 
-					if(clientLocation.getLatitude() != 0){
-						myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
-					}else{
-						myClient = myPosition;
+						android.R.layout.simple_spinner_item, listfact);
+				dataAdapter1.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+
+				//facturespinner.setAdapter(dataAdapter);
+				factcomplete.setAdapter(dataAdapter1);
+				factcomplete.setThreshold(1);
+				factcomplete.setTextColor(Color.RED); 
+				factcomplete.setOnItemClickListener(new OnItemClickListener() {
+
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						factcomplete.showDropDown();
+						String selected = (String) parent.getItemAtPosition(position);
+						final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
+
+						factcomplete.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
+						//Toast.makeText(MainActivity.this, selected, Toast.LENGTH_LONG).show();
+
+						for (int i = 0; i < factures.size(); i++) {
+							if(selected.equals(factures.get(i).getNumero())){
+								facture = factures.get(i);
+								break;
+							}
+						}
+						//factcomplete.setInputType(InputType.TYPE_NULL);
 					}
+				});
 
-					CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(myClient)
-					.zoom(zoom)// Sets the zoom
-					.build();    // Creates a CameraPosition from the builder
-					map.animateCamera(CameraUpdateFactory.newCameraPosition(
-							cameraPosition));
+				Button showme = (Button) dialogbtnfact.findViewById(R.id.factshowme);
+				showme.setOnClickListener(new OnClickListener() {
 
+					@Override
+					public void onClick(View v) {
 
-					MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
-							.icon(BitmapDescriptorFactory.defaultMarker(
-									BitmapDescriptorFactory.HUE_YELLOW));
-					/*
-					 *	map.addMarker(markMe);
-					 */
-
-					mesPositions.add(markMe);
-					clearMap(map);
-
-					getDirections(myPosition,myClient);
-					dialogbtnclt.dismiss();
+						if(facture != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(Double.parseDouble(facture.getLat()) > 0){
+								myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+							}else{
+								myfact = myPosition;
+							}
 
 
-				}
-			});
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myfact)
+							.zoom(zoom)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
 
-			dialogbtnclt.show();
-			break;
 
-			/************************MENU FACTURE *****************************************/
-		case R.id.pointerFact:
-			//facturespinner= (Spinner) dialogbtnfact.findViewById(R.id.facturepointer);
-			factcomplete = (AutoCompleteTextView) dialogbtnfact.findViewById(R.id.autocomplate);
+							MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.facture_num)+facture.getNumero())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_YELLOW));
+							/*
+							 *	map.addMarker(markMe);
+							 */
 
-			if(!factcomplete.hasFocus()){
-				hideSoftKeyboard();
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							dialogbtnfact.dismiss();
+						}else{
+							Log.e("facture ","null");
+							alertmaps();
+						}
+
+						
+					}
+				});
+
+				Button itinerer = (Button) dialogbtnfact.findViewById(R.id.itenermoifact);
+				itinerer.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View arg0) {
+						//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+
+						if(facture != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(Double.parseDouble(facture.getLat()) > 0){
+								myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+							}else{
+								myfact = myPosition;
+							}
+
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myfact)
+							.zoom(10)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
+
+
+							MarkerOptions markMe = new MarkerOptions().position(myfact).title("Facture Numero :"+facture.getNumero())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_YELLOW));
+							/*
+							 *	map.addMarker(markMe);
+							 */
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							getDirections(myPosition,myfact);
+							dialogbtnfact.dismiss();
+						}else{
+							Log.e("facture ","null");
+							alertmaps();
+						}
+						
+
+
+					}
+				});
+
+				Button annul1 = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
+				annul1.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						dialogbtnfact.dismiss();
+					}
+				});
+				dialogbtnfact.show();
+				break;
 			}
-
-
-			ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<String>(this,
-
-					android.R.layout.simple_spinner_item, listfact);
-			dataAdapter1.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
-
-			//facturespinner.setAdapter(dataAdapter);
-			factcomplete.setAdapter(dataAdapter1);
-			factcomplete.setThreshold(1);
-			factcomplete.setTextColor(Color.RED); 
-			factcomplete.setOnItemClickListener(new OnItemClickListener() {
-
-
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long id) {
-					factcomplete.showDropDown();
-					String selected = (String) parent.getItemAtPosition(position);
-					final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
-
-					factcomplete.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
-					//Toast.makeText(MainActivity.this, selected, Toast.LENGTH_LONG).show();
-
-					for (int i = 0; i < factures.size(); i++) {
-						if(selected.equals(factures.get(i).getNumero())){
-							facture = factures.get(i);
-							break;
-						}
-					}
-					//factcomplete.setInputType(InputType.TYPE_NULL);
-				}
-			});
-
-			Button showme = (Button) dialogbtnfact.findViewById(R.id.factshowme);
-			showme.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-
-					if(Double.parseDouble(facture.getLat()) > 0){
-						myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-					}else{
-						myfact = myPosition;
-					}
-
-
-					CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(myfact)
-					.zoom(zoom)// Sets the zoom
-					.build();    // Creates a CameraPosition from the builder
-					map.animateCamera(CameraUpdateFactory.newCameraPosition(
-							cameraPosition));
-
-
-					MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.facture_num)+facture.getNumero())
-							.icon(BitmapDescriptorFactory.defaultMarker(
-									BitmapDescriptorFactory.HUE_YELLOW));
-					/*
-					 *	map.addMarker(markMe);
-					 */
-
-
-					mesPositions.add(markMe);
-					clearMap(map);
-
-					dialogbtnfact.dismiss();
-				}
-			});
-
-			Button itinerer = (Button) dialogbtnfact.findViewById(R.id.itenermoifact);
-			itinerer.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-
-					if(Double.parseDouble(facture.getLat()) > 0){
-						myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-					}else{
-						myfact = myPosition;
-					}
-
-					CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(myfact)
-					.zoom(10)// Sets the zoom
-					.build();    // Creates a CameraPosition from the builder
-					map.animateCamera(CameraUpdateFactory.newCameraPosition(
-							cameraPosition));
-
-
-					MarkerOptions markMe = new MarkerOptions().position(myfact).title("Facture Numero :"+facture.getNumero())
-							.icon(BitmapDescriptorFactory.defaultMarker(
-									BitmapDescriptorFactory.HUE_YELLOW));
-					/*
-					 *	map.addMarker(markMe);
-					 */
-
-					mesPositions.add(markMe);
-					clearMap(map);
-
-					getDirections(myPosition,myfact);
-					dialogbtnfact.dismiss();
-
-
-				}
-			});
-
-			Button annul1 = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
-			annul1.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					dialogbtnfact.dismiss();
-				}
-			});
-			dialogbtnfact.show();
-			break;
-		}
+		
 		return true;
 
 	}
@@ -987,390 +1032,444 @@ OnMyLocationButtonClickListener,DCACallBack{
 	
 	private void myHomDialog(){
 		
-		Log.e("in home duialog ",type +"  ");
-		switch (type) {
-		case 1:
-			clientspinner = (Spinner) dialogbtnclt.findViewById(R.id.produitpointer);
+		Log.e("in home duialog ",type +"  >>>");
+			switch (type) {
+			case 1:
+				
+				factcomplete = (AutoCompleteTextView) dialogbtnclt.findViewById(R.id.produitpointer);
 
-			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_spinner_item, listclt);
-			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			clientspinner.setAdapter(dataAdapter);
-
-			Log.i("Clients ", clients.toString());
-			Log.d("List pour spinner ", listclt.toString());
-
-			Button annul = (Button) dialogbtnclt.findViewById(R.id.annulershowme); 
-			annul.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					dialogbtnclt.dismiss();
+				if(!factcomplete.hasFocus()){
+					hideSoftKeyboard();
 				}
-			});
 
-			clientspinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-				@Override
-				public void onItemSelected(AdapterView<?> parent, View arg1,int pos, long arg3) {
-					String selected = parent.getItemAtPosition(pos).toString();
 
-					for (int i = 0; i < clients.size(); i++) {
-						if(selected.equals(clients.get(i).getName())){
-							clientLocation = clients.get(i);
-							Log.e("Client selected",clientLocation.toString());
-							break;
+				ArrayAdapter<String> dataAdapter11 = new ArrayAdapter<String>(this,
+
+						android.R.layout.simple_spinner_item, listclt);
+				dataAdapter11.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+
+				//facturespinner.setAdapter(dataAdapter);
+				factcomplete.setAdapter(dataAdapter11);
+				factcomplete.setThreshold(1);
+				factcomplete.setTextColor(Color.RED); 
+				factcomplete.setOnItemClickListener(new OnItemClickListener() {
+
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						factcomplete.showDropDown();
+						String selected = (String) parent.getItemAtPosition(position);
+						final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
+
+						factcomplete.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
+						 
+	 
+						for (int i = 0; i < clients.size(); i++) {
+							if(selected.equals(clients.get(i).getName())){
+								clientLocation = clients.get(i);
+								Log.e("Client in home selected",clientLocation.toString());
+								break;
+							}
 						}
 					}
-					/*
-					for (Client clt : clients) {
-						if(selected.equals(clt.getName())){
-							clientLocation = clt;
-							Log.e("Client selected",clt.toString());
-							break;
+				});
+				
+
+				Button showm = (Button) dialogbtnclt.findViewById(R.id.clientshowme);
+				showm.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+
+						Log.e("Client Location",clientLocation.toString());
+						if(clientLocation != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(clientLocation.getLatitude() != 0){
+								myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
+							}else{
+								myClient = myPosition;
+							}
+
+
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myClient)
+							.zoom(zoom)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
+
+
+							MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_GREEN));
+							/*
+							 *	map.addMarker(markMe);
+							 */
+
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							dialogbtnclt.dismiss();
+						}else{
+							Log.e("clien ","null");alertmaps();
 						}
+						
 					}
-					 */
-				}
+				});
 
-				@Override
-				public void onNothingSelected(AdapterView<?> arg0) {
-					// TODO Auto-generated method stub
+				Button itinere = (Button) dialogbtnclt.findViewById(R.id.itenermoiclient);
+				itinere.setOnClickListener(new OnClickListener() {
 
-				}
-			});
+					@Override
+					public void onClick(View arg0) {
+						//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+						Log.e("Client myhom eitener",clientLocation.toString());
+						if(clientLocation != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(clientLocation.getLatitude() != 0){
+								myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
+							}else{
+								myClient = myPosition;
+							}
 
-			Button showm = (Button) dialogbtnclt.findViewById(R.id.clientshowme);
-			showm.setOnClickListener(new OnClickListener() {
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myClient)
+							.zoom(zoom)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
 
-				@Override
-				public void onClick(View v) {
 
-					Log.e("Client Location",clientLocation.toString());
-					if(clientLocation.getLatitude() != 0){
-						myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
-					}else{
-						myClient = myPosition;
+							MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_YELLOW));
+							/*
+							 *	map.addMarker(markMe);
+							 */
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							getDirections(myPosition,myClient);
+							dialogbtnclt.dismiss();
+						}else{
+							Log.e("clien ","null");alertmaps();
+						}
+						
+
+
 					}
+				});
+				
+				Button annul11 = (Button) dialogbtnclt.findViewById(R.id.annulershowme); 
+				annul11.setOnClickListener(new OnClickListener() {
 
-
-					CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(myClient)
-					.zoom(zoom)// Sets the zoom
-					.build();    // Creates a CameraPosition from the builder
-					map.animateCamera(CameraUpdateFactory.newCameraPosition(
-							cameraPosition));
-
-
-					MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
-							.icon(BitmapDescriptorFactory.defaultMarker(
-									BitmapDescriptorFactory.HUE_GREEN));
-					/*
-					 *	map.addMarker(markMe);
-					 */
-
-
-					mesPositions.add(markMe);
-					clearMap(map);
-
-					dialogbtnclt.dismiss();
-				}
-			});
-
-			Button itinere = (Button) dialogbtnclt.findViewById(R.id.itenermoiclient);
-			itinere.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-
-					if(clientLocation.getLatitude() != 0){
-						myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
-					}else{
-						myClient = myPosition;
+					@Override
+					public void onClick(View v) {
+						dialogbtnclt.dismiss();alertmaps();
 					}
+				});
 
-					CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(myClient)
-					.zoom(zoom)// Sets the zoom
-					.build();    // Creates a CameraPosition from the builder
-					map.animateCamera(CameraUpdateFactory.newCameraPosition(
-							cameraPosition));
+				dialogbtnclt.show();
+				break;
+			case 2:
+				factcomplete = (AutoCompleteTextView) dialogbtnfact.findViewById(R.id.autocomplate);
 
-
-					MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
-							.icon(BitmapDescriptorFactory.defaultMarker(
-									BitmapDescriptorFactory.HUE_YELLOW));
-					/*
-					 *	map.addMarker(markMe);
-					 */
-
-					mesPositions.add(markMe);
-					clearMap(map);
-
-					getDirections(myPosition,myClient);
-					dialogbtnclt.dismiss();
-
-
+				if(!factcomplete.hasFocus()){
+					hideSoftKeyboard();
 				}
-			});
 
-			dialogbtnclt.show();
-			break;
-		case 2:
-			factcomplete = (AutoCompleteTextView) dialogbtnfact.findViewById(R.id.autocomplate);
 
-			if(!factcomplete.hasFocus()){
-				hideSoftKeyboard();
+				ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<String>(this,
+
+						android.R.layout.simple_spinner_item, listfact);
+				dataAdapter1.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+
+				//facturespinner.setAdapter(dataAdapter);
+				factcomplete.setAdapter(dataAdapter1);
+				factcomplete.setThreshold(1);
+				factcomplete.setTextColor(Color.RED); 
+				factcomplete.setOnItemClickListener(new OnItemClickListener() {
+
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						factcomplete.showDropDown();
+						String selected = (String) parent.getItemAtPosition(position);
+						final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
+
+						factcomplete.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
+						//Toast.makeText(MainActivity.this, selected, Toast.LENGTH_LONG).show();
+
+						for (int i = 0; i < factures.size(); i++) {
+							if(selected.equals(factures.get(i).getNumero())){
+								facture = factures.get(i);
+								break;
+							}
+						}
+						//factcomplete.setInputType(InputType.TYPE_NULL);
+					}
+				});
+
+				Button showme = (Button) dialogbtnfact.findViewById(R.id.factshowme);
+				showme.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+
+						if(facture.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(Double.parseDouble(facture.getLat()) > 0){
+								myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+							}else{
+								myfact = myPosition;
+							}
+
+
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myfact)
+							.zoom(zoom)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
+
+
+							MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.facture_num)+facture.getNumero())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_YELLOW));
+							/*
+							 *	map.addMarker(markMe);
+							 */
+
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							dialogbtnfact.dismiss();
+						}else{
+							Log.e("clint ","null");alertmaps();
+						}
+
+						
+					}
+				});
+
+				Button itinerer = (Button) dialogbtnfact.findViewById(R.id.itenermoifact);
+				itinerer.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View arg0) {
+						//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+
+						if(facture.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(Double.parseDouble(facture.getLat()) > 0){
+								myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+							}else{
+								myfact = myPosition;
+							}
+							
+							Log.e("myPoss",myPosition +" ##myfact "+myfact);
+
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myfact)
+							.zoom(10)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
+
+
+							MarkerOptions markMe = new MarkerOptions().position(myfact).title("Facture Numero :"+facture.getNumero())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_YELLOW));
+							/*
+							 *	map.addMarker(markMe);
+							 */
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							getDirections(myPosition,myfact);
+							dialogbtnfact.dismiss();
+
+						}else{
+							Log.e("clint ","null");alertmaps();
+						}
+
+						
+
+					}
+				});
+
+				Button annul1 = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
+				annul1.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						dialogbtnfact.dismiss();
+					}
+				});
+				dialogbtnfact.show();
+				break;
+
+			case 3:
+				factcomplete = (AutoCompleteTextView) dialogbtnfact.findViewById(R.id.autocomplate);
+
+				if(!factcomplete.hasFocus()){
+					hideSoftKeyboard();
+				}
+
+
+				ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, listcmd);
+				dataAdapter3.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+
+				//facturespinner.setAdapter(dataAdapter);
+				factcomplete.setAdapter(dataAdapter3);
+				factcomplete.setThreshold(1);
+				factcomplete.setTextColor(Color.RED); 
+				factcomplete.setOnItemClickListener(new OnItemClickListener() {
+
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						factcomplete.showDropDown();
+						String selected = (String) parent.getItemAtPosition(position);
+						final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
+
+						factcomplete.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
+						//Toast.makeText(MainActivity.this, selected, Toast.LENGTH_LONG).show();
+
+						for (int i = 0; i < cmds.size(); i++) {
+							if(selected.equals(cmds.get(i).getNumero())){
+								cmd = cmds.get(i);
+								break;
+							}
+						}
+						//factcomplete.setInputType(InputType.TYPE_NULL);
+					}
+				});
+
+				Button showme2 = (Button) dialogbtnfact.findViewById(R.id.factshowme);
+				showme2.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+
+						if(cmd.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(Double.parseDouble(cmd.getLat()) > 0){
+								myfact = new LatLng(Double.parseDouble(cmd.getLat()), Double.parseDouble(cmd.getLng()));
+							}else{
+								myfact = myPosition;
+							}
+
+
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myfact)
+							.zoom(zoom)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
+
+
+							MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.commande_num)+cmd.getNumero())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_YELLOW));
+							/*
+							 *	map.addMarker(markMe);
+							 */
+
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							dialogbtnfact.dismiss();
+						}else{
+							Log.e("clint ","null");alertmaps();
+						}
+
+						
+					}
+				});
+
+				Button itinerer2 = (Button) dialogbtnfact.findViewById(R.id.itenermoifact);
+				itinerer2.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View arg0) {
+						//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+
+						if(cmd.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(Double.parseDouble(cmd.getLat()) > 0){
+								myfact = new LatLng(Double.parseDouble(cmd.getLat()), Double.parseDouble(cmd.getLng()));
+							}else{
+								myfact = myPosition;
+							}
+							
+							Log.e("myPoss",myPosition +" ##myfact "+myfact);
+
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myfact)
+							.zoom(10)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
+
+
+							MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.commande_num)+cmd.getNumero())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_YELLOW));
+							/*
+							 *	map.addMarker(markMe);
+							 */
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							getDirections(myPosition,myfact);
+							dialogbtnfact.dismiss();
+						}else{
+							Log.e("clint ","null");
+							alertmaps();
+						}
+						
+
+
+					}
+				});
+
+				Button annul12 = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
+				annul12.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						dialogbtnfact.dismiss();
+					}
+				});
+				dialogbtnfact.show();
+				break;
+			default:
+				break;
 			}
+		 
+		
+	}
+	
+	public void alertmaps(){
+		AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+		alert.setTitle(getResources().getString(R.string.mapstitle7));
+		alert.setMessage(getResources().getString(R.string.mapstitle5) + " \n "+getResources().getString(R.string.mapstitle4)+ "\n"+getResources().getString(R.string.mapstitle6));
+		alert.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
 
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
 
-			ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<String>(this,
-
-					android.R.layout.simple_spinner_item, listfact);
-			dataAdapter1.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
-
-			//facturespinner.setAdapter(dataAdapter);
-			factcomplete.setAdapter(dataAdapter1);
-			factcomplete.setThreshold(1);
-			factcomplete.setTextColor(Color.RED); 
-			factcomplete.setOnItemClickListener(new OnItemClickListener() {
-
-
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long id) {
-					factcomplete.showDropDown();
-					String selected = (String) parent.getItemAtPosition(position);
-					final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
-
-					factcomplete.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
-					//Toast.makeText(MainActivity.this, selected, Toast.LENGTH_LONG).show();
-
-					for (int i = 0; i < factures.size(); i++) {
-						if(selected.equals(factures.get(i).getNumero())){
-							facture = factures.get(i);
-							break;
-						}
-					}
-					//factcomplete.setInputType(InputType.TYPE_NULL);
-				}
-			});
-
-			Button showme = (Button) dialogbtnfact.findViewById(R.id.factshowme);
-			showme.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-
-					if(Double.parseDouble(facture.getLat()) > 0){
-						myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-					}else{
-						myfact = myPosition;
-					}
-
-
-					CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(myfact)
-					.zoom(zoom)// Sets the zoom
-					.build();    // Creates a CameraPosition from the builder
-					map.animateCamera(CameraUpdateFactory.newCameraPosition(
-							cameraPosition));
-
-
-					MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.facture_num)+facture.getNumero())
-							.icon(BitmapDescriptorFactory.defaultMarker(
-									BitmapDescriptorFactory.HUE_YELLOW));
-					/*
-					 *	map.addMarker(markMe);
-					 */
-
-
-					mesPositions.add(markMe);
-					clearMap(map);
-
-					dialogbtnfact.dismiss();
-				}
-			});
-
-			Button itinerer = (Button) dialogbtnfact.findViewById(R.id.itenermoifact);
-			itinerer.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-
-					if(Double.parseDouble(facture.getLat()) > 0){
-						myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-					}else{
-						myfact = myPosition;
-					}
-					
-					Log.e("myPoss",myPosition +" ##myfact "+myfact);
-
-					CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(myfact)
-					.zoom(10)// Sets the zoom
-					.build();    // Creates a CameraPosition from the builder
-					map.animateCamera(CameraUpdateFactory.newCameraPosition(
-							cameraPosition));
-
-
-					MarkerOptions markMe = new MarkerOptions().position(myfact).title("Facture Numero :"+facture.getNumero())
-							.icon(BitmapDescriptorFactory.defaultMarker(
-									BitmapDescriptorFactory.HUE_YELLOW));
-					/*
-					 *	map.addMarker(markMe);
-					 */
-
-					mesPositions.add(markMe);
-					clearMap(map);
-
-					getDirections(myPosition,myfact);
-					dialogbtnfact.dismiss();
-
-
-				}
-			});
-
-			Button annul1 = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
-			annul1.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					dialogbtnfact.dismiss();
-				}
-			});
-			dialogbtnfact.show();
-			break;
-
-		case 3:
-			factcomplete = (AutoCompleteTextView) dialogbtnfact.findViewById(R.id.autocomplate);
-
-			if(!factcomplete.hasFocus()){
-				hideSoftKeyboard();
+				return;
 			}
-
-
-			ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, listcmd);
-			dataAdapter3.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
-
-			//facturespinner.setAdapter(dataAdapter);
-			factcomplete.setAdapter(dataAdapter3);
-			factcomplete.setThreshold(1);
-			factcomplete.setTextColor(Color.RED); 
-			factcomplete.setOnItemClickListener(new OnItemClickListener() {
-
-
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long id) {
-					factcomplete.showDropDown();
-					String selected = (String) parent.getItemAtPosition(position);
-					final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
-
-					factcomplete.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
-					//Toast.makeText(MainActivity.this, selected, Toast.LENGTH_LONG).show();
-
-					for (int i = 0; i < cmds.size(); i++) {
-						if(selected.equals(cmds.get(i).getNumero())){
-							cmd = cmds.get(i);
-							break;
-						}
-					}
-					//factcomplete.setInputType(InputType.TYPE_NULL);
-				}
-			});
-
-			Button showme2 = (Button) dialogbtnfact.findViewById(R.id.factshowme);
-			showme2.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-
-					if(Double.parseDouble(cmd.getLat()) > 0){
-						myfact = new LatLng(Double.parseDouble(cmd.getLat()), Double.parseDouble(cmd.getLng()));
-					}else{
-						myfact = myPosition;
-					}
-
-
-					CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(myfact)
-					.zoom(zoom)// Sets the zoom
-					.build();    // Creates a CameraPosition from the builder
-					map.animateCamera(CameraUpdateFactory.newCameraPosition(
-							cameraPosition));
-
-
-					MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.commande_num)+cmd.getNumero())
-							.icon(BitmapDescriptorFactory.defaultMarker(
-									BitmapDescriptorFactory.HUE_YELLOW));
-					/*
-					 *	map.addMarker(markMe);
-					 */
-
-
-					mesPositions.add(markMe);
-					clearMap(map);
-
-					dialogbtnfact.dismiss();
-				}
-			});
-
-			Button itinerer2 = (Button) dialogbtnfact.findViewById(R.id.itenermoifact);
-			itinerer2.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-
-					if(Double.parseDouble(cmd.getLat()) > 0){
-						myfact = new LatLng(Double.parseDouble(cmd.getLat()), Double.parseDouble(cmd.getLng()));
-					}else{
-						myfact = myPosition;
-					}
-					
-					Log.e("myPoss",myPosition +" ##myfact "+myfact);
-
-					CameraPosition cameraPosition = new CameraPosition.Builder()
-					.target(myfact)
-					.zoom(10)// Sets the zoom
-					.build();    // Creates a CameraPosition from the builder
-					map.animateCamera(CameraUpdateFactory.newCameraPosition(
-							cameraPosition));
-
-
-					MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.commande_num)+cmd.getNumero())
-							.icon(BitmapDescriptorFactory.defaultMarker(
-									BitmapDescriptorFactory.HUE_YELLOW));
-					/*
-					 *	map.addMarker(markMe);
-					 */
-
-					mesPositions.add(markMe);
-					clearMap(map);
-
-					getDirections(myPosition,myfact);
-					dialogbtnfact.dismiss();
-
-
-				}
-			});
-
-			Button annul12 = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
-			annul12.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					dialogbtnfact.dismiss();
-				}
-			});
-			dialogbtnfact.show();
-			break;
-		default:
-			break;
-		}
+		});
+		alert.setCancelable(false);
+		alert.create().show();
 	}
 }

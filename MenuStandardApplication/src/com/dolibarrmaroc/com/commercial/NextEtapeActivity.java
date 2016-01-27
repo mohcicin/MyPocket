@@ -319,9 +319,11 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 			totaux_tva = tt -totaux_ht;
 			
 			du.setText( String.format( "%.2f", tt ).replace(",", "."));
-			total_ticket.setTotal_ttc(tt);;
+			total_ticket.setTotal_ttc(tt);
 			total_ticket.setTotal_tva(totaux_tva);
 			total_ticket.setTotal_ht(totaux_ht);
+
+			
 			
 			rendu.setText("0");
 			
@@ -393,6 +395,8 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 					
 				}
 			});
+			
+			encaisse.setText( String.format( "%.2f", tt ).replace(",", "."));
 			
 			
 			gps =  getGpsApplication();
@@ -774,7 +778,7 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 			
 			numChek = numchek.getText().toString();
 			
-			
+			Log.e("amount",amount +"");
 			meinvo = myofline.shynchronizeInvoice(database.addrow("fc")+"", produitsFacture, idclt, nmb, commentaire, compte, reglement , amount , numChek , 1 ,prepaRemise(allremises),gps,imei,num,battery,total_ticket,type_invoice);
 			if(meinvo != null){
 				data = meinvo.getData();
@@ -953,7 +957,7 @@ public class NextEtapeActivity extends Activity implements OnClickListener,OnIte
 			
 			sv = new StockVirtual(NextEtapeActivity.this);
 
-
+			Log.e("amount",amount +"");
 			meinvo = myofline.shynchronizeInvoice(database.addrow("fc")+"", produitsFacture, idclt, nmb, commentaire, compte, reglement , amount , numChek , 1 ,prepaRemise(allremises),gps,imei,num,battery,total_ticket,type_invoice);
 			
 			Log.e("invooo ",myofline.LoadInvoice("").toString());

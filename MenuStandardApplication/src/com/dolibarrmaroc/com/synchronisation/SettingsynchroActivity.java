@@ -9,6 +9,7 @@ import java.util.zip.Inflater;
 import com.dolibarrmaroc.com.ConnexionActivity;
 import com.dolibarrmaroc.com.R;
 import com.dolibarrmaroc.com.models.Compte;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.MyTicketBluetooth;
 import com.dolibarrmaroc.com.models.MyfactureAdapter;
 import com.dolibarrmaroc.com.models.Myinvoice;
@@ -22,6 +23,7 @@ import com.dolibarrmaroc.com.database.DatabaseHandler;
 import com.dolibarrmaroc.com.database.StockVirtual;
 import com.dolibarrmaroc.com.offline.Offlineimpl;
 import com.dolibarrmaroc.com.offline.ioffline;
+import com.dolibarrmaroc.com.utils.URL;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -216,6 +218,7 @@ public class SettingsynchroActivity extends Activity {
 								dialogin = ProgressDialog.show(SettingsynchroActivity.this, getResources().getString(R.string.data_clean),
 										getResources().getString(R.string.msg_wait), true);
 								myoffline.cleancache();
+								
 								if (dialogin.isShowing()){
 									dialogin.dismiss();
 								}
@@ -296,6 +299,8 @@ public class SettingsynchroActivity extends Activity {
 								myoffline.CleanClsCmd();
 								myoffline.CleanMotif();
 								
+								MyDebug.CleanLog("");
+								
 								
 								StockVirtual sv = new StockVirtual(SettingsynchroActivity.this);
 								sv.cleantables("");// clean les produits echanges + rendus
@@ -304,7 +309,7 @@ public class SettingsynchroActivity extends Activity {
 								sv.cleantablesLR("");
 								sv.deletePdQt("");
 								
-								File fl = new File(Environment.getExternalStorageDirectory()+"/.datadolicachenew/storagevirtual");
+								File fl = new File(Environment.getExternalStorageDirectory()+URL.path+"/storagevirtual");
 								if(fl.exists()){
 									fl.delete();
 								}

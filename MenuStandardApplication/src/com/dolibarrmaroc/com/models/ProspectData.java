@@ -1,17 +1,18 @@
 package com.dolibarrmaroc.com.models;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class ProspectData {
 	
-	private List<String> villes;
-	private List<String> juridique;
-	private List<String> typent;
+	private List<String> villes = new ArrayList<>();
+	private List<String> juridique= new ArrayList<>();
+	private List<String> typent= new ArrayList<>();
 	
-	private HashMap<String, String> juridique_code;
-	private HashMap<String,String> typent_code;
-	private HashMap<String,String> typent_id;
+	private HashMap<String, String> juridique_code = new HashMap<>();
+	private HashMap<String,String> typent_code= new HashMap<>();
+	private HashMap<String,String> typent_id= new HashMap<>();
 	
 	private List<String> lsrequired;
 	

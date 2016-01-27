@@ -702,7 +702,8 @@ public class CmdEditActivity extends Activity implements OnItemClickListener{
 
 				Intent intent1 = new Intent(CmdEditActivity.this, CmdViewActivity.class);
 				intent1.putExtra("user", compte);
-				intent1.putExtra("cmd", "0");
+				intent1.putExtra("editcmd", "1");
+				intent1.putExtra("cmd", "1");
 				intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
 				startActivity(intent1);
 			}

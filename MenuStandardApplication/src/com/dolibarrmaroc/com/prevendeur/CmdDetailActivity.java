@@ -516,6 +516,7 @@ public class CmdDetailActivity extends Activity {
 							Intent intent1 = new Intent(CmdDetailActivity.this, CmdViewActivity.class); //CatalogeActivity.class  //VendeurActivity
 							intent1.putExtra("user", compte);
 							intent1.putExtra("cmd", "0");
+							intent1.putExtra("editcmd", "0");
 							startActivity(intent1);
 							CmdDetailActivity.this.finish();
 						}

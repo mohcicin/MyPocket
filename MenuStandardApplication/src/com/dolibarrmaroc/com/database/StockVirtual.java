@@ -14,6 +14,7 @@ import java.util.TimeZone;
 import com.dolibarrmaroc.com.models.DataSerial;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Serial1;
+import com.dolibarrmaroc.com.utils.URL;
 
 import android.R.integer;
 import android.content.ContentValues;
@@ -59,7 +60,7 @@ public class StockVirtual extends SQLiteOpenHelper {
 	private static final String KEY_TPOP = "TYPEOP";
 
 	public StockVirtual(Context context) {
-		super(context,Environment.getExternalStorageDirectory()+"/.datadolicachenew/"+DATABASE_NAME, null, DATABASE_VERSION);
+		super(context,Environment.getExternalStorageDirectory()+URL.path+"/"+DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
 
@@ -553,6 +554,7 @@ public class StockVirtual extends SQLiteOpenHelper {
 		long id =-1;
 		try {
 			SQLiteDatabase db = this.getWritableDatabase();
+			Log.e("in db ad motif ",tp+" "+mtn);
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			ContentValues values = new ContentValues();

@@ -554,7 +554,7 @@ public class TransfertstockActivity extends Activity implements OnClickListener,
 		AlertDialog.Builder alert = new AlertDialog.Builder(TransfertstockActivity.this);
 		alert.setTitle(getResources().getString(R.string.error));
 		alert.setMessage(msg);
-		alert.setNegativeButton("Lancer � nouveau", new DialogInterface.OnClickListener() {
+		alert.setNegativeButton(getResources().getString(R.string.retry), new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface d, int which) {

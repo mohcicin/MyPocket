@@ -44,12 +44,30 @@
             android:text="@string/btn_cancel"
             android:textColor="@android:color/white" />
     </LinearLayout>
-
+	<!-- 
     <Spinner
         android:id="@+id/produitpointer"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="18dp" />
+    -->
+    <AutoCompleteTextView
+        android:id="@+id/produitpointer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="18dp"
+        android:completionThreshold="1"
+        android:dropDownHeight="150dp"
+        android:dropDownVerticalOffset="5dp"
+        android:dropDownWidth="wrap_content"
+        android:gravity="center"
+        android:hint="--Select Client--"
+        android:inputType="textAutoComplete|textAutoCorrect" >
+
+        <requestFocus />
+    </AutoCompleteTextView>
 
 </RelativeLayout>

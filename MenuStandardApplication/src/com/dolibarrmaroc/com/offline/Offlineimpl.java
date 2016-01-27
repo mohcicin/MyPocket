@@ -92,6 +92,7 @@ import com.dolibarrmaroc.com.utils.MouvementManagerFactory;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
 import com.dolibarrmaroc.com.utils.ServiceDao;
 import com.dolibarrmaroc.com.utils.TechnicienManagerFactory;
+import com.dolibarrmaroc.com.utils.URL;
 import com.dolibarrmaroc.com.utils.Utils;
 
 public class Offlineimpl implements ioffline {
@@ -114,7 +115,7 @@ public class Offlineimpl implements ioffline {
 
 	private StandardPBEStringEncryptor encryptor;
 
-	private static String path = Environment.getExternalStorageDirectory()+"/.datadolicachenew";//path
+	private static String path = Environment.getExternalStorageDirectory()+URL.path;//path
 
 	private HashMap<Myinvoice, String> myc = new HashMap<>();
 
@@ -3911,13 +3912,13 @@ public class Offlineimpl implements ioffline {
 				lsreg.add(ls.get(i));
 			}
 
-			//synchronisation des factures prospects
+			//synchronisation des factures new prospects (not client)
 			if(invo_ps.size() > 0 || cmd_ps.size() > 0){
 				dataeror1 = synchronisation_Invoice_Out(invo_ps, compte,cmd_ps);
 			}
 
 
-			//synchronisation des fcatures clients
+			//synchronisation des fcatures clients (already exist)
 			if(invo_cl.size() > 0 || cmd_cl.size() > 0){
 				dataeror2 = synchronisationPayementOut(invo_cl,cmd_cl);
 			}
@@ -5497,7 +5498,7 @@ public class Offlineimpl implements ioffline {
 	public long PutDeniededData(Object in,int ob) {
 		// TODO Auto-generated method stub
 
-		if(ob >= 5 ){
+		if(ob < 5 ){
 			file = new File(path, "/deniededdata.txt");
 		}else{
 			file = new File(path, "/deniededdatacmd.txt");

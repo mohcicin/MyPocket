@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -17,6 +16,7 @@ import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.ConfigGps;
 import com.dolibarrmaroc.com.models.GpsTracker;
 import com.dolibarrmaroc.com.models.LabelService;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.MyTicketWitouhtProduct;
 import com.dolibarrmaroc.com.models.Services;
 import com.dolibarrmaroc.com.utils.JSONParser;
@@ -53,12 +53,13 @@ public class ConnexionDaoMysql implements ConnexionDao {
 	Context context;
 	public Compte login(String login, String password) {
 		int success;
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		try {
 			//Getting the Object of TelephonyManager 
 			String login2[] = login.split("/karouaniYassine/");
 			login = login2[0];
 			// Building Parameters
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			
 			params.add(new BasicNameValuePair("username", login));
 			params.add(new BasicNameValuePair("imei", login2[1]));
 			params.add(new BasicNameValuePair("password", password));
@@ -70,7 +71,6 @@ public class ConnexionDaoMysql implements ConnexionDao {
 					LOGIN_URL, "POST", params);
 
 			String stfomat = jsonString.substring(jsonString.indexOf("{"),jsonString.lastIndexOf("}")+1);
-			
 			
 			
 			Log.e("Login Erreur !", jsonString);
@@ -110,6 +110,7 @@ public class ConnexionDaoMysql implements ConnexionDao {
 					compte.setStop(json.getString("stop"));
 					compte.setPermission(json.getInt("permission"));
 					compte.setPermissionbl(json.getInt("blcmd"));
+					compte.setIstour(json.getInt("istour"));
 					
 					gpsTracker.setEmei(json.getString("emei"));
 					gpsTracker.setIduser(json.getString("iduser"));
@@ -143,7 +144,9 @@ public class ConnexionDaoMysql implements ConnexionDao {
 
 
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
+			Log.e("ConnexionDaoMysql eroor login ",e.getMessage()+"");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "login", params.toString(), e.toString());
 			e.printStackTrace();
 		}
 
@@ -197,8 +200,9 @@ public class ConnexionDaoMysql implements ConnexionDao {
 				}
 				s.setLabels(labels);
 			}
-		}catch(JSONException e){
-			Log.e("log_tag", "Error parsing data " + e.toString());
+		}catch(Exception e){
+			Log.e("ConnexionDaoMysql log_tag", "Error parsing data  getService " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "getService", nameValuePairs.toString(), e.toString());
 		}
 		return s;
 	}

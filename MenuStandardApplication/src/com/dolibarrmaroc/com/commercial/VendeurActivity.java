@@ -1200,7 +1200,8 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 			//Log.e("Produit 3 ",products.toString());
 
 			//Log.e("begin offline from offline",">>start load "+products.toString());
-			if(com.dolibarrmaroc.com.utils.URL.is_tour){
+			
+			if(compte.getIstour() == 1){//com.dolibarrmaroc.com.utils.URL.is_tour
 				List<Tournee> trs = Functions.prepaTourneeData(myoffline.LoadTourneeList("")).get(Functions.getNumberOfDay(new Date()));
 				int n = trs.size();
 				
@@ -1269,7 +1270,7 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 					addItemsOnSpinnerCustom(categoriepinner	,-1);
 					firstexecution = 1989;
 					
-					if(is_tr == 0 && com.dolibarrmaroc.com.utils.URL.is_tour){
+					if(is_tr == 0 && (compte.getIstour() == 1)){//com.dolibarrmaroc.com.utils.URL.is_tour){
 						new AlertDialog.Builder(VendeurActivity.this)
 					    .setTitle(getResources().getString(R.string.cmdtofc12))
 					    .setMessage(getResources().getString(R.string.task6))

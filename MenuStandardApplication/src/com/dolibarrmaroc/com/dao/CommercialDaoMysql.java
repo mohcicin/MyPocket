@@ -10,7 +10,6 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.graphics.Bitmap;
@@ -18,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.dolibarrmaroc.com.models.Compte;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.ProspectData;
 import com.dolibarrmaroc.com.models.Prospection;
 import com.dolibarrmaroc.com.models.Societe;
@@ -86,7 +86,7 @@ public class CommercialDaoMysql implements CommercialDao{
 			String json = parser.makeHttpRequest(urlData, "POST", nameValuePairs);
 			String stfomat = json.substring(json.indexOf("{"),json.lastIndexOf("}")+1);
 			
-			Log.e("Insertion Message old", json);
+			Log.e("Insertion Message clt simple", json);
 			
 			JSONObject obj = new JSONObject(stfomat);
 			if(obj.has("message")){
@@ -97,11 +97,12 @@ public class CommercialDaoMysql implements CommercialDao{
 			//$message['client']
 			retour = obj.getString("client");
 			
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			retour ="-1";
-			Log.e("json insert prospect",e.getMessage() +" << ");
+			Log.e("CommercialDaoMysql json insert prospect  insert",e.getMessage() +" << ");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "insert", nameValuePairs.toString(), e.toString());
 		}
 		
 		Log.e("Retour >> 00",retour);
@@ -117,9 +118,10 @@ public class CommercialDaoMysql implements CommercialDao{
 				
 		nameValuePairs.add(new BasicNameValuePair("username",c.getLogin()));
 		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
+		nameValuePairs.add(new BasicNameValuePair("json","json"));
 		
 		String json = parser.makeHttpRequest(urlData, "POST", nameValuePairs);
-		
+		Log.e("Before parse GetInfo ", json+"");
 		
 		/*{
 			"town":[
@@ -128,7 +130,7 @@ public class CommercialDaoMysql implements CommercialDao{
 			                 {"code":"2121","nom":"Soci\u00e9t\u00e9 A R\u00e9sponsabilit\u00e9 Limit\u00e9e"}]
 	    }*/
 		
-		Log.e("RepondreMoi all client getinfo json", json);
+		//Log.e("Sample affichage RepondreMoi all client getinfo json", json);
 		try {
 			String stfomat = json.substring(json.indexOf("{"),json.lastIndexOf("}")+1);
 			Log.e("RepondreMoi cc", stfomat);
@@ -178,8 +180,10 @@ public class CommercialDaoMysql implements CommercialDao{
 			data.setTypent_id(typent_id);
 			data.setLsrequired(reqfield);
 			
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			Log.e("CommercialDaoMysql erpoor getInfos",e.getMessage()+"");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "getInfos", nameValuePairs.toString(), e.toString());
 			e.printStackTrace();
 			
 		}
@@ -254,11 +258,12 @@ public class CommercialDaoMysql implements CommercialDao{
 			JSONArray arr = obj.getJSONArray("message");
 			int k =arr.length() - 1;
 			retour = arr.getString(k);
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			Log.e("error ",e.getMessage() +" ");
+			Log.e("CommercialDaoMysql error update",e.getMessage() +" ");
 			retour = "Error Survenue lors d'insertion, réssayer plus tard !!";
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "update", nameValuePairs.toString(), e.toString());
 		}
 		
 		Log.e("Retour ",retour);
@@ -331,11 +336,12 @@ public class CommercialDaoMysql implements CommercialDao{
 				list.add(s);
 			}
 			
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			list = new ArrayList<>();
-			Log.e("get all societe ",e.getMessage()+" >> ");
+			Log.e("CommercialDaoMysql get all societe getAll ",e.getMessage()+" >> ");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "getAll", nameValuePairs.toString(), e.toString());
 		}
 		return list;
 	}
@@ -390,7 +396,7 @@ public class CommercialDaoMysql implements CommercialDao{
 			String json = parser.makeHttpRequest(urlData, "POST", nameValuePairs);
 			String stfomat = json.substring(json.indexOf("{"),json.lastIndexOf("}")+1);
 
-			Log.e("Insertion Message old", json);
+			Log.e("Insertion Message clt pic", json);
 
 			JSONObject obj = new JSONObject(stfomat);
 			if(obj.has("message")){
@@ -401,11 +407,12 @@ public class CommercialDaoMysql implements CommercialDao{
 			//$message['client']
 			retour = obj.getString("client");
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			retour ="-1";
-			Log.e("json insert prospect",e.getMessage() +" << ");
+			Log.e("CommercialDaoMysql json insert prospect insertWithImage ",e.getMessage() +" << ");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "insertWithImage", nameValuePairs.toString(), e.toString());
 		}
 
 		Log.e("Retour >> 00",retour);

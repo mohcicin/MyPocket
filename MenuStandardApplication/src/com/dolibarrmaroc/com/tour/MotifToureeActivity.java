@@ -306,6 +306,8 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 
 			managertourne = new TourneeDaoMysql();
 			
+			sv = new StockVirtual(MotifToureeActivity.this); 
+			
 			ix = managertourne.sendMotifs(new Motifs(new Tournee(tr.getRowid(), tr.getLabel(), tr.getColor(), tr.getDebut(), tr.getFin(), tr.getSecteur(), tr.getIdsecteur(), tr.getGrp(), tr.getIdgrp(), tr.getRecur()), clt, new Date(), motf, commentaire.getText().toString()), compte, "add"); 
 			
 			try {
@@ -331,11 +333,13 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 				if (dialog.isShowing()){
 					dialog.dismiss();
 					
-					Log.e(">> res ",ix+ "");
+					
 					if(ix.equals("ok")){
+						Log.e(">> res ",ix+ "<<");
 						sv.addOperation("MTF", bo_mtf.get(motf));
 						showMsg(getResources().getString(R.string.task17),1);
 					}else{
+						Log.e(">> no ",ix+ "<<");
 						showMsg(getResources().getString(R.string.task18),0);
 					}
 
@@ -369,7 +373,7 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 				}else if(tr != null && clt != null){
 					motf = motif.getSelectedItem().toString();
 					
-					dialog = ProgressDialog.show(MotifToureeActivity.this, getResources().getString(R.string.map_data),
+					dialog = ProgressDialog.show(MotifToureeActivity.this, getResources().getString(R.string.task19),
 							getResources().getString(R.string.msg_wait), true);
 					
 						if(CheckOutNet.isNetworkConnected(MotifToureeActivity.this)){
@@ -409,6 +413,7 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 	}
 	
 	private void showMsg(String in,final int tp){
+		Log.e("show showMsg ",in);
 		AlertDialog.Builder alert = new AlertDialog.Builder(MotifToureeActivity.this);
 		alert.setTitle(getResources().getString(R.string.cmdtofc10));
 		alert.setMessage(in);
@@ -416,16 +421,17 @@ public class MotifToureeActivity extends Activity implements OnClickListener {
 
 			@Override
 			public void onClick(DialogInterface dialogc, int which) {
-				dialogc.dismiss();
+				//dialogc.dismiss();
 				
-				if(tp == 1){
+				//if(tp == 1){
 					onClickHome(LayoutInflater.from(MotifToureeActivity.this).inflate(R.layout.activity_motif_touree, null));
-				}
+				//}
 				return;
 			}
 		});
 		alert.setCancelable(false);
 		alert.create().show();
+		
 	}
 	
 	

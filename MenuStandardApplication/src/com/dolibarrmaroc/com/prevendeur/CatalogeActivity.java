@@ -1165,7 +1165,7 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 
 			Log.e("begin offline from offline",">>start load");
 			
-			if(URL.is_tour){
+			if(compte.getIstour() == 1){//URL.is_tour){
 				List<Tournee> trs = Functions.prepaTourneeData(myoffline.LoadTourneeList("")).get(Functions.getNumberOfDay(new Date()));
 				int n = trs.size();
 				
@@ -1193,22 +1193,25 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 			
 			//clients = myoffline.LoadClients("");
 			
-			Log.e("star client 1pros ",myoffline.LoadProspection("").size()+"");
+			//Log.e("star client 1pros ",myoffline.LoadProspection("").size()+"");
 			Log.e("star client clt ",clients.size()+"");
 			listclt = new ArrayList<>();
 			for (int i = 0; i < clients.size(); i++) {
 				listclt.add(clients.get(i).getName());
 			}
 
-				List<Prospection> pros = myoffline.LoadProspection("");
-					for (int i = 0; i < pros.size(); i++) {
-						if(pros.get(i).getClient() == 1){
-							Client c = new Client(pros.get(i).getIdpros(), pros.get(i).getName(), pros.get(i).getZip(), pros.get(i).getTown(), pros.get(i).getEmail(), pros.get(i).getPhone(), pros.get(i).getAddress());
-							clients.add(c);
-							listclt.add(pros.get(i).getName());
-						}
-					}
 			
+			/********** We neeed control the insert of new prospect befor send the command **************************
+			List<Prospection> pros = myoffline.LoadProspection("");
+			for (int i = 0; i < pros.size(); i++) {
+				if(pros.get(i).getClient() == 1){
+					Client c = new Client(pros.get(i).getIdpros(), pros.get(i).getName(), pros.get(i).getZip(), pros.get(i).getTown(), pros.get(i).getEmail(), pros.get(i).getPhone(), pros.get(i).getAddress());
+					clients.add(c);
+					listclt.add(pros.get(i).getName());
+				}
+			}
+			*/
+
 			
 			lscat = new ArrayList<>();
 			listcat = new ArrayList<>();
@@ -1243,7 +1246,7 @@ public class CatalogeActivity extends Activity implements OnItemSelectedListener
 					addItemsOnSpinner(clientspinner,1);
 					Log.e("end ","end cnx task");
 					
-					if(is_tr == 0 && com.dolibarrmaroc.com.utils.URL.is_tour){
+					if(is_tr == 0 && (compte.getIstour() == 1)){//com.dolibarrmaroc.com.utils.URL.is_tour){
 						new AlertDialog.Builder(CatalogeActivity.this)
 					    .setTitle(getResources().getString(R.string.cmdtofc12))
 					    .setMessage(getResources().getString(R.string.task6))

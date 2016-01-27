@@ -12,7 +12,6 @@ import java.util.Map;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -25,6 +24,7 @@ import com.dolibarrmaroc.com.models.Categorie;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.FileData;
 import com.dolibarrmaroc.com.models.LoadStock;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
 import com.dolibarrmaroc.com.models.Remises;
@@ -310,8 +310,9 @@ public class CategorieDaoMysql implements CategorieDao {
 			}
 			
 			
-		}catch(JSONException e){
-			Log.e("log_tag", "Error laod categories data " + e.toString());
+		}catch(Exception e){
+			Log.e("log_tag CategorieDaoMysql", "Error laod categories data LoadCategories " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "LoadCategories", nameValuePairs.toString(), e.toString());
 			ls = new ArrayList<>();
 		}
 		

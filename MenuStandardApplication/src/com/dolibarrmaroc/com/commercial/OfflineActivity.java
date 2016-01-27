@@ -493,7 +493,7 @@ public class OfflineActivity extends Activity implements OnItemClickListener{
          */
 		
 		new AlertDialog.Builder(this)
-	    .setTitle("Consulter d�tails de facture")
+	    .setTitle(getResources().getString(R.string.comm_5))
 	    .setPositiveButton(R.string.movetoregls, new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int which) { 
 	        	 showReglements(selectedfact);

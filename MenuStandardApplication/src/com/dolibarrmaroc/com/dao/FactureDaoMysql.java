@@ -13,7 +13,6 @@ import java.util.TreeSet;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.ls.LSResourceResolver;
 
@@ -27,6 +26,7 @@ import com.dolibarrmaroc.com.models.ConfigGps;
 import com.dolibarrmaroc.com.models.FactureGps;
 import com.dolibarrmaroc.com.models.FileData;
 import com.dolibarrmaroc.com.models.GpsTracker;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Myinvoice;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Prospection;
@@ -210,8 +210,10 @@ public class FactureDaoMysql implements FactureDao {
 			
 
 			return file;
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			Log.e("FactureDaoMysql eeroor insert ",e.getMessage()+"");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "insert", nameValuePairs.toString(), e.toString());
 			return null;
 		}
 
@@ -248,8 +250,9 @@ public class FactureDaoMysql implements FactureDao {
 				list.add(fact);
 				
 			}
-		}catch(JSONException e){
-			Log.e("log_tag", "Error parsing data " + e.toString());
+		}catch(Exception e){
+			Log.e("FactureDaoMysql log_tag", "Error parsing data listFacture " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "listFacture", nameValuePairs.toString(), e.toString());
 		}
 
 		return list;
@@ -465,8 +468,10 @@ public class FactureDaoMysql implements FactureDao {
 			file.setTel(json.getString("tel"));
 
 			return file;
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			Log.e("FactureDaoMysql eroor insertoff ",e.getMessage()+"");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "insertoff", nameValuePairs.toString(), e.toString());
 			return null;
 		}
 
@@ -778,9 +783,16 @@ public class FactureDaoMysql implements FactureDao {
 		}
 		
 		Log.e("voila send out", nameValuePairs.toString());
-		String jsonString =  jsonParser.makeHttpRequest(INVO_CLT_URL , "POST", nameValuePairs);
+		String jsonString = "";
+		try {
+			jsonString = jsonParser.makeHttpRequest(INVO_CLT_URL , "POST", nameValuePairs);
+		} catch (Exception e) {
+			// TODO: handle exception
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "insertcicin", nameValuePairs.toString(), e.toString());
+		}
+		 
 		
-		Log.e("from doli ",jsonString);
+		Log.e("FactureDaoMysql from doli ",jsonString);
 		return jsonString;
 	}
 	

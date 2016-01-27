@@ -201,6 +201,7 @@ public class PersonnePhysiqueActivity extends Activity  implements OnItemClickLi
 					wakelock.release();
 
 					for (int i = 0; i < clients.size(); i++) {
+						Log.e("clt ",clients.get(i).toString());
 						myclts.put(clients.get(i).getId(), clients.get(i));
 						cltdata.add(new MyClientAdapter(clients.get(i).getId(), clients.get(i).getName(), clients.get(i).getAddress(), clients.get(i).getPhone(), clients.get(i).getLogo()));
 					}

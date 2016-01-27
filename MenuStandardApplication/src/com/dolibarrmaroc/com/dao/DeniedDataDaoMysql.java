@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.dolibarrmaroc.com.models.Compte;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.utils.JSONParser;
 import com.dolibarrmaroc.com.utils.URL;
 
@@ -59,7 +60,8 @@ public class DeniedDataDaoMysql implements DeniedDataDao {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				res = in;
-				Log.e("json insert eroor data ",e.getMessage() +" << ");
+				Log.e("DeniedDataDaoMysql json insert eroor data sendMyErrorData",e.getMessage() +" << ");
+				MyDebug.WriteLog(this.getClass().getSimpleName(), "sendMyErrorData", nameValuePairs.toString(), e.toString());
 			}
 		}
 		

@@ -1,5 +1,6 @@
 package com.dolibarrmaroc.com.dao;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,7 +10,6 @@ import java.util.Map;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
@@ -18,6 +18,7 @@ import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Commandeview;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.FactureGps;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Remises;
 import com.dolibarrmaroc.com.utils.JSONParser;
@@ -100,9 +101,10 @@ public class CommandeDaoMysql implements CommandeDao {
 				cmd.add(cm);
 			}
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Log.e("json insert commande",e.getMessage() +" << ");
+			Log.e("CommandeDaoMysql json charger_commandes ",e.getMessage() +" << ");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "charger_commandes", nameValuePairs.toString(), e.toString());
 		}
 
 		return cmd;
@@ -117,7 +119,14 @@ public class CommandeDaoMysql implements CommandeDao {
 		Calendar cl = Calendar.getInstance();
 		cl.setTime(new Date());
 		
+		String dtcmd = "";
 		
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd");
+			dtcmd = sdf.format(new Date());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
 		nameValuePairs.add(new BasicNameValuePair("username",compte.getLogin()));
@@ -126,7 +135,7 @@ public class CommandeDaoMysql implements CommandeDao {
 		//Log.e("PRDS ",compte.getPassword());
 		nameValuePairs.add(new BasicNameValuePair("socid",idclt));
 		
-		nameValuePairs.add(new BasicNameValuePair("dtcmd",cl.get(Calendar.YEAR)+"-"+cl.get(Calendar.MONTH)+"-"+cl.get(Calendar.DAY_OF_MONTH)));
+		nameValuePairs.add(new BasicNameValuePair("dtcmd",dtcmd)); //cl.get(Calendar.YEAR)+"-"+(cl.get(Calendar.MONTH)+1)+"-"+cl.get(Calendar.DAY_OF_MONTH)));
 		
 		Log.e("BRRRRRR",allremises.toString());
 		Log.e("PRDS ALL",prd.toString());
@@ -222,10 +231,12 @@ public class CommandeDaoMysql implements CommandeDao {
 			
 			stfomat = obj.getString("code");
 			
-			numcmd = obj.getString("cmdnum");
+			numcmd = obj.getString("cmd"); //obj.getString("cmdnum");
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			Log.e(" CommandeDaoMysql error insertCommande ",e.getMessage()+"");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "insertCommande", nameValuePairs.toString(), e.toString());
 			stfomat ="ko";
 		}
 		
@@ -255,9 +266,10 @@ public class CommandeDaoMysql implements CommandeDao {
 			res = obj.getString("msg");
 			
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Log.e("json insert commande",e.getMessage() +" << ");
+			Log.e("CommandeDaoMysql json insert commande CmdToFacture",e.getMessage() +" << ");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "CmdToFacture", nameValuePairs.toString(), e.toString());
 		}
 
 		return res;
@@ -315,9 +327,10 @@ public class CommandeDaoMysql implements CommandeDao {
 					
 				}
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Log.e("json insert commande",e.getMessage() +" << ");
+			Log.e("CommandeDaoMysql json charger_commandes_gps",e.getMessage() +" << ");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "charger_commandes_gps", nameValuePairs.toString(), e.toString());
 			list = new ArrayList<>();
 		}
 
@@ -374,6 +387,8 @@ public class CommandeDaoMysql implements CommandeDao {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			Log.e("CommandeDaoMysql eroor updateCommande ",e.getMessage()+"");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "updateCommande", nameValuePairs.toString(), e.toString());
 			stfomat ="ko";
 		}
 		
@@ -435,9 +450,10 @@ public class CommandeDaoMysql implements CommandeDao {
 				cmd.add(cm);
 			}
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Log.e("json insert commande",e.getMessage() +" << ");
+			Log.e("CommandeDaoMysql json insert commande charger_commandesLast",e.getMessage() +" << ");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "charger_commandesLast", nameValuePairs.toString(), e.toString());
 		}
 
 		return cmd;
@@ -467,9 +483,10 @@ public class CommandeDaoMysql implements CommandeDao {
 			res = obj.getString("msg");
 			
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Log.e("json cls commande",e.getMessage() +" << ");
+			Log.e("CommandeDaoMysql json cls commande CancelCmd",e.getMessage() +" << ");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "CancelCmd", nameValuePairs.toString(), e.toString());
 			res ="-100";
 			return res;
 		}

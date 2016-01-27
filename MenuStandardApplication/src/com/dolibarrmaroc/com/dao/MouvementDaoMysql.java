@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
@@ -16,6 +15,7 @@ import com.dolibarrmaroc.com.models.FactureGps;
 import com.dolibarrmaroc.com.models.FileData;
 import com.dolibarrmaroc.com.models.LoadStock;
 import com.dolibarrmaroc.com.models.Mouvement;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Remises;
 import com.dolibarrmaroc.com.utils.JSONParser;
@@ -83,8 +83,9 @@ public class MouvementDaoMysql implements MouvementDao {
 			sm.setVname(vwn);
 			sm.setName_vend(json.getString("vendeurname"));
 			
-		}catch(JSONException e){
-			Log.e("log_tag", "Error laod stock data " + e.toString());
+		}catch(Exception e){
+			Log.e("MouvementDaoMysql log_tag", "Error laod stock data laodStock " + e.toString());
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "laodStock", nameValuePairs.toString(), e.toString());
 			sm = null;
 		}
 
@@ -141,7 +142,8 @@ public class MouvementDaoMysql implements MouvementDao {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e("error ",e.getMessage()+" << ");
+			Log.e("MouvementDaoMysql error makemouvement",e.getMessage()+" << ");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "makemouvement", nameValuePairs.toString(), e.toString());
 			in ="-1";
 			return in;
 		}
@@ -200,7 +202,8 @@ public class MouvementDaoMysql implements MouvementDao {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e("error ",e.getMessage()+" << ");
+			Log.e("MouvementDaoMysql error makeechange ",e.getMessage()+" << ");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "makeechange", nameValuePairs.toString(), e.toString());
 			in ="-1";
 			return in;
 		}

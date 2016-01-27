@@ -11,7 +11,6 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.R.integer;
@@ -23,6 +22,7 @@ import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Commandeview;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.Motifs;
+import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.models.Tournee;
@@ -183,10 +183,11 @@ public class TourneeDaoMysql implements TourneeDao{
 				
 			}
 
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			tour = new ArrayList<>();
-			Log.e("load tour error ",e.getMessage()+ "  <<");
+			Log.e("TourneeDaoMysql load tour error consulterMesTournee ",e.getMessage()+ "  <<");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "consulterMesTournee", nameValuePairs.toString(), e.toString());
 		}
 
 		return tour;
@@ -245,6 +246,8 @@ public class TourneeDaoMysql implements TourneeDao{
 			
 		}catch(Exception e){
 			msg = "ko";
+			Log.e("TourneeDaoMysql sendmoif",e.getMessage()+"");
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "sendMotifs", nameValuePairs.toString(), e.toString());
 			return msg;
 		}
 		

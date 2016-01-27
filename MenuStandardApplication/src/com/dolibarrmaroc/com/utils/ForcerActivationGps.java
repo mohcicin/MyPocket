@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
+import android.util.Log;
 
 public class ForcerActivationGps {
 
@@ -16,9 +17,11 @@ public class ForcerActivationGps {
 
 	public void turnGPSOn()
 	{
+		/*
 		Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
 		intent.putExtra("enabled", true);
 		this.ctx.sendBroadcast(intent);
+		*/
 
 		String provider = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 		if(!provider.contains("gps")){ //if gps is disabled
