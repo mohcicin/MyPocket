@@ -20,6 +20,7 @@ public class Compte implements Serializable{
 	private int permission;
 	private int permissionPayement;
 	private int permissionbl;
+	private int facture;
 	private int istour = 0;
 	
 	private int souvenue;
@@ -189,8 +190,9 @@ public class Compte implements Serializable{
 				+ emei + ", step=" + step + ", stop=" + stop + ", level="
 				+ level + ", permission=" + permission
 				+ ", permissionPayement=" + permissionPayement
-				+ ", permissionbl=" + permissionbl + ", is_tour=" + istour
-				+ ", souvenue=" + souvenue + ", date=" + date + "]";
+				+ ", permissionbl=" + permissionbl + ", facture=" + facture
+				+ ", istour=" + istour + ", souvenue=" + souvenue + ", date="
+				+ date + "]";
 	}
 
 	public int getPermissionbl() {
@@ -207,6 +209,14 @@ public class Compte implements Serializable{
 
 	public void setIstour(int is_tour) {
 		this.istour = is_tour;
+	}
+
+	public int getFacture() {
+		return facture;
+	}
+
+	public void setFacture(int facture) {
+		this.facture = facture;
 	}
 
 	 

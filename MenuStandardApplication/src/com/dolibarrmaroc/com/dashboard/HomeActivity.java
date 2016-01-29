@@ -440,39 +440,44 @@ public class HomeActivity extends Activity
 			break;
 		case R.id.home_btn_livraison :
 			//startActivity (new Intent(getApplicationContext(), VendeurActivity.class));)
-			if(compte.getPermissionbl() == 0 || "vendeur".equals(compte.getProfile().toLowerCase())){
-				List<com.dolibarrmaroc.com.models.AlertDialog> alertfc2 = new ArrayList<>();
-				Intent intentfc1 = new Intent(getApplicationContext(), VendeurActivity.class); //CatalogeActivity.class  //CmdViewActivity
-				intentfc1.putExtra("user", compte);
-				intentfc1.putExtra("cmd", "0");
-				com.dolibarrmaroc.com.models.AlertDialog createfc1 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc1, getString(R.string.title_activity_vendeur), "invoice_see");
+			if(compte.getFacture() != 0){
+				if(compte.getPermissionbl() == 0 || "vendeur".equals(compte.getProfile().toLowerCase())){
+					List<com.dolibarrmaroc.com.models.AlertDialog> alertfc2 = new ArrayList<>();
+					Intent intentfc1 = new Intent(getApplicationContext(), VendeurActivity.class); //CatalogeActivity.class  //CmdViewActivity
+					intentfc1.putExtra("user", compte);
+					intentfc1.putExtra("cmd", "0");
+					com.dolibarrmaroc.com.models.AlertDialog createfc1 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc1, getString(R.string.title_activity_vendeur), "invoice_see");
 
 
-				Intent intentfc2 = new Intent(getApplicationContext(), PayementActivity.class);
-				intentfc2.putExtra("user", compte);
-				intentfc2.putExtra("dico", myoffline.LoadDeco("").getDico());
-				com.dolibarrmaroc.com.models.AlertDialog updatefc2 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc2, getString(R.string.title_activity_payement), "invoice");
+					Intent intentfc2 = new Intent(getApplicationContext(), PayementActivity.class);
+					intentfc2.putExtra("user", compte);
+					intentfc2.putExtra("dico", myoffline.LoadDeco("").getDico());
+					com.dolibarrmaroc.com.models.AlertDialog updatefc2 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc2, getString(R.string.title_activity_payement), "invoice");
 
 
-				Intent intentfc3 = new Intent(getApplicationContext(), OfflineActivity.class);
-				intentfc3.putExtra("user", compte);
-				com.dolibarrmaroc.com.models.AlertDialog updatefc3 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc3, getString(R.string.title_activity_offline), "invoice_lock");
+					Intent intentfc3 = new Intent(getApplicationContext(), OfflineActivity.class);
+					intentfc3.putExtra("user", compte);
+					com.dolibarrmaroc.com.models.AlertDialog updatefc3 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc3, getString(R.string.title_activity_offline), "invoice_lock");
 
-				Intent intentfc4 = new Intent(getApplicationContext(), ReglementOfflineActivity.class);
-				intentfc4.putExtra("user", compte);
-				com.dolibarrmaroc.com.models.AlertDialog updatefc4 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc4, getString(R.string.title_activity_reglement_offline), "invoice_pay");
-				
-				
+					Intent intentfc4 = new Intent(getApplicationContext(), ReglementOfflineActivity.class);
+					intentfc4.putExtra("user", compte);
+					com.dolibarrmaroc.com.models.AlertDialog updatefc4 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc4, getString(R.string.title_activity_reglement_offline), "invoice_pay");
+					
+					
 
-				alertfc2.add(createfc1);
-				alertfc2.add(updatefc2);
-				alertfc2.add(updatefc3);
-				alertfc2.add(updatefc4);
-				new AlertDialogList(HomeActivity.this, alertfc2).show();
+					alertfc2.add(createfc1);
+					alertfc2.add(updatefc2);
+					alertfc2.add(updatefc3);
+					alertfc2.add(updatefc4);
+					new AlertDialogList(HomeActivity.this, alertfc2).show();
 
+				}else{
+					alertPrdClt(getString(R.string.syscl9));
+				}
 			}else{
-				alertPrdClt(getString(R.string.syscl9));
+				AlertMsg();
 			}
+			
 
 			break;
 		case R.id.home_btn_tiers :
@@ -1044,5 +1049,21 @@ public class HomeActivity extends Activity
 		Intent intent = new Intent(this, AboutActivity.class);
 		intent.putExtra("user", compte);
 		startActivity (intent);
+	}
+	
+	public void AlertMsg(){
+		AlertDialog.Builder alert = new AlertDialog.Builder(HomeActivity.this);
+		alert.setTitle(getResources().getString(R.string.vendcat2));
+		alert.setMessage(getResources().getString(R.string.vendcat3));
+		alert.setNegativeButton(getResources().getString(R.string.cmdtofc11), new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+				return;
+			}
+		});
+		alert.setCancelable(false);
+		alert.create().show();
 	}
 } // end class

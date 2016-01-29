@@ -478,6 +478,8 @@
     <string name="cnxlab6">Veuillez verifier le type du transfert ou le nombre des produits</string>
     <string name="title_activity_transfertvirtualstock">Transfert des Rendus,Echanges</string>
     <string name="vendcat1">Categorie par defaut</string>
+    <string name="vendcat2">Message d\'avertissement</string>
+    <string name="vendcat3">vous ne disposez pas des autorisation pour : Ajouter/modifier ou emettre des paiements sur les factures clients.\n Contacter votre administrateur pour vous accordez ces droits.</string>
 
     <!-- synchronisation labels -->
     <string name="syscl1">Charger produits et clients</string>

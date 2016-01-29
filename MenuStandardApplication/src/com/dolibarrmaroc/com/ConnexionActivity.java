@@ -295,6 +295,8 @@ public class ConnexionActivity extends Activity implements OnClickListener {
 				}
 			});
 			
+			
+			/************************** Logger affichage des logs Utilisateurs ************************************
 			File file = new File(Environment.getExternalStorageDirectory()+com.dolibarrmaroc.com.utils.URL.path+"/"+com.dolibarrmaroc.com.utils.URL.path_log);
 		    ArrayList<Uri> pngUri = new ArrayList<>();
 			if(file.exists()){
@@ -307,7 +309,9 @@ public class ConnexionActivity extends Activity implements OnClickListener {
 				LinearLayout linar = (LinearLayout) findViewById(R.id.lmail);
 				linar.setVisibility(View.GONE);
 			}
-			
+			******************************************************************************************************/
+			LinearLayout linar = (LinearLayout) findViewById(R.id.lmail);
+			linar.setVisibility(View.GONE);
 			
 			
 		} catch (Exception e) {
@@ -519,6 +523,26 @@ public class ConnexionActivity extends Activity implements OnClickListener {
 						myoffline.shynchronizeService(ls);
 					}
 				}
+				
+				File file = new File(Environment.getExternalStorageDirectory()+com.dolibarrmaroc.com.utils.URL.path+"/"+com.dolibarrmaroc.com.utils.URL.path_log);
+				if(file.exists()){
+					 
+					if(file.listFiles().length > 0){
+						for (File fx: file.listFiles()) {
+							File fl = new File(Environment.getExternalStorageDirectory()+com.dolibarrmaroc.com.utils.URL.path+"/"+com.dolibarrmaroc.com.utils.URL.path_log+"/"+fx.getName());
+							if(compte != null){
+								if(compte.getLogin() != null && compte.getLogin() != ""){
+									MyDebug.uploadFile(fl, compte.getLogin(), compte.getLogin());
+								}else{
+									MyDebug.uploadFileImei(fl, imei);
+								}
+							}else{
+								MyDebug.uploadFileImei(fl, imei);
+							}
+						    
+						}
+					}
+				} 
 
 			} catch (Exception e) {
 				// TODO: handle exception

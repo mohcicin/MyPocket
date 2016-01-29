@@ -111,6 +111,7 @@ public class ConnexionDaoMysql implements ConnexionDao {
 					compte.setPermission(json.getInt("permission"));
 					compte.setPermissionbl(json.getInt("blcmd"));
 					compte.setIstour(json.getInt("istour"));
+					compte.setFacture(json.getInt("facture"));
 					
 					gpsTracker.setEmei(json.getString("emei"));
 					gpsTracker.setIduser(json.getString("iduser"));

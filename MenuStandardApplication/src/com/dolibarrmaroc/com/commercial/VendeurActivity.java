@@ -81,6 +81,7 @@ import com.dolibarrmaroc.com.business.CommercialManager;
 import com.dolibarrmaroc.com.business.PayementManager;
 import com.dolibarrmaroc.com.business.VendeurManager;
 import com.dolibarrmaroc.com.dao.VendeurDaoMysql;
+import com.dolibarrmaroc.com.maps.MainActivity;
 import com.dolibarrmaroc.com.models.CategorieCustomer;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
@@ -1784,6 +1785,8 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 		startActivity (intent);
 		this.finish();
 	}
+	
+	
 	
 	
 }

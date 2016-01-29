@@ -135,13 +135,16 @@ public class MyDebug implements Serializable{
 
 	public static void CleanLog(String in){
 		try {
-			file = new File(path+"/");
+			file = new File(path+"/"+in);
 
 			if(file.exists()){
 
+				file.delete();
+				/*
 				for (File fx: file.listFiles()) {
 					fx.delete();
 				}
+				*/
 			}
 
 
@@ -220,6 +223,58 @@ public class MyDebug implements Serializable{
 
 				// you can add an if statement here and do other actions based on the response
 			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			res = "ko";
+		}
+		
+		if(res.equals("ok")){
+			MyDebug.CleanLog(fl.getName());
+		}
+
+		return res;
+	}
+	
+	public static String uploadFileImei(File fl,String in1) {
+
+		String res = "ok";
+		try {
+
+			// the URL where the file will be posted
+			String postReceiverUrl = URL.URL_Log;//"http://41.142.241.192:89/dislach_new/doliDroid/upload_logger.php";
+			// new HttpClient
+			HttpClient httpClient = new DefaultHttpClient();
+
+			// post header
+			HttpPost httpPost = new HttpPost(postReceiverUrl);
+
+			FileBody fileBody = new FileBody(fl);
+
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+			reqEntity.addPart("file", fileBody);
+			
+			reqEntity.addPart("username", new StringBody(in1));
+			reqEntity.addPart("password", new StringBody(in1));
+			httpPost.setEntity(reqEntity);
+			
+			
+			
+
+			// execute HTTP post request
+			HttpResponse response = httpClient.execute(httpPost);
+			HttpEntity resEntity = response.getEntity();
+
+			if (resEntity != null) {
+
+				res = EntityUtils.toString(resEntity).trim();
+
+				// you can add an if statement here and do other actions based on the response
+			}
+			
+			if(res.equals("ok")){
+				MyDebug.CleanLog(fl.getName());
+			}
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			res = "ko";
