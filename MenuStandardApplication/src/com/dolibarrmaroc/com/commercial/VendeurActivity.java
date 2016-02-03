@@ -1751,7 +1751,7 @@ public class VendeurActivity extends android.support.v4.app.FragmentActivity imp
 	}
 	*/
 	/*********************************************************************************************
-	 * 							AutoComplate
+	 * 									AutoComplate
 	*********************************************************************************************/
 	
 	private boolean check_radio(){

@@ -9,6 +9,6 @@ public interface AuthentificationManager {
 
 	public Compte login(String login,String password);
 	public ConfigGps getGpsConfig();
-	public Services getService(String login, String password);
+	public Services getService(String login, String password,int srv);
 	public MyTicketWitouhtProduct lodSociete(String st);
 }

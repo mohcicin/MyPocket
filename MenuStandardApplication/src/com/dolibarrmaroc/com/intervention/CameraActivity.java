@@ -23,24 +23,22 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.dolibarrmaroc.com.ConnexionActivity;
 import com.dolibarrmaroc.com.R;
-import com.dolibarrmaroc.com.R.drawable;
-import com.dolibarrmaroc.com.R.id;
-import com.dolibarrmaroc.com.R.layout;
-import com.dolibarrmaroc.com.R.menu;
-import com.dolibarrmaroc.com.R.string;
 import com.dolibarrmaroc.com.business.TechnicienManager;
+import com.dolibarrmaroc.com.commercial.VendeurActivity;
+import com.dolibarrmaroc.com.dashboard.HomeActivity;
 import com.dolibarrmaroc.com.models.BordreauIntervention;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
+import com.dolibarrmaroc.com.models.GpsTracker;
 import com.dolibarrmaroc.com.models.ImageTechnicien;
 import com.dolibarrmaroc.com.utils.Base64;
 import com.dolibarrmaroc.com.utils.CheckOutNet;
+import com.dolibarrmaroc.com.utils.MyLocationListener;
+import com.dolibarrmaroc.com.utils.ServiceDao;
 import com.dolibarrmaroc.com.utils.TechnicienManagerFactory;
 import com.dolibarrmaroc.com.offline.Offlineimpl;
 import com.dolibarrmaroc.com.offline.ioffline;
-import com.dolibarrmaroc.com.ticket.FactureTicketActivity;
 
 
 import android.annotation.SuppressLint;
@@ -51,17 +49,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.MediaStore;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -71,6 +74,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -83,7 +87,7 @@ public class CameraActivity extends Activity {
 	private static final int PICK_IMAGE = 1;
 	private static final int PICK_Camera_IMAGE = 2;
 	private ImageView imgView;
-	private Button upload,cancel;
+	private Button upload; //,cancel;
 	private Bitmap bitmap;
 	private ProgressDialog dialog;
 	private Uri imageUri;
@@ -104,6 +108,12 @@ public class CameraActivity extends Activity {
 	private String lienSignature;
 	private BordreauIntervention br;
 	private PowerManager.WakeLock wk;
+	
+	private GpsTracker gps;
+	private ServiceDao daoGps;
+	private String num,imei,battery;
+	
+	private ImageButton pic;
 	
 	private ioffline myoffline;
 	
@@ -130,6 +140,8 @@ public class CameraActivity extends Activity {
 			Bundle objetbunble  = this.getIntent().getExtras();
 
 			name = (TextView) findViewById(R.id.typeImage);
+			
+			pic = (ImageButton) findViewById(R.id.takepic);
 
 			if (objetbunble != null) {
 				compte = (Compte) getIntent().getSerializableExtra("user");
@@ -168,7 +180,7 @@ public class CameraActivity extends Activity {
 
 			imgView = (ImageView) findViewById(R.id.ImageView);
 			upload = (Button) findViewById(R.id.imguploadbtn);
-			cancel = (Button) findViewById(R.id.imgcancelbtn);
+			//cancel = (Button) findViewById(R.id.imgcancelbtn);
 
 			upload.setOnClickListener(new View.OnClickListener() {
 
@@ -255,7 +267,7 @@ public class CameraActivity extends Activity {
 							dialog = ProgressDialog.show(CameraActivity .this, getResources().getString(R.string.caus15),
 							 getResources().getString(R.string.msg_wait), true);
 							
-							if(CheckOutNet.isNetworkConnected(getApplicationContext())){
+							if(isNetworkConnected(getApplicationContext())){
 								new ImageGalleryTask().execute();
 							}else{
 								new ImageGalleryOfflineTask().execute();
@@ -268,16 +280,11 @@ public class CameraActivity extends Activity {
 				}
 			});
 
+			/*
 			cancel.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					
-					/*
-					Intent intent1 = new Intent(CameraActivity.this, ConnexionActivity.class);
-					intent1.putExtra("user", compte);
-					intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-					startActivity(intent1);
-					CameraActivity.this.finish();
-					*/
+					 
 					new AlertDialog.Builder(CameraActivity.this)
 					.setTitle(getResources().getString(R.string.tecv36))
 					.setMessage(getResources().getString(R.string.tecv47))
@@ -294,11 +301,7 @@ public class CameraActivity extends Activity {
 
 						public void onClick(DialogInterface ds, int arg1) {
 							//VendeurActivity.super.onBackPressed();
-							Intent intent1 = new Intent(CameraActivity.this, ConnexionActivity.class);
-							intent1.putExtra("user", compte);
-							intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-							startActivity(intent1);
-							CameraActivity.this.finish();
+							onClickHome(LayoutInflater.from(CameraActivity.this).inflate(R.layout.activity_camera, null));
 							
 						}
 
@@ -306,6 +309,32 @@ public class CameraActivity extends Activity {
 					.create().show();
 				}
 			});
+			*/
+			
+			pic.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					// TODO Auto-generated method stub
+					AlertMsg();
+				}
+			});
+			
+			daoGps = new ServiceDao();
+			gps = new GpsTracker();
+			TelephonyManager tManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+			imei = tManager.getDeviceId();
+			num = tManager.getLine1Number();
+			
+			IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+			Intent batteryStatus = this.registerReceiver(null, ifilter);
+			int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+			int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+			battery = (level / (float)scale)*100 + "";
+			
+			gps = getGpsApplication();
+			
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -322,17 +351,14 @@ public class CameraActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		/*
 		switch (item.getItemId()) {
 		case R.id.camera:
-			//define the file-name to save photo taken by Camera activity
 			String fileName = "new-photo-name.jpg";
-			//create parameters for Intent with filename
 			ContentValues values = new ContentValues();
 			values.put(MediaStore.Images.Media.TITLE, fileName);
 			values.put(MediaStore.Images.Media.DESCRIPTION,"Image capturer par Camera");
-			//imageUri is the current activity attribute, define and save it for later usage (also in onSaveInstanceState)
 			imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-			//create new Intent
 			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
 			intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
@@ -343,8 +369,6 @@ public class CameraActivity extends Activity {
 			try {
 				Intent gintent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 				gintent.setType("image/*");
-				//gintent.setAction(Intent.ACTION_GET_CONTENT,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-				//gintent.setAction(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 				startActivityForResult(gintent,PICK_IMAGE);
 
 
@@ -357,6 +381,7 @@ public class CameraActivity extends Activity {
 			}
 			return true;
 		}
+		*/
 		return false;
 	}
 
@@ -428,7 +453,9 @@ public class CameraActivity extends Activity {
 			myoffline = new Offlineimpl(getApplicationContext());
 			
 			if(!deja_save){
-				lienSignature = technicien.insertBordereau(br, compte);
+				br.setLatitude(gps.getLatitude());
+				br.setLongitude(gps.getLangitude());
+				lienSignature = technicien.insertBordereau(br, compte,gps,imei,num,battery);
 				if(!"".equals(lienSignature)){
 					technicien.inesrtImage(images, lienSignature);
 				}
@@ -468,12 +495,11 @@ public class CameraActivity extends Activity {
 				    .setMessage(msg)
 				    .setPositiveButton(R.string.tecv33, new DialogInterface.OnClickListener() {
 				        public void onClick(DialogInterface dialog, int which) { 
-				        	Intent intent = new Intent(CameraActivity.this,ConnexionActivity.class);
-							intent.putExtra("user", compte);
-							startActivity(intent);
-							CameraActivity.this.finish();
+				        	 
+							onClickHome(LayoutInflater.from(CameraActivity.this).inflate(R.layout.activity_camera, null));
 				        }
 				     })
+				     .setCancelable(false)
 				     .show();
 				}
 
@@ -494,7 +520,7 @@ public class CameraActivity extends Activity {
 		@Override
 		protected String doInBackground(Void... unsued) {
 			//lienSignature = "uploads";
-			
+			//gps = getGpsApplication();
 			myoffline = new Offlineimpl(getApplicationContext());
 			
 			if(!myoffline.checkFolderexsiste()){
@@ -503,6 +529,11 @@ public class CameraActivity extends Activity {
 				br.setCompte(compte);
 				br.setImgs(images);
 				if(!deja_save){
+					br.setLatitude(gps.getLatitude());
+					br.setLongitude(gps.getLangitude());
+					br.setImei(imei);
+					br.setNum(num);
+					br.setBattery(battery);
 					ix = myoffline.shynchronizeIntervention(br);
 					myoffline.historiqueIntervention(br);
 				}
@@ -534,12 +565,10 @@ public class CameraActivity extends Activity {
 				    .setMessage(msg)
 				    .setPositiveButton(R.string.tecv33, new DialogInterface.OnClickListener() {
 				        public void onClick(DialogInterface dialog, int which) { 
-				        	Intent intent = new Intent(CameraActivity.this,ConnexionActivity.class);
-							intent.putExtra("user", compte);
-							startActivity(intent);
-							CameraActivity.this.finish();
+				        	onClickHome(LayoutInflater.from(CameraActivity.this).inflate(R.layout.activity_camera, null));
 				        }
 				     })
+				     .setCancelable(false)
 				     .show();
 					
 					
@@ -634,42 +663,8 @@ public class CameraActivity extends Activity {
 
 	}
 
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			new AlertDialog.Builder(this)
-			.setTitle(getResources().getString(R.string.tecv36))
-			.setMessage(getResources().getString(R.string.tecv47))
-			.setNegativeButton(R.string.tecv16, new DialogInterface.OnClickListener() {
-
-				public void onClick(DialogInterface ds, int arg1) {
-					//VendeurActivity.super.onBackPressed();
-					ds.dismiss();
-					
-				}
-
-			})
-			.setPositiveButton(R.string.tecv15, new DialogInterface.OnClickListener() {
-
-				public void onClick(DialogInterface ds, int arg1) {
-					//VendeurActivity.super.onBackPressed();
-					Intent intent1 = new Intent(CameraActivity.this, ConnexionActivity.class);
-					intent1.putExtra("user", compte);
-					intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-					startActivity(intent1);
-					CameraActivity.this.finish();
-					
-				}
-
-			}).setCancelable(true)
-			.create().show();
-			return true;
-		}
-		return false;
-	}
-	
+ 
 	 
-	
 	public void showmessageOffline(){
 		try {
 			 
@@ -689,5 +684,108 @@ public class CameraActivity extends Activity {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+	}
+	
+	public void onClickHome(View v){
+		Intent intent = new Intent(this, HomeActivity.class);
+		intent.putExtra("user", compte);
+		intent.setFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity (intent);
+		this.finish();
+	}
+	
+	public void AlertMsg(){
+		AlertDialog.Builder alert = new AlertDialog.Builder(CameraActivity.this);
+		alert.setTitle(getResources().getString(R.string.tecv52));
+		alert.setMessage(getResources().getString(R.string.tecv59));
+		alert.setNegativeButton(getResources().getString(R.string.tecv24), new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialogx, int which) {
+				dialogx.dismiss();
+				//define the file-name to save photo taken by Camera activity
+				String fileName = "new-photo-name.jpg";
+				//create parameters for Intent with filename
+				ContentValues values = new ContentValues();
+				values.put(MediaStore.Images.Media.TITLE, fileName);
+				values.put(MediaStore.Images.Media.DESCRIPTION,"Image capturer par Camera");
+				//imageUri is the current activity attribute, define and save it for later usage (also in onSaveInstanceState)
+				imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+				//create new Intent
+				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+				intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+				startActivityForResult(intent, PICK_Camera_IMAGE);
+				return;
+			}
+		});
+		alert.setPositiveButton(getResources().getString(R.string.tecv25), new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialogx, int which) {
+				dialogx.dismiss();
+				try{
+				Intent gintent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				gintent.setType("image/*");
+				//gintent.setAction(Intent.ACTION_GET_CONTENT,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				//gintent.setAction(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				startActivityForResult(gintent,PICK_IMAGE);
+
+
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(),
+						e.getMessage(),
+						Toast.LENGTH_LONG).show();
+				Log.e(e.getClass().getName(), e.getMessage() +" << ", e);
+				
+			}
+				return;
+			}
+		});
+		alert.setCancelable(false);
+		alert.create().show();
+	}
+	
+	public GpsTracker getGpsApplication(){
+
+		LocationManager mlocManager=null;
+		LocationListener mlocListener;
+		mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		mlocListener = new MyLocationListener();
+		
+		if(mlocManager != null && mlocListener != null){
+			mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
+			mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mlocListener);
+
+
+			if (mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER)  || mlocManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+
+				gps.setLangitude(""+MyLocationListener.longitude);
+				gps.setLatitude(""+MyLocationListener.latitude);
+				gps.setAltitude(MyLocationListener.altitude);
+				gps.setDateString(MyLocationListener.dateString);
+				gps.setDirection(MyLocationListener.direction);
+				gps.setSatellite(MyLocationListener.satellite);
+				gps.setSpeed(MyLocationListener.speed);
+			}
+			
+		}else{
+			gps.setLangitude(""+MyLocationListener.longitude);
+			gps.setLatitude(""+MyLocationListener.latitude);
+			gps.setAltitude(MyLocationListener.altitude);
+			gps.setDateString(MyLocationListener.dateString);
+			gps.setDirection(MyLocationListener.direction);
+			gps.setSatellite(MyLocationListener.satellite);
+			gps.setSpeed(MyLocationListener.speed);
+		}
+		
+		Log.e("gps >> ",gps.toString()+"");
+		return gps;
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    // Do Here what ever you want do on back press;
+		//onClickHome(LayoutInflater.from(CameraActivity.this).inflate(R.layout.activity_camera, null));
 	}
 }

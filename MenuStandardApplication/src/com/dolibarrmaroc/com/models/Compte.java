@@ -23,6 +23,8 @@ public class Compte implements Serializable{
 	private int facture;
 	private int istour = 0;
 	
+	private int id_service;
+	
 	private int souvenue;
 	private long date;
 	
@@ -191,8 +193,8 @@ public class Compte implements Serializable{
 				+ level + ", permission=" + permission
 				+ ", permissionPayement=" + permissionPayement
 				+ ", permissionbl=" + permissionbl + ", facture=" + facture
-				+ ", istour=" + istour + ", souvenue=" + souvenue + ", date="
-				+ date + "]";
+				+ ", istour=" + istour + ", id_service=" + id_service
+				+ ", souvenue=" + souvenue + ", date=" + date + "]";
 	}
 
 	public int getPermissionbl() {
@@ -217,6 +219,14 @@ public class Compte implements Serializable{
 
 	public void setFacture(int facture) {
 		this.facture = facture;
+	}
+
+	public int getId_service() {
+		return id_service;
+	}
+
+	public void setId_service(int id_service) {
+		this.id_service = id_service;
 	}
 
 	 

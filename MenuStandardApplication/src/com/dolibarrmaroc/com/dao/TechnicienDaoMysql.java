@@ -1,6 +1,8 @@
 package com.dolibarrmaroc.com.dao;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -12,6 +14,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Base64;
@@ -21,13 +24,14 @@ import com.dolibarrmaroc.com.models.BordereauGps;
 import com.dolibarrmaroc.com.models.BordreauIntervention;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
-import com.dolibarrmaroc.com.models.FactureGps;
-import com.dolibarrmaroc.com.models.FileData;
+import com.dolibarrmaroc.com.models.GpsTracker;
 import com.dolibarrmaroc.com.models.ImageTechnicien;
 import com.dolibarrmaroc.com.models.LabelService;
 import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Services;
 import com.dolibarrmaroc.com.utils.JSONParser;
+import com.dolibarrmaroc.com.utils.MyLocationListener;
+import com.dolibarrmaroc.com.utils.ServiceDao;
 import com.dolibarrmaroc.com.utils.URL;
 
 
@@ -40,7 +44,7 @@ public class TechnicienDaoMysql implements TechnicienDao{
 	private static final String URL_BRD = URL.URL+"getBrdDataGps.php";
 	private static final String TAG_SUCCESS = "success";
 	private static final String TAG_ID = "id";
-	
+
 
 	public TechnicienDaoMysql(){
 		jsonParser = new JSONParser();
@@ -84,9 +88,8 @@ public class TechnicienDaoMysql implements TechnicienDao{
 				list.add(s);
 
 			}
-		}catch(Exception e){
-			Log.e("log_tag TechnicienDaoMysql allServices", "Error parsing data " + e.toString());
-			MyDebug.WriteLog(this.getClass().getSimpleName(), "allServices", nameValuePairs.toString(), e.toString());
+		}catch(JSONException e){
+			Log.e("log_tag", "Error parsing data " + e.toString());
 		}
 		return list;
 	}
@@ -94,7 +97,7 @@ public class TechnicienDaoMysql implements TechnicienDao{
 
 
 	@Override
-	public String insertBordereau(BordreauIntervention bi, Compte c) {
+	public String insertBordereau(BordreauIntervention bi, Compte c,GpsTracker gps,String imei,String num,String battery) {
 
 		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("username",c.getLogin()));
@@ -119,17 +122,19 @@ public class TechnicienDaoMysql implements TechnicienDao{
 			Log.e("Bordereau lien ",jsonString);
 			String stfomat = jsonString.substring(jsonString.indexOf("{"),jsonString.lastIndexOf("}")+1);
 			JSONObject json = new JSONObject(stfomat);
+			ServiceDao daoGps = new ServiceDao();
+			int id = json.getInt("feedback");
+			if(id != -1)daoGps.insertDataIntrv(gps,imei,num,battery,c,id+"");
 			return json.getString("lien");
-		} catch (Exception e) {
-			Log.e("TechnicienDaoMysql insertBordereau ",e.getMessage()+"");
-			MyDebug.WriteLog(this.getClass().getSimpleName(), "insertBordereau", nameValuePairs.toString(), e.toString());
+		} catch (JSONException e) {
 			e.printStackTrace();
-			return null;
+			MyDebug.WriteLog(this.getClass().getSimpleName(), "insertBordereau", nameValuePairs.toString(), e.toString());
+			return "";
 		}
 
 	}
 
-	
+
 	@Override
 	public String insertBordereauoff(BordreauIntervention bi, Compte c) {
 		String stfomat ="no";
@@ -148,17 +153,33 @@ public class TechnicienDaoMysql implements TechnicienDao{
 		nameValuePairs.add(new BasicNameValuePair("day",bi.getDay()));
 		nameValuePairs.add(new BasicNameValuePair("year",bi.getYear()));
 
-		
 
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd H:m:s"); 
 		Log.e("sended params",nameValuePairs.toString());
-		
+
 		try {
 
 			String jsonString = jsonParser.newmakeHttpRequest(urlInsert, "POST", nameValuePairs);
 			stfomat = jsonString.substring(jsonString.indexOf("{"),jsonString.lastIndexOf("}")+1);
+
+			ServiceDao daoGps = new ServiceDao();
+
+			JSONObject json = new JSONObject(stfomat);
+			int id = json.getInt("feedback");
+
+			GpsTracker gps= new GpsTracker();
+			gps.setLangitude(bi.getLongitude());
+			gps.setLatitude(bi.getLatitude());
+			gps.setAltitude(0);
+			gps.setDateString(sdf.format(new Date()));
+			gps.setDirection(0);
+			gps.setSatellite(0+"");
+			gps.setSpeed(0);
+
+			if(id != -1)daoGps.insertDataIntrv(gps,bi.getImei(),bi.getNum(),bi.getBattery(),c,id+"");
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e("TechnicienDaoMysql insertBordereauoff ",e.getMessage()+"");
 			MyDebug.WriteLog(this.getClass().getSimpleName(), "insertBordereauoff", nameValuePairs.toString(), e.toString());
 			return "no";
 		}
@@ -199,8 +220,8 @@ public class TechnicienDaoMysql implements TechnicienDao{
 				list.add(fact);
 
 			}
-		}catch(Exception e){
-			Log.e(" TechnicienDaoMysql selectAllBordereau", "Error parsing data " + e.toString());
+		}catch(JSONException e){
+			Log.e("log_tag", "Error parsing data " + e.toString());
 			MyDebug.WriteLog(this.getClass().getSimpleName(), "selectAllBordereau", nameValuePairs.toString(), e.toString());
 		}
 
@@ -219,7 +240,7 @@ public class TechnicienDaoMysql implements TechnicienDao{
 			nameValuePairs.add(new BasicNameValuePair("path",lien));
 			nameValuePairs.add(new BasicNameValuePair("image",imgs.get(i).getImageCode()));
 			try{
-			jsonParser.newmakeHttpRequest(li, "POST", nameValuePairs);
+				jsonParser.newmakeHttpRequest(li, "POST", nameValuePairs);
 			}catch(Exception e){
 				MyDebug.WriteLog(this.getClass().getSimpleName(), "inesrtImage", nameValuePairs.toString(), e.toString());
 			}
@@ -234,7 +255,8 @@ public class TechnicienDaoMysql implements TechnicienDao{
 
 		nameValuePairs.add(new BasicNameValuePair("username",c.getLogin()));
 		nameValuePairs.add(new BasicNameValuePair("password",c.getPassword()));
-		
+		//added for new commercial
+		nameValuePairs.add(new BasicNameValuePair("techno", "1"));
 
 		String jsonString =  jsonParser.makeHttpRequest(
 				urlclt, "POST", nameValuePairs);
@@ -242,7 +264,7 @@ public class TechnicienDaoMysql implements TechnicienDao{
 
 		List<Client> list = new ArrayList<Client>();
 
-		Log.e("Json retourne >> ", jsonString);
+		Log.d("Json retourne >> ", jsonString);
 		try{
 
 			JSONArray jArray = new JSONArray(jsonString);
@@ -266,21 +288,21 @@ public class TechnicienDaoMysql implements TechnicienDao{
 				list.add(clt);
 
 			}
-		}catch(Exception e){
-			Log.e("TechnicienDaoMysql selectAllClient", "Error parsing data " + e.toString());
+		}catch(JSONException e){
+			Log.e("log_tag", "Error parsing data " + e.toString());
 			MyDebug.WriteLog(this.getClass().getSimpleName(), "selectAllClient", nameValuePairs.toString(), e.toString());
 		}
 		return list;
 	}
 
 	public static String getEncodedString(String str) {
-	    String ret = null;
-	    try {
-	        ret = Base64.encodeToString(str.getBytes(), Base64.DEFAULT);
+		String ret = null;
+		try {
+			ret = Base64.encodeToString(str.getBytes(), Base64.DEFAULT);
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return ret;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ret;
 	}
 }

@@ -16,7 +16,9 @@
 
         <ImageView style="@style/TitleBarSeparator" />
 
-        <TextView style="@style/TitleBarText" />
+        <TextView 
+            android:id="@+id/usernameview"
+            style="@style/TitleBarText" />
 
         <ImageButton
             style="@style/TitleBarAction"

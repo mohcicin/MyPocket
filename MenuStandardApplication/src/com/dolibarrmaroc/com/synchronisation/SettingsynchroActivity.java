@@ -299,7 +299,17 @@ public class SettingsynchroActivity extends Activity {
 								myoffline.CleanClsCmd();
 								myoffline.CleanMotif();
 								
+								myoffline.CleanAllDeniededData();
+								
 								MyDebug.CleanLog("");
+								
+								
+								
+								
+								/********** Clean Intervention ********************/
+								myoffline.CleanIntervention();
+								myoffline.CleanHistoIntervention();
+								myoffline.CleanDeniededInterv();
 								
 								
 								StockVirtual sv = new StockVirtual(SettingsynchroActivity.this);

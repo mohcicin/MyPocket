@@ -103,6 +103,7 @@
     <string name="facture_action">Action sur Facture</string>
     <string name="facture_num">Facture numero</string>
     <string name="commande_num">Commande numero</string>
+    <string name="num_bordereau">Bordereau numero</string>
     <string name="client_action">Action sur Client</string>
     <string name="facture_choice">Votre choix :</string>
     <string name="stock_limit">Stock Limité</string>
@@ -363,7 +364,7 @@
     <string name="tecv30">Resultats de votre traitement</string>
     <string name="tecv31">Operation effectuer avec success</string>
     <string name="tecv32">Operation non enregistrer</string>
-    <string name="tecv33">Sortir</string>
+    <string name="tecv33">Terminer</string>
     <string name="tecv34">Vider votre cache</string>
     <string name="tecv35">Cette action va supprimer tout votre cache hors ligne des intérvention \n \n Veuillez saisir votre mot de passe</string>
     <string name="tecv36">Demande de confirmation</string>
@@ -380,10 +381,26 @@
     <string name="tecv48">Num SIM</string>
     <string name="tecv49">Vous avez</string>
     <string name="tecv50">Intervention(s) hors ligne pas encours synchroniser avec le serveur</string>
+    <string name="tecv52">Message d\'avertissement</string>
+    <string name="tecv53">Vous ne disposer pas des services. Contacter votre adminisrateur pour vous accordez des services</string>
+    <string name="tecv54">Nouvelle intervention</string>
+    <string name="tecv55">Liste des interventions</string>
+    <string name="tecv56">Vérifier l\'heure du fin</string>
+    <string name="tecv57">Le format de votre temps est incompatible</string>
+    <string name="tecv58">Il faut renseigner le Numero de la Fiche </string>
+    <string name="tecv59">Selectionner une image</string>
+    <string name="tecv60">Vous ne disposer pas des services</string>
+    <string name="tecv61">N° Bon </string>
+    <string name="tecv62">Historique</string>
+    
+    
     <string name="title_activity_home">GEO.COM</string>
     <string name="title_activity_viewcommande">Consultation des commandes</string>
     <string name="title_activity_commande_view">Impression des commandes</string>
     <string name="title_activity_transfertstock">Transfert de stock</string>
+    
+    
+    <!-- Transfert de Stock -->
     <string name="btn_mvmstck">Selectionner</string>
     <string name="btn_mvmstckgo">Enregistrer transfert</string>
     <string name="btn_mvmstckall">Transferer totalité du stock</string>
@@ -492,6 +509,7 @@
     <string name="syscl8">Vous ne disposer pas des droits pour créer et valider des commandes</string>
     <string name="syscl9">Cette option n\'est pas disponible pour le moment</string>
     <string name="syscl10">Vous ne disposer pas des droits pour passer des factures et effectuer des payements</string>
+    <string name="syscl11">Charger mes clients et services</string>
     <string name="title_activity_synchronisation_home">Accueil de synchronisation</string>
 
     <!-- maps data -->

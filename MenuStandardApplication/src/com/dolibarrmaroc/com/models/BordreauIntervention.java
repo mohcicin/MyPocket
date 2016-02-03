@@ -18,6 +18,12 @@ public class BordreauIntervention {
 	private String month;
 	private String day;
 	private String nmclt;
+	private String latitude;
+	private String longitude;
+	private String num;
+	private String imei;
+	private String battery;
+	private String bon;
 	
 	private List<ImageTechnicien> imgs;
 	private Compte compte;
@@ -158,7 +164,7 @@ public class BordreauIntervention {
 				+ duree + ", status=" + status + ", description=" + description
 				+ ", objet=" + objet + ", heurD=" + heurD + ", minD=" + minD
 				+ ", year=" + year + ", month=" + month + ", day=" + day
-				+ ", nmclt=" + nmclt + ", imgs=" + imgs + ", compte=" + compte
+				+ ", nmclt=" + nmclt + ",compte=" + compte
 				+ "]";
 	}
 
@@ -176,6 +182,54 @@ public class BordreauIntervention {
 
 	public void setNmclt(String nmclt) {
 		this.nmclt = nmclt;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
+	public String getNum() {
+		return num;
+	}
+
+	public void setNum(String num) {
+		this.num = num;
+	}
+
+	public String getImei() {
+		return imei;
+	}
+
+	public void setImei(String imei) {
+		this.imei = imei;
+	}
+
+	public String getBattery() {
+		return battery;
+	}
+
+	public void setBattery(String battery) {
+		this.battery = battery;
+	}
+
+	public String getBon() {
+		return bon;
+	}
+
+	public void setBon(String bon) {
+		this.bon = bon;
 	}
 
 	

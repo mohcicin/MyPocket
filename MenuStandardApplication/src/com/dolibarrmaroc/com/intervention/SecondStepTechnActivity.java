@@ -1,17 +1,18 @@
 package com.dolibarrmaroc.com.intervention;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 
-import com.dolibarrmaroc.com.ConnexionActivity;
 import com.dolibarrmaroc.com.R;
-import com.dolibarrmaroc.com.R.id;
-import com.dolibarrmaroc.com.R.layout;
+import com.dolibarrmaroc.com.commercial.VendeurActivity;
+import com.dolibarrmaroc.com.dashboard.HomeActivity;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
 
@@ -24,6 +25,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -49,6 +51,8 @@ OnClickListener{
 	
 	private boolean hd = false;
 	private boolean hf = false;
+	
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 	
 	//Recuperation Interface de l'utilisateur Par Service
 	private String nmb;
@@ -96,8 +100,8 @@ OnClickListener{
 			nextstep.setOnClickListener(this);
 			
 			// Remplir Valeur Par defaut
-			txtDate.setText(mDay + "-"
-					+ (mMonth + 1) + "-" + mYear);
+			//txtDate.setText(mDay + "-"+ (mMonth + 1) + "-" + mYear);
+			txtDate.setText(sdf.format(new Date()));
 			
 			if(mMinute < 10){
 				txtTimeD.setText(mHour + ":0" + mMinute);
@@ -272,26 +276,28 @@ OnClickListener{
 						
 					startActivity(intent);
 				}else{
-					Toast.makeText(SecondStepTechnActivity.this, "V�rifi� l'heur de fin", Toast.LENGTH_LONG).show();
+					Toast.makeText(SecondStepTechnActivity.this, getResources().getString(R.string.tecv56), Toast.LENGTH_LONG).show();
 				}
 				
 				
 			}else{
-				Toast.makeText(SecondStepTechnActivity.this, "Le format de votre temps est incompatible", Toast.LENGTH_LONG).show();
+				Toast.makeText(SecondStepTechnActivity.this, getResources().getString(R.string.tecv57), Toast.LENGTH_LONG).show();
 			}
 			
 		}
 	}
 	
-	@Override
-	public void onBackPressed() {
-		// TODO Auto-generated method stub
-		super.onBackPressed();
-		Intent intent1 = new Intent(this, ConnexionActivity.class);
-		intent1.putExtra("user", compte);
-		intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		startActivity(intent1);
+	public void onClickHome(View v){
+		Intent intent = new Intent(this, HomeActivity.class);
+		intent.putExtra("user", compte);
+		intent.setFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity (intent);
 		this.finish();
 	}
 	
+	@Override
+	public void onBackPressed() {
+	    // Do Here what ever you want do on back press;
+		//onClickHome(LayoutInflater.from(SecondStepTechnActivity.this).inflate(R.layout.activity_second_step_techn, null));
+	}
 }

@@ -515,15 +515,22 @@ public class ConnexionActivity extends Activity implements OnClickListener {
 					myoffline.shynchronizeSociete(auth.lodSociete(""));
 
 
+					/*******************************************
 					if("technicien".equals(compte.getProfile())){
-						service = auth.getService(log, pass);
+						service = auth.getService(log, pass,compte.getId_service());
 
-						List<Services> ls = new ArrayList<>();
-						ls.add(service);
-						myoffline.shynchronizeService(ls);
+						
+						if(service.getId() != -1){
+							List<Services> ls = new ArrayList<>();
+							ls.add(service);
+							myoffline.shynchronizeService(ls);
+						} 
 					}
+					*********************************************/
 				}
 				
+				
+				/**********************  Load & Send Log error ***************************/
 				File file = new File(Environment.getExternalStorageDirectory()+com.dolibarrmaroc.com.utils.URL.path+"/"+com.dolibarrmaroc.com.utils.URL.path_log);
 				if(file.exists()){
 					 
@@ -546,6 +553,7 @@ public class ConnexionActivity extends Activity implements OnClickListener {
 
 			} catch (Exception e) {
 				// TODO: handle exception
+				Log.e("begin connexion ",e.getMessage()+"");
 			}
 
 
@@ -657,10 +665,11 @@ public class ConnexionActivity extends Activity implements OnClickListener {
 					compte = myoffline.LoadCompte(login.getText().toString(), password.getText().toString());
 					conf = myoffline.getGpsTracker();
 					
-					
+					/*
 					if("technicien".equals(compte.getProfile())){
 						service = myoffline.LoadServices("");
 					}	
+					*/
 				}
 				
 				

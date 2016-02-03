@@ -6,20 +6,13 @@ import java.util.List;
 import org.joda.time.Duration;
 import org.joda.time.Hours;
 
-import com.dolibarrmaroc.com.ConnexionActivity;
 import com.dolibarrmaroc.com.R;
-import com.dolibarrmaroc.com.R.id;
-import com.dolibarrmaroc.com.R.layout;
-import com.dolibarrmaroc.com.R.menu;
-import com.dolibarrmaroc.com.R.string;
 import com.dolibarrmaroc.com.adapter.InterventionAdapterView;
-import com.dolibarrmaroc.com.adapter.MyFactureAdapterView;
+import com.dolibarrmaroc.com.dashboard.HomeActivity;
 import com.dolibarrmaroc.com.models.BordereauGps;
 import com.dolibarrmaroc.com.models.BordreauIntervention;
 import com.dolibarrmaroc.com.models.Compte;
-import com.dolibarrmaroc.com.models.MyTicketPayement;
 import com.dolibarrmaroc.com.models.MyfactureAdapter;
-import com.dolibarrmaroc.com.models.Myinvoice;
 import com.dolibarrmaroc.com.offline.Offlineimpl;
 
 import android.support.v7.app.ActionBarActivity;
@@ -53,12 +46,12 @@ import android.widget.SearchView.OnQueryTextListener;
 
 public class InterventionhistoActivity extends Activity  implements OnQueryTextListener {
 
+	private SearchView search;
 	private Compte compte;
 	private ListView lisview;
 	private ListView lisview2;
 	
 	private Offlineimpl myoffline;
-	private Myinvoice meinvo;
 	
 	private ProgressDialog dialog;
 	private ProgressDialog dialogIN;
@@ -98,6 +91,44 @@ public class InterventionhistoActivity extends Activity  implements OnQueryTextL
 		//new offlineTask().execute();
 		
 		factadapter = new InterventionAdapterView();
+		
+		
+		search = (SearchView) findViewById(R.id.searchView1);
+		
+		search.setOnQueryTextListener(new OnQueryTextListener(){
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				// TODO Auto-generated method stub
+				Log.e("util", TextUtils.isEmpty(newText)+"");
+				if (TextUtils.isEmpty(newText))
+				{
+					lisview.clearTextFilter();
+					remplireListview(factdata, 0);
+				}
+				else
+				{
+					lisview.setFilterText(newText.toString());
+					factadapter.getFilter().filter(newText.toString());
+					
+					
+					//bindingData = new BinderData(WeatherActivity.this, bindingData.getMap());
+					factadapter.notifyDataSetChanged();
+					lisview.invalidateViews();
+					lisview.setAdapter(factadapter);
+					lisview.refreshDrawableState();
+				}
+
+				return true;
+			}
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				// TODO Auto-generated method stub
+				Log.e("search data","is me submit");
+				return false;
+			}
+		});
 	}
 	
 	public void remplireListview(List<MyfactureAdapter> fc,int n){
@@ -151,7 +182,8 @@ public class InterventionhistoActivity extends Activity  implements OnQueryTextL
 					}
 				}
 				
-				factdata.add(new MyfactureAdapter(mm.getNmclt(), mm.getObjet(), mm.getDate_c(),du, mm.getId()));
+				Log.e(">>> ",mx.toString());
+				factdata.add(new MyfactureAdapter(mm.getNmclt(), mm.getObjet(), mm.getDate_c(),mm.getStatus(), mm.getId()));
 			}
 			
 		
@@ -181,39 +213,7 @@ public class InterventionhistoActivity extends Activity  implements OnQueryTextL
 	}
 	
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.interventionhisto, menu);
-		
-		// Associate searchable configuration with the SearchView
-		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView = (SearchView) menu.findItem(R.id.search)
-				.getActionView();
-		searchView.setSearchableInfo(searchManager
-				.getSearchableInfo(getComponentName()));
-
-		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-		searchView.setSubmitButtonEnabled(true);
-		searchView.setOnQueryTextListener(this);
-
-		//handleIntent(getIntent());
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.clshistinterv) {
-			alertchachedel();
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+	 
 	
 	@Override
 	public boolean onQueryTextChange(String newText) {
@@ -247,17 +247,7 @@ public class InterventionhistoActivity extends Activity  implements OnQueryTextL
 		return false;
 	}
 	
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			
-			Intent intent1 = new Intent(InterventionhistoActivity.this, ConnexionActivity.class);
-			intent1.putExtra("user", compte);
-			startActivity(intent1);
-			InterventionhistoActivity.this.finish();
-		}
-		return false;
-	}
+	 
 	
 
 	public void alertchachedel(){
@@ -288,6 +278,7 @@ public class InterventionhistoActivity extends Activity  implements OnQueryTextL
 								myoffline.CleanHistoIntervention();
 								if (dialogIN.isShowing()){
 									dialogIN.dismiss();
+									onClickHome(LayoutInflater.from(InterventionhistoActivity.this).inflate(R.layout.activity_interventionhisto, null));
 								}
 								
 							}else{
@@ -314,5 +305,23 @@ public class InterventionhistoActivity extends Activity  implements OnQueryTextL
 			// TODO: handle exception
 			Log.e("erreur",e.getMessage() +" << ");
 		}
+	}
+	
+	public void onClickHome(View v){
+		Intent intent = new Intent(this, HomeActivity.class);
+		intent.putExtra("user", compte);
+		intent.setFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity (intent);
+		this.finish();
+	}
+	
+	public void onClickDel(View v){
+		alertchachedel();
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    // Do Here what ever you want do on back press;
+		//onClickHome(LayoutInflater.from(InterventionhistoActivity.this).inflate(R.layout.activity_interventionhisto, null));
 	}
 }

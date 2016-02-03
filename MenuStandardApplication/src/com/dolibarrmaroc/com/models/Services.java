@@ -1,14 +1,15 @@
 package com.dolibarrmaroc.com.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Services implements Serializable{
 
 	private int id;
-	private String service;
+	private String service = "";
 	private int nmb_cmp;
-	private List<LabelService> labels;
+	private List<LabelService> labels = new ArrayList<>();
 		
 	public Services() {
 	}

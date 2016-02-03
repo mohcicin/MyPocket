@@ -20,7 +20,7 @@
         <!-- new key for eclipse AIzaSyBd03jbPDWAKu17sqzOPABxK-NFHVRRbDk -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyABixGwUyVuAxnXwo_J_ug5XX8QlNPqNqk" />
+            android:value="AIzaSyBd03jbPDWAKu17sqzOPABxK-NFHVRRbDk" />
         <!--
         android:value="AIzaSyBd03jbPDWAKu17sqzOPABxK-NFHVRRbDk" ==>15-01
         android:value="    AIzaSyBd03jbPDWAKu17sqzOPABxK-NFHVRRbDk" />

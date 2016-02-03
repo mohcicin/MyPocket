@@ -93,6 +93,14 @@
                 android:onClick="onClickFeature"
                 android:text="@string/syscl3"
                 android:textColor="#FFFFFFFF" />
+            
+            <Button
+                android:id="@+id/syscbtn6"
+                style="@style/SynchroBtn"
+                android:drawableTop="@drawable/home_livraison"
+                android:onClick="onClickFeature"
+                android:text="@string/syscl11"
+                android:textColor="#FFFFFFFF" />
         </LinearLayout>
     </LinearLayout>
 

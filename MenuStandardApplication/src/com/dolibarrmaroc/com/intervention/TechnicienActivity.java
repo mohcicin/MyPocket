@@ -10,27 +10,25 @@ import java.util.List;
 import java.util.Locale;
 
 
-import com.dolibarrmaroc.com.ConnexionActivity;
 import com.dolibarrmaroc.com.R;
-import com.dolibarrmaroc.com.R.id;
-import com.dolibarrmaroc.com.R.layout;
-import com.dolibarrmaroc.com.R.string;
 import com.dolibarrmaroc.com.business.TechnicienManager;
-import com.dolibarrmaroc.com.business.VendeurManager;
+import com.dolibarrmaroc.com.commercial.VendeurActivity;
+import com.dolibarrmaroc.com.dashboard.HomeActivity;
 import com.dolibarrmaroc.com.models.BordreauIntervention;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.GpsTracker;
 import com.dolibarrmaroc.com.models.LabelService;
-import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Services;
 import com.dolibarrmaroc.com.utils.CheckOutNet;
 import com.dolibarrmaroc.com.utils.JSONParser;
 import com.dolibarrmaroc.com.utils.MyLocationListener;
 import com.dolibarrmaroc.com.utils.TechnicienManagerFactory;
-import com.dolibarrmaroc.com.utils.VendeurManagerFactory;
 import com.dolibarrmaroc.com.offline.Offlineimpl;
 import com.dolibarrmaroc.com.offline.ioffline;
+import com.karouani.cicin.widget.AutocompleteCustomArrayAdapter;
+import com.karouani.cicin.widget.CustomAutoCompleteTextChangedListener;
+import com.karouani.cicin.widget.CustomAutoCompleteView;
 
 
 import android.annotation.SuppressLint;
@@ -48,7 +46,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.StrictMode;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -72,9 +72,7 @@ import android.os.PowerManager.WakeLock;
 
 public class TechnicienActivity extends  Activity implements OnClickListener,OnItemSelectedListener{
 	//IOC
-	private VendeurManager vendeurManager;
 	private TechnicienManager technicien;
-
 	//offline
 	private ioffline myoffine;
 	
@@ -84,7 +82,10 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 	// UI
 	private Spinner services;
 	private Spinner objets;
-	private AutoCompleteTextView clients;
+	
+	public CustomAutoCompleteView clientspinner;
+	public ArrayAdapter<String> myAdapter;
+	
 	private Button next;
 	private Button deconnecte;
 
@@ -97,6 +98,7 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 	//Spinner Remplissage
 	private List<String> listclt;
 	private List<String> listobjet;
+	public String[] values ;
 
 	//Asynchrone avec connexion 
 	private ProgressDialog dialog;
@@ -119,11 +121,12 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 		firstexecution = 0;
 
 		listclt = new ArrayList<String>();
-		listclt.add("--Choisir un Client---");
+		//listclt.add("--Choisir un Client---");
 
 		listobjet = new ArrayList<String>();
 		
 		String lan = Locale.getDefault().getLanguage();
+		Log.e("langage ",lan+"");
 		
 		if(lan.toLowerCase().equals("ar")){
 			listobjet.add("--اختيار الموضوع--");
@@ -149,8 +152,6 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 
 		json = new JSONParser();
 
-		vendeurManager = VendeurManagerFactory.getClientManager();
-		technicien = TechnicienManagerFactory.getClientManager();
 
 		serv = new Services();
 		clt = new Client();
@@ -165,19 +166,9 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 		wakelock.acquire();
 
 		
-		if(CheckOutNet.isNetworkConnected(getApplicationContext())){
-			if(firstexecution == 0){
-				dialog = ProgressDialog.show(TechnicienActivity.this, getResources().getString(R.string.map_data),
-						getResources().getString(R.string.msg_wait), true);
-				new ConnexionTask().execute();
-			}
-		}else{
-			if(firstexecution == 0){
-				dialog = ProgressDialog.show(TechnicienActivity.this, getResources().getString(R.string.map_data),
-						getResources().getString(R.string.msg_wait), true);
-				new OfflineTask().execute();
-			}
-		}
+		dialog = ProgressDialog.show(TechnicienActivity.this, getResources().getString(R.string.map_data),
+				getResources().getString(R.string.msg_wait), true);
+		new OfflineTask().execute();
 		
 		super.onStart();
 	}
@@ -197,39 +188,62 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 		try {
 			/********* Creation Interfaces *****************/
 			objets = (Spinner) findViewById(R.id.objet_tech);
-			clients = (AutoCompleteTextView) findViewById(R.id.client_technicien);
+			
+			clientspinner =  (CustomAutoCompleteView) findViewById(R.id.client_technicien);
+			
 			next = (Button) findViewById(R.id.secondStep);
-			deconnecte = (Button) findViewById(R.id.deconnecte);
 
 			/********* Declaration Evenement ****************/
+			
+			technicien = TechnicienManagerFactory.getClientManager();
 
 			next.setOnClickListener(this);
-			deconnecte.setOnClickListener(this);
 			objets.setOnItemSelectedListener(this);
  
-			clients.setOnItemClickListener(new OnItemClickListener() {
-
+			 
+			
+			clientspinner.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override
-				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long id) {
-
-					String selected = (String) parent.getItemAtPosition(position);
-
-					clients.showDropDown();
-
-					final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromInputMethod(parent.getWindowToken(), 0);
-
-					clients.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
-
-					for (int i = 0; i < allClient.size(); i++) {
-						if(selected.equals(allClient.get(i).getName())){
-							clt = allClient.get(i);
-							Log.e(">> Client Selected",clt.toString());
-							break;
+				public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+					//final TextView txt = (TextView) findViewById(R.id.cicin);
+					
+						String selected = clientspinner.getSelected(parent, view, position, id);
+						//txt.setText(selected);
+						
+						for (int i = 0; i < allClient.size(); i++) {
+							if(selected.equals(allClient.get(i).getName())){
+								clt = allClient.get(i);
+								Log.e(">> Client Selected",clt.toString());
+								break;
+							}
 						}
+
 					}
+			});
+			clientspinner.addTextChangedListener(new TextWatcher() {
+				
+				@Override
+				public void onTextChanged(CharSequence s, int start, int before, int count) {
+					// TODO Auto-generated method stub
+					CustomAutoCompleteTextChangedListener txt = new CustomAutoCompleteTextChangedListener(TechnicienActivity.this,R.layout.list_view_row,listclt);
+
+					myAdapter = txt.onTextChanged(s, start, before, count);
+					myAdapter.notifyDataSetChanged();
+					clientspinner.setAdapter(myAdapter);
+				}
+				
+				@Override
+				public void beforeTextChanged(CharSequence s, int start, int count,
+						int after) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void afterTextChanged(Editable s) {
+					// TODO Auto-generated method stub
+					
 				}
 			});
 
@@ -294,28 +308,10 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 
 			
 
-		}else if(v.getId() == R.id.deconnecte){
-
-			
-			Intent intent1 = new Intent(this, ConnexionActivity.class);
-			intent1.putExtra("user", compte);
-			intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			startActivity(intent1);
-			this.finish();
-
-		}
+		} 
 	}
 	
-	@Override
-	public void onBackPressed() {
-		// TODO Auto-generated method stub
-		super.onBackPressed();
-		Intent intent1 = new Intent(this, ConnexionActivity.class);
-		intent1.putExtra("user", compte);
-		intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		startActivity(intent1);
-		this.finish();
-	}
+	 
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
@@ -395,6 +391,13 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 			for (int i = 0; i < allClient.size(); i++) {
 				listclt.add(allClient.get(i).getName());
 			}
+			
+			if(listclt.size() > 0){
+				values = new String[listclt.size()];
+				for (int i = 0; i < listclt.size(); i++) {
+					values[i] = listclt.get(i);
+				}
+			}
 
 			
 			if(!myoffine.checkFolderexsiste()){
@@ -417,16 +420,9 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 					dialog.dismiss();
 
 					firstexecution = 1989;
-					ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(TechnicienActivity.this, android.R.layout.simple_spinner_item, listclt);
-					dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
-
-					//facturespinner.setAdapter(dataAdapter);
-					addItemsOnSpinner(services, 3);
-
-					//ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(TechnicienActivity.this,android.R.layout.simple_dropdown_item_1line, listclt);				    
-					clients.setAdapter(dataAdapter);
-					clients.setThreshold(1);
-					clients.setTextColor(Color.RED); 
+					
+					myAdapter = new AutocompleteCustomArrayAdapter(TechnicienActivity.this, R.layout.list_view_row,values);
+					clientspinner.setAdapter(myAdapter);
 					
 					if(myoffine.checkAvailableofflinestorage2() > 0){
 						dialog2 = ProgressDialog.show(TechnicienActivity.this,getResources().getString(R.string.caus15),
@@ -452,7 +448,7 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 
 		@Override
 		protected String doInBackground(Void... params) {
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			//getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 			myoffine = new Offlineimpl(getApplicationContext());
 			
@@ -460,7 +456,12 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 			for (int i = 0; i < allClient.size(); i++) {
 				listclt.add(allClient.get(i).getName());
 			}
-
+			if(listclt.size() > 0){
+				values = new String[listclt.size()];
+				for (int i = 0; i < listclt.size(); i++) {
+					values[i] = listclt.get(i);
+				}
+			}
 			return "success";
 		}
 
@@ -476,16 +477,14 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 					dialog.dismiss();
 
 					firstexecution = 1989;
-					ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(TechnicienActivity.this, android.R.layout.simple_spinner_item, listclt);
-					dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
-
-					//facturespinner.setAdapter(dataAdapter);
-					addItemsOnSpinner(services, 3);
-
-					//ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(TechnicienActivity.this,android.R.layout.simple_dropdown_item_1line, listclt);				    
-					clients.setAdapter(dataAdapter);
-					clients.setThreshold(1);
-					clients.setTextColor(Color.RED); 
+					myAdapter = new AutocompleteCustomArrayAdapter(TechnicienActivity.this, R.layout.list_view_row, values);
+					clientspinner.setAdapter(myAdapter);
+					
+					if(myoffine.checkAvailableofflinestorage2() > 0){
+						dialog2 = ProgressDialog.show(TechnicienActivity.this,getResources().getString(R.string.caus15),
+								getResources().getString(R.string.msg_wait), true);
+						new ServerSideTask().execute();
+					}
 
 					
 					for (BordreauIntervention b:myoffine.LoadInterventions("")) {
@@ -588,7 +587,6 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 					dialog2.dismiss();
 					
 					
-					Log.e("end ","load interv");
 					/*
 					Intent intent2 = new Intent(ConnexionActivity.this, SettingsynchroActivity.class);
 					intent2.putExtra("user", compte);
@@ -606,5 +604,19 @@ public class TechnicienActivity extends  Activity implements OnClickListener,OnI
 
 	}
 	
+	
+	public void onClickHome(View v){
+		Intent intent = new Intent(this, HomeActivity.class);
+		intent.putExtra("user", compte);
+		intent.setFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity (intent);
+		this.finish();
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    // Do Here what ever you want do on back press;
+		onClickHome(LayoutInflater.from(TechnicienActivity.this).inflate(R.layout.activity_technicien, null));
+	}
 	
 }

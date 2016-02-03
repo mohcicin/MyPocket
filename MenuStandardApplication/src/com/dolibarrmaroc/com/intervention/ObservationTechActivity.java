@@ -5,11 +5,8 @@ import java.util.List;
 import java.util.Locale;
 
 
-import com.dolibarrmaroc.com.ConnexionActivity;
 import com.dolibarrmaroc.com.R;
-import com.dolibarrmaroc.com.R.id;
-import com.dolibarrmaroc.com.R.layout;
-import com.dolibarrmaroc.com.R.string;
+import com.dolibarrmaroc.com.dashboard.HomeActivity;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
 
@@ -53,7 +50,7 @@ public class ObservationTechActivity extends Activity implements OnClickListener
 
 	private EditText numFiche;
 	private EditText observation;
-	private Button valider,annuler;
+	private Button valider;//,annuler
 	private String mYear, mMonth, mDay, mHour, mMinute;
 	
 	public ObservationTechActivity() {
@@ -67,14 +64,16 @@ public class ObservationTechActivity extends Activity implements OnClickListener
 		setContentView(R.layout.activity_observation_tech);
 
 		try {
+			
+			
 			numFiche = (EditText) findViewById(R.id.ficheNum);
 			observation = (EditText) findViewById(R.id.observationtech);
 			
 			valider = (Button) findViewById(R.id.validerfiche);
-			annuler = (Button) findViewById(R.id.annulerfiche);
+			//annuler = (Button) findViewById(R.id.annulerfiche);
 			
 			valider.setOnClickListener(this);
-			annuler.setOnClickListener(this);
+			//annuler.setOnClickListener(this);
 			
 			Bundle objetbunble  = this.getIntent().getExtras();
 
@@ -181,9 +180,11 @@ public class ObservationTechActivity extends Activity implements OnClickListener
 				startActivity(intent);
 				ObservationTechActivity.this.finish();
 			}else{
-				Toast.makeText(this, "Il faut renseigner Numero de la Fiche ", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, getResources().getString(R.string.tecv58), Toast.LENGTH_LONG).show();
 			}
-		}else if(v == annuler){
+		}
+		/*
+		else if(v == annuler){
 			new AlertDialog.Builder(this)
 			.setTitle(getResources().getString(R.string.tecv36))
 			.setMessage(getResources().getString(R.string.tecv47))
@@ -200,22 +201,21 @@ public class ObservationTechActivity extends Activity implements OnClickListener
 
 				public void onClick(DialogInterface ds, int arg1) {
 					//VendeurActivity.super.onBackPressed();
-					Intent intent1 = new Intent(ObservationTechActivity.this, ConnexionActivity.class);
-					intent1.putExtra("user", compte);
-					intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-					startActivity(intent1);
-					ObservationTechActivity.this.finish();
+					onClickHome(LayoutInflater.from(ObservationTechActivity.this).inflate(R.layout.activity_camera, null));
 					
 				}
 
 			}).setCancelable(true)
 			.create().show();
 		}
+		*/
 	}
 	
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			
+			/*
 			new AlertDialog.Builder(this)
 			.setTitle(getResources().getString(R.string.tecv36))
 			.setMessage(getResources().getString(R.string.tecv47))
@@ -232,18 +232,24 @@ public class ObservationTechActivity extends Activity implements OnClickListener
 
 				public void onClick(DialogInterface ds, int arg1) {
 					//VendeurActivity.super.onBackPressed();
-					Intent intent1 = new Intent(ObservationTechActivity.this, ConnexionActivity.class);
-					intent1.putExtra("user", compte);
-					intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-					startActivity(intent1);
-					ObservationTechActivity.this.finish();
+					onClickHome(LayoutInflater.from(ObservationTechActivity.this).inflate(R.layout.activity_camera, null));
 					
 				}
 
 			}).setCancelable(true)
 			.create().show();
 			return true;
+			
+			*/
 		}
 		return false;
+	}
+	
+	public void onClickHome(View v){
+		Intent intent = new Intent(this, HomeActivity.class);
+		intent.putExtra("user", compte);
+		intent.setFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity (intent);
+		this.finish();
 	}
 }

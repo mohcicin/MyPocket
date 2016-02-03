@@ -70,9 +70,11 @@ import com.dolibarrmaroc.com.R.menu;
 import com.dolibarrmaroc.com.R.string;
 import com.dolibarrmaroc.com.business.CommandeManager;
 import com.dolibarrmaroc.com.business.FactureManager;
+import com.dolibarrmaroc.com.business.TechnicienManager;
 import com.dolibarrmaroc.com.business.VendeurManager;
 import com.dolibarrmaroc.com.commercial.FactureActivity;
 import com.dolibarrmaroc.com.dashboard.HomeActivity;
+import com.dolibarrmaroc.com.models.BordereauGps;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.FactureGps;
@@ -81,6 +83,7 @@ import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
 import com.dolibarrmaroc.com.utils.FactureManagerFactory;
 import com.dolibarrmaroc.com.utils.ForcerActivationGps;
 import com.dolibarrmaroc.com.utils.MyLocationListener;
+import com.dolibarrmaroc.com.utils.TechnicienManagerFactory;
 import com.dolibarrmaroc.com.utils.VendeurManagerFactory;
 
 
@@ -99,10 +102,12 @@ OnMyLocationButtonClickListener,DCACallBack{
 	private VendeurManager vendeurManager;
 	private FactureManager factureManager;
 	private CommandeManager cmdmanager;
+	private TechnicienManager technicien;
 
 	private Compte compte;
 	private FactureGps cmd;
 	private FactureGps facture;
+	private BordereauGps bord;
 	private Client client;
 	private Client clientLocation;
 
@@ -112,20 +117,24 @@ OnMyLocationButtonClickListener,DCACallBack{
 	private Spinner facturespinner;//clientspinner
 	private AutoCompleteTextView factcomplete;
 	private AutoCompleteTextView clientspinner;
+	private AutoCompleteTextView bordereauspinner;
 
 	//Spinner Remplissage
 	private List<String> listclt;
 	private List<String> listfact;
 	private List<String> listcmd;
+	private List<String> listinterv;
 	private List<FactureGps> factures;
 	private List<FactureGps> cmds;
 	private List<Client> clients;
+	private List<BordereauGps> interv;
+	
 
 	//Asynchrone avec connexion 
 	private ProgressDialog dialog;
 
 	//Dialogue Button
-	private Dialog dialogbtnfact,dialogbtnclt;
+	private Dialog dialogbtnfact,dialogbtnclt,dialogbtnintrv;
 
 	//CE QUI CONCERN MAP
 	private LocationClient mLocationClient;
@@ -158,10 +167,12 @@ OnMyLocationButtonClickListener,DCACallBack{
 		listclt = new ArrayList<String>();
 		listfact = new ArrayList<String>();
 		listcmd = new ArrayList<>();
+		listinterv = new ArrayList<>();
 
 		factures = new ArrayList<>();
 		clients = new ArrayList<>();
 		cmds = new ArrayList<>();
+		interv = new ArrayList<>();
 
 		facture = new FactureGps();
 		cmd = new FactureGps();
@@ -199,6 +210,10 @@ OnMyLocationButtonClickListener,DCACallBack{
 			dialogbtnclt = new Dialog(this);
 			dialogbtnclt.setContentView(R.layout.clientlayout);
 			dialogbtnclt.setTitle(getResources().getString(R.string.client_action));
+			
+			dialogbtnintrv = new Dialog(this);
+			dialogbtnintrv.setContentView(R.layout.bordereau);
+			dialogbtnintrv.setTitle(getResources().getString(R.string.client_action));
 
 			if (android.os.Build.VERSION.SDK_INT > 9) {
 				StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -496,6 +511,22 @@ OnMyLocationButtonClickListener,DCACallBack{
 					listcmd.add(f.getNumero());
 				}
 				break;
+				
+			case 4:
+				interv = new ArrayList<>();
+				listinterv = new ArrayList<String>();
+				
+				technicien = TechnicienManagerFactory.getClientManager();
+				
+				interv = technicien.selectAllBordereau(compte);
+
+				for (int i = 0; i < interv.size(); i++) {
+					BordereauGps f = new BordereauGps();
+					f = interv.get(i);
+					listinterv.add(f.getNumero());
+				}
+				break;
+
 			}
 			return "success";
 		}
@@ -1008,12 +1039,158 @@ OnMyLocationButtonClickListener,DCACallBack{
 				});
 				dialogbtnfact.show();
 				break;
+				
+				/************************MENU Bordereau *****************************************/
+			case R.id.pointerBor:
+				Log.e("click ","Bordereau");
+				//facturespinner= (Spinner) dialogbtnfact.findViewById(R.id.facturepointer);
+				bordereauspinner = (AutoCompleteTextView) dialogbtnintrv.findViewById(R.id.bordereaupointer);
+
+				if(!factcomplete.hasFocus()){
+					hideSoftKeyboard();
+				}
+
+
+				ArrayAdapter<String> dataAdapte1 = new ArrayAdapter<String>(this,
+
+						android.R.layout.simple_spinner_item, listinterv);
+				dataAdapte1.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+
+				//facturespinner.setAdapter(dataAdapter);
+				bordereauspinner.setAdapter(dataAdapte1);
+				bordereauspinner.setThreshold(1);
+				bordereauspinner.setTextColor(Color.RED); 
+				bordereauspinner.setOnItemClickListener(new OnItemClickListener() {
+
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						bordereauspinner.showDropDown();
+						String selected = (String) parent.getItemAtPosition(position);
+						final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
+
+						bordereauspinner.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
+						//Toast.makeText(MainActivity.this, selected, Toast.LENGTH_LONG).show();
+
+						for (int i = 0; i < interv.size(); i++) {
+							if(selected.equals(interv.get(i).getNumero())){
+								bord = interv.get(i);
+								break;
+							}
+						}
+						//factcomplete.setInputType(InputType.TYPE_NULL);
+					}
+				});
+
+				Button showmen = (Button) dialogbtnintrv.findViewById(R.id.clientshowme);
+				showmen.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+
+						if(bord != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(Double.parseDouble(bord.getLat()) > 0){
+								myfact = new LatLng(Double.parseDouble(bord.getLat()), Double.parseDouble(bord.getLng()));
+							}else{
+								myfact = myPosition;
+							}
+
+
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myfact)
+							.zoom(zoom)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
+
+
+							MarkerOptions markMe = new MarkerOptions().position(myfact).title("Bordereau Numero :"+bord.getNumero())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_YELLOW));
+							/*
+							 *	map.addMarker(markMe);
+							 */
+
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							dialogbtnintrv.dismiss();
+						}else{
+							alertmaps();
+						}
+
+						
+					}
+				});
+
+				Button itinerern = (Button) dialogbtnintrv.findViewById(R.id.itenermoiclient);
+				itinerern.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View arg0) {
+						//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+
+						if(bord != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(Double.parseDouble(bord.getLat()) > 0){
+								myfact = new LatLng(Double.parseDouble(bord.getLat()), Double.parseDouble(bord.getLng()));
+							}else{
+								myfact = myPosition;
+							}
+
+							CameraPosition cameraPosition = new CameraPosition.Builder()
+							.target(myfact)
+							.zoom(10)// Sets the zoom
+							.build();    // Creates a CameraPosition from the builder
+							map.animateCamera(CameraUpdateFactory.newCameraPosition(
+									cameraPosition));
+
+
+							MarkerOptions markMe = new MarkerOptions().position(myfact).title("Bordereau Numero :"+bord.getNumero())
+									.icon(BitmapDescriptorFactory.defaultMarker(
+											BitmapDescriptorFactory.HUE_YELLOW));
+							/*
+							 *	map.addMarker(markMe);
+							 */
+
+							mesPositions.add(markMe);
+							clearMap(map);
+
+							getDirections(myPosition,myfact);
+							dialogbtnintrv.dismiss();
+						}else{
+							Log.e("facture ","null");
+							alertmaps();
+						}
+						
+
+
+					}
+				});
+
+				Button annul1n = (Button) dialogbtnintrv.findViewById(R.id.annulershowme); 
+				annul1n.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						dialogbtnintrv.dismiss();
+					}
+				});
+				
+				Log.e("End ","SHow end bor");
+				dialogbtnintrv.show();
+				break;
+				
 			}
+			
+			
 		
 		return true;
 
 	}
-
+/*
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater menuInflater = getMenuInflater();
@@ -1021,6 +1198,7 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 		return super.onCreateOptionsMenu(menu);
 	}
+	*/
 
 	public void onClickHome(View v){
 		Intent intent = new Intent(this, HomeActivity.class);
@@ -1082,36 +1260,39 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 					@Override
 					public void onClick(View v) {
+						if(clientLocation != null){
+							Log.e("Client Location",clientLocation.toString());
+							if(clientLocation != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+								if(clientLocation.getLatitude() != 0){
+									myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
+								}else{
+									myClient = myPosition;
+								}
 
-						Log.e("Client Location",clientLocation.toString());
-						if(clientLocation != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
-							if(clientLocation.getLatitude() != 0){
-								myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
+
+								CameraPosition cameraPosition = new CameraPosition.Builder()
+								.target(myClient)
+								.zoom(zoom)// Sets the zoom
+								.build();    // Creates a CameraPosition from the builder
+								map.animateCamera(CameraUpdateFactory.newCameraPosition(
+										cameraPosition));
+
+
+								MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
+										.icon(BitmapDescriptorFactory.defaultMarker(
+												BitmapDescriptorFactory.HUE_GREEN));
+								/*
+								 *	map.addMarker(markMe);
+								 */
+
+
+								mesPositions.add(markMe);
+								clearMap(map);
+
+								dialogbtnclt.dismiss();
 							}else{
-								myClient = myPosition;
+								Log.e("clien ","null");alertmaps();
 							}
-
-
-							CameraPosition cameraPosition = new CameraPosition.Builder()
-							.target(myClient)
-							.zoom(zoom)// Sets the zoom
-							.build();    // Creates a CameraPosition from the builder
-							map.animateCamera(CameraUpdateFactory.newCameraPosition(
-									cameraPosition));
-
-
-							MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
-									.icon(BitmapDescriptorFactory.defaultMarker(
-											BitmapDescriptorFactory.HUE_GREEN));
-							/*
-							 *	map.addMarker(markMe);
-							 */
-
-
-							mesPositions.add(markMe);
-							clearMap(map);
-
-							dialogbtnclt.dismiss();
 						}else{
 							Log.e("clien ","null");alertmaps();
 						}
@@ -1125,38 +1306,40 @@ OnMyLocationButtonClickListener,DCACallBack{
 					@Override
 					public void onClick(View arg0) {
 						//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
-						Log.e("Client myhom eitener",clientLocation.toString());
-						if(clientLocation != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
-							if(clientLocation.getLatitude() != 0){
-								myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
+						if(clientLocation != null){
+							if(clientLocation != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+								if(clientLocation.getLatitude() != 0){
+									myClient = new LatLng(clientLocation.getLongitude(),clientLocation.getLatitude());
+								}else{
+									myClient = myPosition;
+								}
+
+								CameraPosition cameraPosition = new CameraPosition.Builder()
+								.target(myClient)
+								.zoom(zoom)// Sets the zoom
+								.build();    // Creates a CameraPosition from the builder
+								map.animateCamera(CameraUpdateFactory.newCameraPosition(
+										cameraPosition));
+
+
+								MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
+										.icon(BitmapDescriptorFactory.defaultMarker(
+												BitmapDescriptorFactory.HUE_YELLOW));
+								/*
+								 *	map.addMarker(markMe);
+								 */
+
+								mesPositions.add(markMe);
+								clearMap(map);
+
+								getDirections(myPosition,myClient);
+								dialogbtnclt.dismiss();
 							}else{
-								myClient = myPosition;
+								Log.e("clien ","null");alertmaps();
 							}
-
-							CameraPosition cameraPosition = new CameraPosition.Builder()
-							.target(myClient)
-							.zoom(zoom)// Sets the zoom
-							.build();    // Creates a CameraPosition from the builder
-							map.animateCamera(CameraUpdateFactory.newCameraPosition(
-									cameraPosition));
-
-
-							MarkerOptions markMe = new MarkerOptions().position(myClient).title(clientLocation.getName())
-									.icon(BitmapDescriptorFactory.defaultMarker(
-											BitmapDescriptorFactory.HUE_YELLOW));
-							/*
-							 *	map.addMarker(markMe);
-							 */
-
-							mesPositions.add(markMe);
-							clearMap(map);
-
-							getDirections(myPosition,myClient);
-							dialogbtnclt.dismiss();
 						}else{
 							Log.e("clien ","null");alertmaps();
 						}
-						
 
 
 					}
@@ -1167,7 +1350,7 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 					@Override
 					public void onClick(View v) {
-						dialogbtnclt.dismiss();alertmaps();
+						dialogbtnclt.dismiss(); 
 					}
 				});
 
@@ -1219,35 +1402,38 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 					@Override
 					public void onClick(View v) {
+						if(facture != null){
+							if(facture.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+								if(Double.parseDouble(facture.getLat()) > 0){
+									myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+								}else{
+									myfact = myPosition;
+								}
 
-						if(facture.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
-							if(Double.parseDouble(facture.getLat()) > 0){
-								myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+
+								CameraPosition cameraPosition = new CameraPosition.Builder()
+								.target(myfact)
+								.zoom(zoom)// Sets the zoom
+								.build();    // Creates a CameraPosition from the builder
+								map.animateCamera(CameraUpdateFactory.newCameraPosition(
+										cameraPosition));
+
+
+								MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.facture_num)+facture.getNumero())
+										.icon(BitmapDescriptorFactory.defaultMarker(
+												BitmapDescriptorFactory.HUE_YELLOW));
+								/*
+								 *	map.addMarker(markMe);
+								 */
+
+
+								mesPositions.add(markMe);
+								clearMap(map);
+
+								dialogbtnfact.dismiss();
 							}else{
-								myfact = myPosition;
+								Log.e("clint ","null");alertmaps();
 							}
-
-
-							CameraPosition cameraPosition = new CameraPosition.Builder()
-							.target(myfact)
-							.zoom(zoom)// Sets the zoom
-							.build();    // Creates a CameraPosition from the builder
-							map.animateCamera(CameraUpdateFactory.newCameraPosition(
-									cameraPosition));
-
-
-							MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.facture_num)+facture.getNumero())
-									.icon(BitmapDescriptorFactory.defaultMarker(
-											BitmapDescriptorFactory.HUE_YELLOW));
-							/*
-							 *	map.addMarker(markMe);
-							 */
-
-
-							mesPositions.add(markMe);
-							clearMap(map);
-
-							dialogbtnfact.dismiss();
 						}else{
 							Log.e("clint ","null");alertmaps();
 						}
@@ -1262,42 +1448,45 @@ OnMyLocationButtonClickListener,DCACallBack{
 					@Override
 					public void onClick(View arg0) {
 						//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+						if(facture != null){
+							if(facture.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+								if(Double.parseDouble(facture.getLat()) > 0){
+									myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+								}else{
+									myfact = myPosition;
+								}
 
-						if(facture.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
-							if(Double.parseDouble(facture.getLat()) > 0){
-								myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+								Log.e("myPoss",myPosition +" ##myfact "+myfact);
+
+								CameraPosition cameraPosition = new CameraPosition.Builder()
+								.target(myfact)
+								.zoom(10)// Sets the zoom
+								.build();    // Creates a CameraPosition from the builder
+								map.animateCamera(CameraUpdateFactory.newCameraPosition(
+										cameraPosition));
+
+
+								MarkerOptions markMe = new MarkerOptions().position(myfact).title("Facture Numero :"+facture.getNumero())
+										.icon(BitmapDescriptorFactory.defaultMarker(
+												BitmapDescriptorFactory.HUE_YELLOW));
+								/*
+								 *	map.addMarker(markMe);
+								 */
+
+								mesPositions.add(markMe);
+								clearMap(map);
+
+								getDirections(myPosition,myfact);
+								dialogbtnfact.dismiss();
+
 							}else{
-								myfact = myPosition;
+								Log.e("clint ","null");alertmaps();
 							}
-							
-							Log.e("myPoss",myPosition +" ##myfact "+myfact);
-
-							CameraPosition cameraPosition = new CameraPosition.Builder()
-							.target(myfact)
-							.zoom(10)// Sets the zoom
-							.build();    // Creates a CameraPosition from the builder
-							map.animateCamera(CameraUpdateFactory.newCameraPosition(
-									cameraPosition));
-
-
-							MarkerOptions markMe = new MarkerOptions().position(myfact).title("Facture Numero :"+facture.getNumero())
-									.icon(BitmapDescriptorFactory.defaultMarker(
-											BitmapDescriptorFactory.HUE_YELLOW));
-							/*
-							 *	map.addMarker(markMe);
-							 */
-
-							mesPositions.add(markMe);
-							clearMap(map);
-
-							getDirections(myPosition,myfact);
-							dialogbtnfact.dismiss();
 
 						}else{
 							Log.e("clint ","null");alertmaps();
 						}
 
-						
 
 					}
 				});
@@ -1357,35 +1546,38 @@ OnMyLocationButtonClickListener,DCACallBack{
 
 					@Override
 					public void onClick(View v) {
+						if(cmd != null){
+							if(cmd.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+								if(Double.parseDouble(cmd.getLat()) > 0){
+									myfact = new LatLng(Double.parseDouble(cmd.getLat()), Double.parseDouble(cmd.getLng()));
+								}else{
+									myfact = myPosition;
+								}
 
-						if(cmd.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
-							if(Double.parseDouble(cmd.getLat()) > 0){
-								myfact = new LatLng(Double.parseDouble(cmd.getLat()), Double.parseDouble(cmd.getLng()));
+
+								CameraPosition cameraPosition = new CameraPosition.Builder()
+								.target(myfact)
+								.zoom(zoom)// Sets the zoom
+								.build();    // Creates a CameraPosition from the builder
+								map.animateCamera(CameraUpdateFactory.newCameraPosition(
+										cameraPosition));
+
+
+								MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.commande_num)+cmd.getNumero())
+										.icon(BitmapDescriptorFactory.defaultMarker(
+												BitmapDescriptorFactory.HUE_YELLOW));
+								/*
+								 *	map.addMarker(markMe);
+								 */
+
+
+								mesPositions.add(markMe);
+								clearMap(map);
+
+								dialogbtnfact.dismiss();
 							}else{
-								myfact = myPosition;
+								Log.e("clint ","null");alertmaps();
 							}
-
-
-							CameraPosition cameraPosition = new CameraPosition.Builder()
-							.target(myfact)
-							.zoom(zoom)// Sets the zoom
-							.build();    // Creates a CameraPosition from the builder
-							map.animateCamera(CameraUpdateFactory.newCameraPosition(
-									cameraPosition));
-
-
-							MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.commande_num)+cmd.getNumero())
-									.icon(BitmapDescriptorFactory.defaultMarker(
-											BitmapDescriptorFactory.HUE_YELLOW));
-							/*
-							 *	map.addMarker(markMe);
-							 */
-
-
-							mesPositions.add(markMe);
-							clearMap(map);
-
-							dialogbtnfact.dismiss();
 						}else{
 							Log.e("clint ","null");alertmaps();
 						}
@@ -1400,10 +1592,153 @@ OnMyLocationButtonClickListener,DCACallBack{
 					@Override
 					public void onClick(View arg0) {
 						//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+						if(cmd != null){
+							if(cmd.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+								if(Double.parseDouble(cmd.getLat()) > 0){
+									myfact = new LatLng(Double.parseDouble(cmd.getLat()), Double.parseDouble(cmd.getLng()));
+								}else{
+									myfact = myPosition;
+								}
 
-						if(cmd.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
-							if(Double.parseDouble(cmd.getLat()) > 0){
-								myfact = new LatLng(Double.parseDouble(cmd.getLat()), Double.parseDouble(cmd.getLng()));
+								Log.e("myPoss",myPosition +" ##myfact "+myfact);
+
+								CameraPosition cameraPosition = new CameraPosition.Builder()
+								.target(myfact)
+								.zoom(10)// Sets the zoom
+								.build();    // Creates a CameraPosition from the builder
+								map.animateCamera(CameraUpdateFactory.newCameraPosition(
+										cameraPosition));
+
+
+								MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.commande_num)+cmd.getNumero())
+										.icon(BitmapDescriptorFactory.defaultMarker(
+												BitmapDescriptorFactory.HUE_YELLOW));
+								/*
+								 *	map.addMarker(markMe);
+								 */
+
+								mesPositions.add(markMe);
+								clearMap(map);
+
+								getDirections(myPosition,myfact);
+								dialogbtnfact.dismiss();
+							}else{
+								Log.e("clint ","null");
+								alertmaps();
+							}
+
+						}else{
+							Log.e("clint ","null");
+							alertmaps();
+						}
+
+					}
+				});
+
+				Button annul12 = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
+				annul12.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						dialogbtnfact.dismiss();
+					}
+				});
+				dialogbtnfact.show();
+				break;	
+			case 4:
+				bordereauspinner = (AutoCompleteTextView) dialogbtnintrv.findViewById(R.id.bordereaupointer);
+
+				if(!bordereauspinner.hasFocus()){
+					hideSoftKeyboard();
+				}
+
+
+				ArrayAdapter<String> dataAdapter3b = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, listinterv);
+				dataAdapter3b.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+
+				//facturespinner.setAdapter(dataAdapter);
+				bordereauspinner.setAdapter(dataAdapter3b);
+				bordereauspinner.setThreshold(1);
+				bordereauspinner.setTextColor(Color.RED); 
+				bordereauspinner.setOnItemClickListener(new OnItemClickListener() {
+
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						bordereauspinner.showDropDown();
+						String selected = (String) parent.getItemAtPosition(position);
+						final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
+
+						bordereauspinner.setFilters(new InputFilter[] {new InputFilter.LengthFilter(selected.length())});
+						//Toast.makeText(MainActivity.this, selected, Toast.LENGTH_LONG).show();
+
+						for (int i = 0; i < interv.size(); i++) {
+							if(selected.equals(interv.get(i).getNumero())){
+								bord = interv.get(i);
+								break;
+							}
+						}
+						//factcomplete.setInputType(InputType.TYPE_NULL);
+					}
+				});
+
+				Button showme2b = (Button) dialogbtnintrv.findViewById(R.id.clientshowme);
+				showme2b.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						if(bord != null){	
+							if(bord.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+								if(Double.parseDouble(bord.getLat()) > 0){
+									myfact = new LatLng(Double.parseDouble(bord.getLat()), Double.parseDouble(bord.getLng()));
+								}else{
+									myfact = myPosition;
+								}
+
+
+								CameraPosition cameraPosition = new CameraPosition.Builder()
+								.target(myfact)
+								.zoom(zoom)// Sets the zoom
+								.build();    // Creates a CameraPosition from the builder
+								map.animateCamera(CameraUpdateFactory.newCameraPosition(
+										cameraPosition));
+
+
+								MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.num_bordereau) +":" +bord.getNumero())
+										.icon(BitmapDescriptorFactory.defaultMarker(
+												BitmapDescriptorFactory.HUE_YELLOW));
+								/*
+								 *	map.addMarker(markMe);
+								 */
+
+
+								mesPositions.add(markMe);
+								clearMap(map);
+
+								dialogbtnintrv.dismiss();
+							}else{
+								Log.e("clint ","null");alertmaps();
+							}
+						}else{
+							Log.e("clint ","null");alertmaps();
+						}
+						
+					}
+				});
+
+				Button itinerer2b = (Button) dialogbtnintrv.findViewById(R.id.itenermoiclient);
+				itinerer2b.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View arg0) {
+						//myfact = new LatLng(Double.parseDouble(facture.getLat()), Double.parseDouble(facture.getLng()));
+
+					if(bord != null){	
+						if(bord.getLat() != null && CheckOutNet.isNetworkConnected(MainActivity.this) && isNetworkConnected(MainActivity.this)){
+							if(Double.parseDouble(bord.getLat()) > 0){
+								myfact = new LatLng(Double.parseDouble(bord.getLat()), Double.parseDouble(bord.getLng()));
 							}else{
 								myfact = myPosition;
 							}
@@ -1418,7 +1753,7 @@ OnMyLocationButtonClickListener,DCACallBack{
 									cameraPosition));
 
 
-							MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.commande_num)+cmd.getNumero())
+							MarkerOptions markMe = new MarkerOptions().position(myfact).title(getResources().getString(R.string.num_bordereau) +":" +bord.getNumero())
 									.icon(BitmapDescriptorFactory.defaultMarker(
 											BitmapDescriptorFactory.HUE_YELLOW));
 							/*
@@ -1429,26 +1764,28 @@ OnMyLocationButtonClickListener,DCACallBack{
 							clearMap(map);
 
 							getDirections(myPosition,myfact);
-							dialogbtnfact.dismiss();
+							dialogbtnintrv.dismiss();
 						}else{
 							Log.e("clint ","null");
 							alertmaps();
 						}
 						
-
+					}else{
+						alertmaps();
+					}
 
 					}
 				});
 
-				Button annul12 = (Button) dialogbtnfact.findViewById(R.id.annulershowme); 
-				annul12.setOnClickListener(new OnClickListener() {
+				Button annul12b = (Button) dialogbtnintrv.findViewById(R.id.annulershowme); 
+				annul12b.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						dialogbtnfact.dismiss();
+						dialogbtnintrv.dismiss();
 					}
 				});
-				dialogbtnfact.show();
+				dialogbtnintrv.show();
 				break;
 			default:
 				break;

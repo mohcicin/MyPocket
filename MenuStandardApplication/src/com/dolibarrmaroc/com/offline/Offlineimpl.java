@@ -674,7 +674,7 @@ public class Offlineimpl implements ioffline {
 			File file = new File(path, "/servicesdata.txt");
 
 			List<Services> ls = new ArrayList<>();
-
+			
 			if(file.exists()){
 				//Log.e("data loaded exist  ",file.getAbsolutePath());
 				File secondInputFile = new File(file.getAbsolutePath());
@@ -682,7 +682,7 @@ public class Offlineimpl implements ioffline {
 				BufferedReader r = new BufferedReader(new InputStreamReader(secondInputStream));
 				StringBuilder total = new StringBuilder();
 				String line;
-
+				
 				while ((line = r.readLine()) != null) {
 
 					JSONArray jArray = new JSONArray(line);
@@ -692,14 +692,14 @@ public class Offlineimpl implements ioffline {
 						JSONObject json = jArray.getJSONObject(i);
 						sr = gson.fromJson(json.toString(), Services.class);
 						//Log.e("hello >>> ",pd.toString());
-
+						
 						ls.add(sr);
 					}
 
 				}
-
+				
 				//meme(st);
-
+				
 				//Log.e("file promo",st);
 				r.close();
 				secondInputStream.close();
@@ -708,7 +708,7 @@ public class Offlineimpl implements ioffline {
 			// TODO: handle exception
 			Log.e("load services err ",e.getMessage()  +" << ");
 		}
-
+        
 		return sr;
 	}
 
@@ -2869,6 +2869,8 @@ public class Offlineimpl implements ioffline {
 		x += LoadUpdateCmdList("").size();
 		x += LoadClsCmdList("").size();
 		x += LoadMotifsList("").size();
+		
+		x += LoadInterventions("").size();
 
 		Log.e("nbr >>",x+"");
 
@@ -4132,7 +4134,7 @@ public class Offlineimpl implements ioffline {
 		long ix = -1;
 		try {
 			file = new File(path, "/interventionsdata.txt");
-			//	Log.e("filesavz",file.getPath());
+			Log.e("filesavz",file.getPath());
 			FileOutputStream outputStream;
 
 			if(!file.exists()){
@@ -4166,7 +4168,7 @@ public class Offlineimpl implements ioffline {
 		long ix = -1;
 		try {
 			file = new File(path, "/interventionshistodata.txt");
-			//	Log.e("filesavz",file.getPath());
+			Log.e("filesavz",file.getPath());
 			FileOutputStream outputStream;
 
 			if(!file.exists()){
@@ -4209,7 +4211,7 @@ public class Offlineimpl implements ioffline {
 				StringBuilder total = new StringBuilder();
 				String line;
 				String st ="";
-
+				
 				while ((line = r.readLine()) != null) {
 
 					JSONArray jArray = new JSONArray(line);
@@ -4218,12 +4220,12 @@ public class Offlineimpl implements ioffline {
 						JSONObject json = jArray.getJSONObject(i);
 						BordreauIntervention pd = new BordreauIntervention();
 						pd = gson.fromJson(json.toString(), BordreauIntervention.class);
-
+						
 						lpd.add(pd);
 					}
 
 				}
-
+				
 				r.close();
 				secondInputStream.close();
 			}
@@ -4231,7 +4233,7 @@ public class Offlineimpl implements ioffline {
 			// TODO: handle exception
 			Log.e("load Intervention err ",e.getMessage()  +" << ");
 		}
-
+        
 		return lpd;
 	}
 
@@ -4266,7 +4268,7 @@ public class Offlineimpl implements ioffline {
 		for (int i = 0; i < ls.size(); i++) {
 			try {
 				s = technicien.insertBordereauoff(ls.get(i), cp);
-
+				
 				if(!s.equals("no")){
 					JSONObject json = new JSONObject(s);
 					if(!json.getString("feedback").equals("-1")){
@@ -4277,22 +4279,24 @@ public class Offlineimpl implements ioffline {
 				}else{
 					tmp.add(ls.get(i));
 				}
-
+				
 			} catch (Exception e) {
 				// TODO: handle exception
 				tmp.add(ls.get(i));
 			}
 		}
-
-
+		
+		
 		CleanIntervention();
 		for (int i = 0; i < tmp.size(); i++) {
-			shynchronizeIntervention(tmp.get(i));
+			//shynchronizeIntervention(tmp.get(i));
+			PutDeniededInterv(tmp.get(i),"");
 		}
 
 
 		return 0;
 	}
+	
 
 
 	public static String getEncodedString(String str) {
@@ -6069,6 +6073,97 @@ public class Offlineimpl implements ioffline {
 		
 		CleanMotif();
 		return 0;
+	}
+
+	@Override
+	public long PutDeniededInterv(BordreauIntervention bi,String in) {
+		// TODO Auto-generated method stub
+		long ix = -1;
+		try {
+			file = new File(path, "/deniededintrv.txt");
+			Log.e("filesavz",file.getPath());
+			FileOutputStream outputStream;
+
+			if(!file.exists()){
+				file.createNewFile();
+				file.mkdir();
+				//Log.e("file not exist ","wloo wloo");
+			}
+
+			if(file.exists()){
+				FileWriter fw = new FileWriter(file, true);
+				PrintWriter pout = new PrintWriter(fw);
+				if(bi != null){
+					bi.setId(Integer.parseInt(calculIdInvoice()));
+					pout.println("["+gson.toJson(bi,BordreauIntervention.class)+"]");
+					ix =1;
+				}else{
+					pout.println(in);
+				}
+				pout.close();
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("save intervention ",e.getMessage()  +" << ");
+		}
+		return ix;
+	}
+
+	@Override
+	public List<String> LoadDeniededInterv() {
+		// TODO Auto-generated method stub
+		List<String> ls = new ArrayList<>();
+		try {
+
+			File file = new File(path, "/deniededintrv.txt");
+
+			if(file.exists()){
+				//Log.e("data loaded exist  ",file.getAbsolutePath());
+				File secondInputFile = new File(file.getAbsolutePath());
+				InputStream secondInputStream = new BufferedInputStream(new FileInputStream(secondInputFile));
+				BufferedReader r = new BufferedReader(new InputStreamReader(secondInputStream));
+				StringBuilder total = new StringBuilder();
+				String line;
+				String st ="";
+				
+				while ((line = r.readLine()) != null) {
+
+					ls.add(line);
+					/*
+					JSONArray jArray = new JSONArray(line);
+					for(int i=0;i<jArray.length();i++){
+						JSONObject json = jArray.getJSONObject(i);
+						BordreauIntervention pd = new BordreauIntervention();
+						pd = gson.fromJson(json.toString(), BordreauIntervention.class);
+						
+					}
+					*/
+				}
+				
+				r.close();
+				secondInputStream.close();
+			}
+		}catch(Exception e){
+			
+		}
+		return ls;
+	}
+
+	@Override
+	public void CleanDeniededInterv() {
+		// TODO Auto-generated method stub
+		try {
+			File file = new File(path, "/deniededintrv.txt"); //servicedata
+			if(file.exists()){
+				FileWriter fw = new FileWriter(file,false);
+				PrintWriter pout = new PrintWriter(fw);
+				pout.print("");
+				pout.close();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 
 }

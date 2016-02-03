@@ -7,6 +7,7 @@ import com.dolibarrmaroc.com.models.BordereauGps;
 import com.dolibarrmaroc.com.models.BordreauIntervention;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
+import com.dolibarrmaroc.com.models.GpsTracker;
 import com.dolibarrmaroc.com.models.ImageTechnicien;
 import com.dolibarrmaroc.com.models.Services;
 
@@ -35,8 +36,8 @@ public class DefaultTechnicienManager implements TechnicienManager {
 
 
 	@Override
-	public String insertBordereau(BordreauIntervention bi, Compte c) {
-		return dao.insertBordereau(bi, c);
+	public String insertBordereau(BordreauIntervention bi, Compte c,GpsTracker gps,String imei,String num,String battery) {
+		return dao.insertBordereau(bi, c, gps, imei, num, battery);
 	}
 
 

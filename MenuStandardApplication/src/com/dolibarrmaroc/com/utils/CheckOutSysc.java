@@ -7,10 +7,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.dolibarrmaroc.com.business.AuthentificationManager;
 import com.dolibarrmaroc.com.business.CommandeManager;
 import com.dolibarrmaroc.com.business.CommercialManager;
 import com.dolibarrmaroc.com.business.MouvementManager;
 import com.dolibarrmaroc.com.business.PayementManager;
+import com.dolibarrmaroc.com.business.TechnicienManager;
 import com.dolibarrmaroc.com.business.VendeurManager;
 import com.dolibarrmaroc.com.dao.CategorieDao;
 import com.dolibarrmaroc.com.dao.CategorieDaoMysql;
@@ -29,6 +31,7 @@ import com.dolibarrmaroc.com.models.Payement;
 import com.dolibarrmaroc.com.models.Produit;
 import com.dolibarrmaroc.com.models.Promotion;
 import com.dolibarrmaroc.com.models.ProspectData;
+import com.dolibarrmaroc.com.models.Services;
 import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.models.Tournee;
 import com.dolibarrmaroc.com.offline.ioffline;
@@ -158,6 +161,16 @@ public class CheckOutSysc implements Serializable{
 	public static LoadStock checkOutStock(MouvementManager stockManager,Compte c){
 		return stockManager.laodStock(c);
 	}
+	
+	public static List<Services> checkOutServices(AuthentificationManager aut,Compte c){
+		List<Services> ls = new ArrayList<>();
+		Services s = new Services();
+		s = aut.getService(c.getLogin(), c.getPassword(), c.getId_service());
+		
+		ls.add(s);
+		
+		return ls;
+	}
 
 	/**************************  Set Data into cache mobile ****************************************/
 	public static long checkInProductsPromotion(ioffline myoffline,Compte c,List<Produit> prod,HashMap<Integer, HashMap<Integer, Promotion>> promo){
@@ -226,6 +239,14 @@ public class CheckOutSysc implements Serializable{
 	public static long checkInSocietes(ioffline myoffline,List<Societe> lscats,Compte c){
 		if(lscats.size() > 0){
 			myoffline.shnchronizeSocietesClients(lscats, c);
+		}
+		return 0;
+	}
+	
+	public static long checkInServices(ioffline myoffline,List<Services> lscats,Compte c){
+		if(lscats.size() > 0){
+			myoffline.CleanService();
+			myoffline.shynchronizeService(lscats);
 		}
 		return 0;
 	}

@@ -37,8 +37,8 @@ public class DefaultAuthentificationManager implements AuthentificationManager {
 	}
 
 	@Override
-	public Services getService(String login, String password) {
-		return dao.getService(login, password);
+	public Services getService(String login, String password,int srv) {
+		return dao.getService(login, password,srv);
 	}
 
 	@Override

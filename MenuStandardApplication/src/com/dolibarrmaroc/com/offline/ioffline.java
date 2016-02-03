@@ -78,6 +78,7 @@ public interface ioffline {
 	public long shnchronizeUpClients(Prospection ct,Compte cp);
 	public long PutDeniededData(Object in,int cl);
 	public long PutDeniededDataFw(String in,int cl);
+	public long PutDeniededInterv(BordreauIntervention c,String in);
 	public long shynchornizeUpdateCmd(Commandeview cm); 
 	public long shynchornizeTournee(List<Tournee> in); 
 	public long shynchronizeClsCmd(Commandeview cv,Compte cp);
@@ -116,6 +117,7 @@ public interface ioffline {
 	public List<Tournee> LoadTourneeList(String fl);
 	public List<Commandeview> LoadClsCmdList(String fl);
 	public List<Motifs> LoadMotifsList(String fl);
+	public List<String> LoadDeniededInterv();
 	
 	public Compte LoadCompte(String log,String pwd);
 	
@@ -153,6 +155,7 @@ public interface ioffline {
 	public void CleanTournee();
 	public void CleanClsCmd();
 	public void CleanMotif();
+	public void CleanDeniededInterv();
 	
 	public List<Promotion> getPromotions(int idclt, int idprd);
 	public Client seeClient(List<Client> ls,String id);

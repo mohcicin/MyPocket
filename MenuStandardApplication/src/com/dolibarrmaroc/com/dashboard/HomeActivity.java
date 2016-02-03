@@ -46,6 +46,7 @@ import com.dolibarrmaroc.com.R;
 import com.dolibarrmaroc.com.R.id;
 import com.dolibarrmaroc.com.R.layout;
 import com.dolibarrmaroc.com.R.string;
+import com.dolibarrmaroc.com.business.AuthentificationManager;
 import com.dolibarrmaroc.com.business.CommandeManager;
 import com.dolibarrmaroc.com.business.CommercialManager;
 import com.dolibarrmaroc.com.business.PayementManager;
@@ -62,6 +63,8 @@ import com.dolibarrmaroc.com.dao.TourneeDaoMysql;
 import com.dolibarrmaroc.com.database.DBHandler;
 import com.dolibarrmaroc.com.database.StockVirtual;
 import com.dolibarrmaroc.com.gps.ShowLocationActivity;
+import com.dolibarrmaroc.com.intervention.InterventionhistoActivity;
+import com.dolibarrmaroc.com.intervention.TechnicienActivity;
 import com.dolibarrmaroc.com.maps.MainActivity;
 import com.dolibarrmaroc.com.models.Categorie;
 import com.dolibarrmaroc.com.models.CategorieCustomer;
@@ -70,6 +73,7 @@ import com.dolibarrmaroc.com.models.Compte;
 import com.dolibarrmaroc.com.models.Dictionnaire;
 import com.dolibarrmaroc.com.models.MyDebug;
 import com.dolibarrmaroc.com.models.Produit;
+import com.dolibarrmaroc.com.models.Services;
 import com.dolibarrmaroc.com.models.Societe;
 import com.dolibarrmaroc.com.models.Tournee;
 import com.dolibarrmaroc.com.offline.Offlineimpl;
@@ -89,6 +93,7 @@ import com.dolibarrmaroc.com.utils.CheckOutNet;
 import com.dolibarrmaroc.com.utils.CheckOutSysc;
 import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
 import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
+import com.dolibarrmaroc.com.utils.ConnexionManagerFactory;
 import com.dolibarrmaroc.com.utils.Functions;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
 import com.dolibarrmaroc.com.utils.URL;
@@ -118,6 +123,7 @@ public class HomeActivity extends Activity
 	private Button btn7;
 	private Button btn8;
 	private Button btn9;
+	private TextView username;
 
 	/**
 	 * onCreate - called when the activity is first created.
@@ -167,7 +173,7 @@ public class HomeActivity extends Activity
 
 		 
 		setContentView(R.layout.activity_home);
-		
+		username = (TextView)findViewById(R.id.usernameview);
 
 		mydb = new DBHandler(this);
 
@@ -175,6 +181,8 @@ public class HomeActivity extends Activity
 
 		if (objetbunble != null) {
 			compte = (Compte) getIntent().getSerializableExtra("user");
+			
+			username.setText(compte.getLogin()+"");
 		}
 
 		Log.e("Compte User ",compte.toString());
@@ -207,6 +215,8 @@ public class HomeActivity extends Activity
 		btn7 = (Button)findViewById(R.id.home_btn_statistque);
 		btn8 = (Button)findViewById(R.id.home_btn_synchronisation);
 		btn9 = (Button)findViewById(R.id.home_btn_logout);
+		
+		
 		
 		ShowMyHome();
 		
@@ -393,7 +403,7 @@ public class HomeActivity extends Activity
 			//startActivity (new Intent(getApplicationContext(), F3Activity.class));StatistiqueActivity
 			
 			
-			if("Administrateur magasinier".toLowerCase().equals(compte.getProfile().toLowerCase())){
+			if("Administrateur magasinier".toLowerCase().equals(compte.getProfile().toLowerCase()) || "technicien".equals(compte.getProfile().toLowerCase())){
 				alertPrdClt(getString(R.string.syscl9));
 			}else{
 				List<com.dolibarrmaroc.com.models.AlertDialog> alertfc2 = new ArrayList<>();
@@ -513,23 +523,29 @@ public class HomeActivity extends Activity
 
 			break;
 		case R.id.home_btn_stock :
-			List<com.dolibarrmaroc.com.models.AlertDialog> alerts2 = new ArrayList<>();
+			
 
-			if("Administrateur magasinier".toLowerCase().equals(compte.getProfile().toLowerCase())){
-
-				Intent intents1 = new Intent(getApplicationContext(), TransfertstockActivity.class); //CatalogeActivity.class  //CmdViewActivity
-				intents1.putExtra("user", compte);
-				com.dolibarrmaroc.com.models.AlertDialog creates1 = new com.dolibarrmaroc.com.models.AlertDialog(intents1, getString(R.string.title_activity_transfertstock), "warehouse_worker");
-				alerts2.add(creates1);
+			if("technicien".equals(compte.getProfile().toLowerCase())){
+				alertPrdClt(getString(R.string.cmdtofc6));
 			}else{
-				Intent intents2 = new Intent(getApplicationContext(), TransfertvirtualstockActivity.class);
-				intents2.putExtra("user", compte);
-				intents2.putExtra("cmd", "0");
-				com.dolibarrmaroc.com.models.AlertDialog updates2 = new com.dolibarrmaroc.com.models.AlertDialog(intents2, getString(R.string.title_activity_transfertvirtualstock), "warehouse_put");
-				alerts2.add(updates2);
+				List<com.dolibarrmaroc.com.models.AlertDialog> alerts2 = new ArrayList<>();
+				if("Administrateur magasinier".toLowerCase().equals(compte.getProfile().toLowerCase())){
+
+					Intent intents1 = new Intent(getApplicationContext(), TransfertstockActivity.class); //CatalogeActivity.class  //CmdViewActivity
+					intents1.putExtra("user", compte);
+					com.dolibarrmaroc.com.models.AlertDialog creates1 = new com.dolibarrmaroc.com.models.AlertDialog(intents1, getString(R.string.title_activity_transfertstock), "warehouse_worker");
+					alerts2.add(creates1);
+				}else {
+					Intent intents2 = new Intent(getApplicationContext(), TransfertvirtualstockActivity.class);
+					intents2.putExtra("user", compte);
+					intents2.putExtra("cmd", "0");
+					com.dolibarrmaroc.com.models.AlertDialog updates2 = new com.dolibarrmaroc.com.models.AlertDialog(intents2, getString(R.string.title_activity_transfertvirtualstock), "warehouse_put");
+					alerts2.add(updates2);
+				}
+				new AlertDialogList(HomeActivity.this, alerts2).show();
 			}
 			
-			new AlertDialogList(HomeActivity.this, alerts2).show();
+			
 
 
 
@@ -589,15 +605,9 @@ public class HomeActivity extends Activity
 			if(CheckOutNet.isNetworkConnected(HomeActivity.this)){
 				
 				List<com.dolibarrmaroc.com.models.AlertDialog> alerts = new ArrayList<>();
-				Intent intentX = new Intent(getApplicationContext(), MainActivity.class); //CatalogeActivity.class  //CmdViewActivity
-				intentX.putExtra("user", compte);
-				intentX.putExtra("type", "1");
-				com.dolibarrmaroc.com.models.AlertDialog create = new com.dolibarrmaroc.com.models.AlertDialog(intentX, getString(R.string.mapstitle2), "customers");
-
-				Intent intentY = new Intent(getApplicationContext(), MainActivity.class);
-				intentY.putExtra("user", compte);
-				intentY.putExtra("type", "2");
-				com.dolibarrmaroc.com.models.AlertDialog update = new com.dolibarrmaroc.com.models.AlertDialog(intentY,  getString(R.string.mapstitle1), "invoice_see");
+				
+				
+				
 				
 				if(("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) && compte.getPermissionbl() != 0) || (compte.getPermissionbl() != 0 && "vendeur".equals(compte.getProfile().toLowerCase()))){
 					Intent intentZ = new Intent(getApplicationContext(), MainActivity.class);
@@ -606,10 +616,32 @@ public class HomeActivity extends Activity
 					com.dolibarrmaroc.com.models.AlertDialog updateZ = new com.dolibarrmaroc.com.models.AlertDialog(intentZ,  getString(R.string.mapstitle3), "invoice_see");
 					alerts.add(updateZ);
 				}
-			
+				
+				
+				if("technicien".equals(compte.getProfile().toLowerCase())){
+					Intent intentw = new Intent(getApplicationContext(), MainActivity.class);
+					intentw.putExtra("user", compte);
+					intentw.putExtra("type", "4");
+					com.dolibarrmaroc.com.models.AlertDialog bordereau = new com.dolibarrmaroc.com.models.AlertDialog(intentw,  "Bordereau", "invoice_see");
+					alerts.add(bordereau);
+				}else{
+					Intent intentX = new Intent(getApplicationContext(), MainActivity.class); //CatalogeActivity.class  //CmdViewActivity
+					intentX.putExtra("user", compte);
+					intentX.putExtra("type", "1");
+					com.dolibarrmaroc.com.models.AlertDialog create = new com.dolibarrmaroc.com.models.AlertDialog(intentX, getString(R.string.mapstitle2), "customers");
 
-				alerts.add(create);
-				alerts.add(update);
+					Intent intentY = new Intent(getApplicationContext(), MainActivity.class);
+					intentY.putExtra("user", compte);
+					intentY.putExtra("type", "2");
+					com.dolibarrmaroc.com.models.AlertDialog update = new com.dolibarrmaroc.com.models.AlertDialog(intentY,  getString(R.string.mapstitle1), "invoice_see");
+					
+					alerts.add(create);
+					alerts.add(update);
+				}
+			
+				
+				
+				
 				
 				new AlertDialogList(HomeActivity.this, alerts).show();
 				
@@ -619,7 +651,40 @@ public class HomeActivity extends Activity
 
 			break;
 		default: 
-			alertPrdClt(getString(R.string.syscl9));
+			if("technicien".equals(compte.getProfile().toLowerCase())){
+				Services service = myoffline.LoadServices("");
+				if(myoffline.LoadClients("").size() == 0){
+					alertPrdClt(getString(R.string.caus27));
+				}else if(compte.getId_service() == -1){
+					alertPrdClt(getString(R.string.tecv53));
+				}else if(service.getService() == null || "".equals(service.getService())){
+					alertPrdClt(getString(R.string.tecv60));
+				}else{
+					
+					
+					List<com.dolibarrmaroc.com.models.AlertDialog> alerts = new ArrayList<>();
+					Intent intentX = new Intent(getApplicationContext(), TechnicienActivity.class); //CatalogeActivity.class  //CmdViewActivity
+					intentX.putExtra("user", compte);
+					intentX.putExtra("service", service.getService());
+					intentX.putExtra("nmbService", service.getNmb_cmp()+"");
+					for (int i = 0; i < service.getLabels().size(); i++) {
+						intentX.putExtra("labels"+i, service.getLabels().get(i).getLabel());
+					}
+					com.dolibarrmaroc.com.models.AlertDialog create = new com.dolibarrmaroc.com.models.AlertDialog(intentX, getString(R.string.tecv54), "tour1");
+
+					Intent intentY = new Intent(getApplicationContext(), InterventionhistoActivity.class);
+					intentY.putExtra("user", compte);
+					com.dolibarrmaroc.com.models.AlertDialog update = new com.dolibarrmaroc.com.models.AlertDialog(intentY,  getString(R.string.tecv55), "catalog");
+					
+					alerts.add(create);
+					alerts.add(update);
+					
+					new AlertDialogList(HomeActivity.this, alerts).show();
+				}
+			}else{
+				alertPrdClt(getString(R.string.syscl9));
+			}
+			
 			break;
 		}
 	}
@@ -671,7 +736,14 @@ public class HomeActivity extends Activity
 			try {
 				myoffline = new Offlineimpl(getApplicationContext());
 				if(CheckOutNet.isNetworkConnected(getApplicationContext())){
+					
+					if(compte.getProfile().toLowerCase().equals("technicien")){
+						myoffline.sendOutIntervention(compte);
+					}
+					
 					myoffline.SendOutData(compte);
+					
+					
 				}
 
 			} catch (Exception e) {
@@ -734,6 +806,7 @@ public class HomeActivity extends Activity
 			CommercialManager manager = CommercialManagerFactory.getCommercialManager();
 			PayementManager payemn = PayementManagerFactory.getPayementFactory();
 			CategorieDao categorie = new CategorieDaoMysql(getApplicationContext());
+			AuthentificationManager auth = ConnexionManagerFactory.getCConnexionManager(); 
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			
@@ -766,7 +839,9 @@ public class HomeActivity extends Activity
 								
 								nprod = res.get("prod");
 								nclt = res.get("clt");
-							}else if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase())){
+							}
+
+							if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase())){
 								res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,manager);
 								nclt = res.get("clt");
 								
@@ -777,9 +852,20 @@ public class HomeActivity extends Activity
 								
 								sv.deletePdQt("");
 								
-							}else if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
+							}
+
+							if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
 								nclt = 1;
 								nprod = 1;
+							}
+
+							if(compte.getProfile().toLowerCase().equals("technicien".toLowerCase())){
+								nclt = 1;
+								nprod = 1;
+								if(compte.getId_service() != -1){
+									CheckOutSysc.checkInServices(myoffline, CheckOutSysc.checkOutServices(auth, compte), compte);
+									CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,manager);
+								}
 							}
 						
 						}
@@ -789,14 +875,22 @@ public class HomeActivity extends Activity
 							nclt = myoffline.LoadClients("").size();
 							nprod = myoffline.LoadCategorieList("").size();
 							Log.e("in prof ","pre_vendeur");
-						}else if(compte.getProfile().toLowerCase().equals("vendeur")){
+						}
+
+						if(compte.getProfile().toLowerCase().equals("vendeur")){
 							nclt = myoffline.LoadClients("").size();
 							nprod = myoffline.LoadProduits("").size();
 							Log.e("in prof ","vendeur");
-						}else if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
+						}
+
+						if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
 							nclt = 1;
 							nprod = 1;
-							Log.e("in prof ","adm mag");
+						}
+
+						if(compte.getProfile().toLowerCase().equals("technicien".toLowerCase())){
+							nclt = 1;
+							nprod = 1;
 						}
 						
 					}
@@ -814,6 +908,17 @@ public class HomeActivity extends Activity
 						if(inres2 != null){
 							for (int i = 0; i < inres2.size(); i++) {
 								myoffline.PutDeniededDataFw(inres2.get(i), 1);
+							}
+						}
+					}
+					
+					if(CheckOutNet.isNetworkConnected(HomeActivity.this)){
+						List<String> inres = new DeniedDataDaoMysql().sendMyErrorData(myoffline.LoadDeniededInterv(), compte,"intervention");
+						myoffline.CleanDeniededInterv();
+						
+						if(inres != null){
+							for (int i = 0; i < inres.size(); i++) {
+								myoffline.PutDeniededInterv(null, inres.get(i));
 							}
 						}
 					}
@@ -907,7 +1012,7 @@ public class HomeActivity extends Activity
 		AlertDialog.Builder alert = new AlertDialog.Builder(HomeActivity.this);
 		alert.setTitle(getResources().getString(R.string.cmdtofc10));
 		alert.setMessage(msg);
-		alert.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+		alert.setNegativeButton(getResources().getString(R.string.cmdtofc11), new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -918,7 +1023,7 @@ public class HomeActivity extends Activity
 		alert.setCancelable(true);
 		alert.create().show();
 	}
-
+	
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -932,7 +1037,7 @@ public class HomeActivity extends Activity
 		AlertDialog.Builder alert = new AlertDialog.Builder(HomeActivity.this);
 		alert.setTitle(getResources().getString(R.string.caus17));
 		alert.setMessage(getResources().getString(R.string.caus18));
-		alert.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+		alert.setNegativeButton(getResources().getString(R.string.cmdtofc11), new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

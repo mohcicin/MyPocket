@@ -8,6 +8,7 @@ import com.dolibarrmaroc.com.R;
 import com.dolibarrmaroc.com.R.id;
 import com.dolibarrmaroc.com.R.layout;
 import com.dolibarrmaroc.com.R.string;
+import com.dolibarrmaroc.com.business.AuthentificationManager;
 import com.dolibarrmaroc.com.business.CommandeManager;
 import com.dolibarrmaroc.com.business.CommercialManager;
 import com.dolibarrmaroc.com.business.PayementManager;
@@ -29,6 +30,7 @@ import com.dolibarrmaroc.com.utils.CheckOutNet;
 import com.dolibarrmaroc.com.utils.CheckOutSysc;
 import com.dolibarrmaroc.com.utils.CommandeManagerFactory;
 import com.dolibarrmaroc.com.utils.CommercialManagerFactory;
+import com.dolibarrmaroc.com.utils.ConnexionManagerFactory;
 import com.dolibarrmaroc.com.utils.PayementManagerFactory;
 import com.dolibarrmaroc.com.utils.VendeurManagerFactory;
 
@@ -60,6 +62,7 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 	private Button btn3;
 	private Button btn4;
 	private Button btn5;
+	private Button btn6;
 	
 	//Declaration Objet
 			private VendeurManager vendeurManager;
@@ -99,17 +102,29 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 		btn3 = (Button)findViewById(R.id.syscbtn3);
 		btn4 = (Button)findViewById(R.id.syscbtn4);
 		btn5 = (Button)findViewById(R.id.syscbtn5);
+		btn6 = (Button)findViewById(R.id.syscbtn6);
 		
 		btn1.setOnClickListener(this);
 		btn2.setOnClickListener(this);
 		btn3.setOnClickListener(this);
 		btn4.setOnClickListener(this);
 		btn5.setOnClickListener(this);
+		btn6.setOnClickListener(this);
+		
+		btn6.setVisibility(View.GONE);
 		
 		if("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase())){
 			btn1.setVisibility(View.GONE);
 			btn2.setVisibility(View.GONE);
 			btn4.setVisibility(View.GONE);
+			btn6.setVisibility(View.GONE);
+		}else if("technicien".toLowerCase().equals(compte.getProfile().toLowerCase())){
+			btn1.setVisibility(View.GONE);
+			btn2.setVisibility(View.GONE);
+			btn3.setVisibility(View.GONE);
+			btn4.setVisibility(View.GONE);
+			
+			btn6.setVisibility(View.VISIBLE);
 		}else if(compte.getPermissionbl() == 0){
 			btn3.setVisibility(View.GONE);
 		}
@@ -371,7 +386,17 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 				//	msgres.setText(msg);
 					
 					break;
-				default:
+				case 6:
+					if(compte.getId_service() != -1){
+						AuthentificationManager auth = ConnexionManagerFactory.getCConnexionManager(); 
+						CheckOutSysc.checkInServices(myoffline, CheckOutSysc.checkOutServices(auth, compte), compte);
+						CheckOutSysc.ReloadProdClt(SynchronisationHomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,manager);
+						msg += getResources().getString(R.string.cnxlab8)+"\n";
+					}else{
+						msg += getResources().getString(R.string.tecv53)+"\n";
+					}
+					break;
+				default :
 					break;
 				}
 			}
@@ -480,6 +505,10 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 			intent6.putExtra("user", compte);
 			startActivity(intent6);
 			SynchronisationHomeActivity.this.finish();
+			break;
+		case R.id.syscbtn6:
+			type = 6;
+			synchronisation();
 			break;
 		}
 	}

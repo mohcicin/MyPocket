@@ -16,4 +16,11 @@
         android:orderInCategory="1"
         android:showAsAction="ifRoom|withText"
         android:title="Client Opération"/>
+	
+	<item
+        android:id="@+id/pointerBor"
+        android:icon="@drawable/sys_local"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom|withText"
+        android:title="Bordereau Opération"/>
 </menu>

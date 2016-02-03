@@ -5,11 +5,8 @@ import java.util.List;
 import java.util.Locale;
 
 
-import com.dolibarrmaroc.com.ConnexionActivity;
 import com.dolibarrmaroc.com.R;
-import com.dolibarrmaroc.com.R.id;
-import com.dolibarrmaroc.com.R.layout;
-import com.dolibarrmaroc.com.R.string;
+import com.dolibarrmaroc.com.dashboard.HomeActivity;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
 
@@ -254,6 +251,8 @@ public class InterfaceTechnicienActivity extends Activity implements OnClickList
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			
+			/*
 			new AlertDialog.Builder(this)
 			.setTitle(getResources().getString(R.string.tecv36))
 			.setMessage(getResources().getString(R.string.tecv47))
@@ -270,19 +269,24 @@ public class InterfaceTechnicienActivity extends Activity implements OnClickList
 
 				public void onClick(DialogInterface ds, int arg1) {
 					//VendeurActivity.super.onBackPressed();
-					Intent intent1 = new Intent(InterfaceTechnicienActivity.this, ConnexionActivity.class);
-					intent1.putExtra("user", compte);
-					intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-					startActivity(intent1);
-					InterfaceTechnicienActivity.this.finish();
-					
+					onClickHome(LayoutInflater.from(InterfaceTechnicienActivity.this).inflate(R.layout.activity_interface_technicien, null));
 				}
 
 			}).setCancelable(true)
 			.create().show();
 			return true;
+			
+			*/
 		}
 		return false;
+	}
+	
+	public void onClickHome(View v){
+		Intent intent = new Intent(this, HomeActivity.class);
+		intent.putExtra("user", compte);
+		intent.setFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity (intent);
+		this.finish();
 	}
 	
 }

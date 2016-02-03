@@ -3,17 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
+    <LinearLayout
+            android:id="@+id/l1"
+            style="@style/TitleBar"
+            android:layout_width="match_parent" >
+
+            <ImageButton
+                style="@style/TitleBarAction"
+                android:contentDescription="@string/description_home"
+                android:onClick="onClickHome"
+                android:src="@drawable/title_home" />
+
+            <ImageView style="@style/TitleBarSeparator" />
+
+            <TextView style="@style/TitleBarText"
+                android:text="@string/title_activity_second_step_techn" />
+
+        </LinearLayout>
+        
  <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logo" />
+     android:id="@+id/imageView1"
+     android:layout_width="fill_parent"
+     android:layout_height="100dp"
+     android:src="@drawable/logo" />
 
  <RelativeLayout
      android:id="@+id/relativeLayout1"
      android:layout_width="fill_parent"
-     android:layout_height="wrap_content"
+     android:layout_height="fill_parent"
      android:layout_alignParentBottom="true"
      android:layout_alignRight="@+id/imageView1"
      android:layout_weight="0.05"

@@ -6,12 +6,13 @@ import com.dolibarrmaroc.com.models.BordereauGps;
 import com.dolibarrmaroc.com.models.BordreauIntervention;
 import com.dolibarrmaroc.com.models.Client;
 import com.dolibarrmaroc.com.models.Compte;
+import com.dolibarrmaroc.com.models.GpsTracker;
 import com.dolibarrmaroc.com.models.ImageTechnicien;
 import com.dolibarrmaroc.com.models.Services;
 
 public interface TechnicienManager {
 	
-	public String insertBordereau(BordreauIntervention bi,Compte c);
+	public String insertBordereau(BordreauIntervention bi,Compte c,GpsTracker gps,String imei,String num,String battery);
 	public String insertBordereauoff(BordreauIntervention bi, Compte c);
 	public List<BordereauGps> selectAllBordereau(Compte c);
 	

@@ -112,6 +112,7 @@ public class ConnexionDaoMysql implements ConnexionDao {
 					compte.setPermissionbl(json.getInt("blcmd"));
 					compte.setIstour(json.getInt("istour"));
 					compte.setFacture(json.getInt("facture"));
+					compte.setId_service(json.getInt("id_service"));
 					
 					gpsTracker.setEmei(json.getString("emei"));
 					gpsTracker.setIduser(json.getString("iduser"));
@@ -162,13 +163,13 @@ public class ConnexionDaoMysql implements ConnexionDao {
 	}
 
 	@Override
-	public Services getService(String login, String password) {
+	public Services getService(String login, String password,int srv) {
 		Services s =new Services();
 		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
 		nameValuePairs.add(new BasicNameValuePair("username",login));
 		nameValuePairs.add(new BasicNameValuePair("password",password));
-		nameValuePairs.add(new BasicNameValuePair("id_serv",id+""));
+		nameValuePairs.add(new BasicNameValuePair("id_serv",srv+""));
 		Log.e("nameValuePairs!", nameValuePairs.toString());
 		String jsonString =  jsonParser.makeHttpRequest(
 				url , "POST", nameValuePairs);
