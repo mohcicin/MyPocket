@@ -112,21 +112,28 @@ public class SynchronisationHomeActivity extends Activity implements OnClickList
 		btn6.setOnClickListener(this);
 		
 		btn6.setVisibility(View.GONE);
+		btn4.setVisibility(View.GONE);
+		btn3.setVisibility(View.GONE);
+		btn2.setVisibility(View.GONE);
+		btn1.setVisibility(View.GONE);
 		
-		if("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase())){
-			btn1.setVisibility(View.GONE);
-			btn2.setVisibility(View.GONE);
-			btn4.setVisibility(View.GONE);
-			btn6.setVisibility(View.GONE);
-		}else if("technicien".toLowerCase().equals(compte.getProfile().toLowerCase())){
-			btn1.setVisibility(View.GONE);
-			btn2.setVisibility(View.GONE);
-			btn3.setVisibility(View.GONE);
-			btn4.setVisibility(View.GONE);
-			
+		 
+
+		if("vendeur".equals(compte.getProfile().toLowerCase()) || compte.getFacture() != 0){
+			btn1.setVisibility(View.VISIBLE);
+			btn4.setVisibility(View.VISIBLE);
+		}
+		
+		if("vendeur".equals(compte.getProfile().toLowerCase()) || compte.getPermission() != 0){
+			btn2.setVisibility(View.VISIBLE);
+		}
+		
+		if("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) || compte.getPermissionbl() != 0){
+			btn3.setVisibility(View.VISIBLE);
+		}
+		
+		if("technicien".toLowerCase().equals(compte.getProfile().toLowerCase()) || compte.getIntervention() != 0){
 			btn6.setVisibility(View.VISIBLE);
-		}else if(compte.getPermissionbl() == 0){
-			btn3.setVisibility(View.GONE);
 		}
 		
 		

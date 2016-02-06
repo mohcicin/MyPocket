@@ -416,6 +416,7 @@
     <string name="mvm10">Une erreur est survenu lors du récupération des données depuis votre serveur</string>
     <string name="mvm11">La quantité est vide </string>
     <string name="mvm12">L\'entrepot cible est vide. Veuillez alimenter ce dernier par des produits </string>
+    <string name="mvm13">Vous ne disposer pas des droits pour effectuer un transfert de stock. Contacter votre administrateur</string>
     <string name="mvm2_stock">Vous avez demandé plus que la quantité que vous avez %1$s </string>
     <string name="title_activity_viewstock">Liste des transferts</string>
 
@@ -509,7 +510,9 @@
     <string name="syscl8">Vous ne disposer pas des droits pour créer et valider des commandes</string>
     <string name="syscl9">Cette option n\'est pas disponible pour le moment</string>
     <string name="syscl10">Vous ne disposer pas des droits pour passer des factures et effectuer des payements</string>
-    <string name="syscl11">Charger mes clients et services</string>
+    <string name="syscl11">Charger mes interventions</string>
+    <string name="syscl12">Vous ne disposer pas des droits pour créer et valider des interventions</string>
+    <string name="syscl13">Vous ne disposer pas des droits pour le transfert de stock</string>
     <string name="title_activity_synchronisation_home">Accueil de synchronisation</string>
 
     <!-- maps data -->

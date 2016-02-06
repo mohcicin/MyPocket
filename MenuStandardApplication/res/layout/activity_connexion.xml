@@ -77,13 +77,16 @@
                 android:ems="10"
                 android:hint="@string/login"
                 android:inputType="text"
-                android:text="techno"
+                
                  >
 
                 <requestFocus />
             </EditText>
         </LinearLayout>
-
+<!-- 
+android:text="techno"
+android:text="123456"
+ -->
         <LinearLayout
             android:id="@+id/l3"
             android:layout_width="match_parent"
@@ -99,7 +102,7 @@
                 android:ems="10"
                 android:hint="@string/password"
                 android:inputType="textPassword"
-                android:text="123456"
+                
                  >
 
                 <requestFocus />

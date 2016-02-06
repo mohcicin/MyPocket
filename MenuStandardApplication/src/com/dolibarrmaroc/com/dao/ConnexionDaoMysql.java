@@ -113,6 +113,8 @@ public class ConnexionDaoMysql implements ConnexionDao {
 					compte.setIstour(json.getInt("istour"));
 					compte.setFacture(json.getInt("facture"));
 					compte.setId_service(json.getInt("id_service"));
+					compte.setIntervention(json.getInt("intervention"));
+					compte.setExpedition(json.getInt("expedition"));
 					
 					gpsTracker.setEmei(json.getString("emei"));
 					gpsTracker.setIduser(json.getString("iduser"));
@@ -125,7 +127,7 @@ public class ConnexionDaoMysql implements ConnexionDao {
 					
 					my = new MyTicketWitouhtProduct();
 					if(compte.getProfile().toLowerCase().equals("technicien")){
-						my.setNameSte("test societe");
+						my.setNameSte("Default Societe");
 					}else{
 						my.setNameSte(json.getString("nameSte"));
 						my.setAddresse(json.getString("addresse"));

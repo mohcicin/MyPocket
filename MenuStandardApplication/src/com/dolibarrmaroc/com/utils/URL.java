@@ -8,7 +8,7 @@ public class URL {
 	//public final static String URL = "http://dislach.dolibarrmaroc.com/doliDroid/"; //"http://takamaroc.com/htdocs/doliDroid/";  //        "http://als.dolibarrmaroc.com/doliDroid/";  //    //"http://geocom.dolibarrmaroc.com/doliDroid/"
 	
 	//save offline folder
-	public final static String path = "/.datadolicache12";
+	public final static String path = "/.datadolicache12";  // <=========================================
 	
 	//save logger file
 	public final static String path_log = "/log_apps";
@@ -16,7 +16,7 @@ public class URL {
 	
 	//check for update
 	public static String url_update ="http://41.142.241.192:8005/android/marocgeo.php";
-	public static String type = "mypocketdislach";//"standarddroidoffline";
+	public static String type = "mypocketdislach";//"standarddroidoffline";  // <=========================================
 	
 	public URL() {
 	}

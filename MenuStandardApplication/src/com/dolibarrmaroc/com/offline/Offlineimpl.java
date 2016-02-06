@@ -421,11 +421,10 @@ public class Offlineimpl implements ioffline {
 
 				while ((line = r.readLine()) != null) {
 					//Log.e("load compt data ",line);
-
+					Log.e("compte ",line);
 					JSONArray dico = new JSONArray(encryptor.decrypt(line));
 					for (int j = 0; j < dico.length(); j++) {
 						JSONObject json = dico.getJSONObject(j);
-						Log.e("compte ",line);
 						if(json.getString("login").equals(log) && json.getString("password").equals(pwd)){
 							compte = new Compte();
 

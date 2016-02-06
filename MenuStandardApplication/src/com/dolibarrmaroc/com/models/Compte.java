@@ -22,6 +22,8 @@ public class Compte implements Serializable{
 	private int permissionbl;
 	private int facture;
 	private int istour = 0;
+	private int intervention;
+	private int expedition;
 	
 	private int id_service;
 	
@@ -227,6 +229,22 @@ public class Compte implements Serializable{
 
 	public void setId_service(int id_service) {
 		this.id_service = id_service;
+	}
+
+	public int getIntervention() {
+		return intervention;
+	}
+
+	public void setIntervention(int intervention) {
+		this.intervention = intervention;
+	}
+
+	public int getExpedition() {
+		return expedition;
+	}
+
+	public void setExpedition(int expedition) {
+		this.expedition = expedition;
 	}
 
 	 

@@ -40,7 +40,7 @@ public class CommercialDaoMysql implements CommercialDao{
 
 	@Override
 	public String insert(Compte c,Prospection p) {
-		//Log.e("Appel INSERTION", p.toString());
+		Log.e("Appel INSERTION", p.toString());
 		
 		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		
@@ -49,7 +49,7 @@ public class CommercialDaoMysql implements CommercialDao{
 		nameValuePairs.add(new BasicNameValuePair("create","create"));
 		
 		if (p.getParticulier() == 1) {
-			nameValuePairs.add(new BasicNameValuePair("nom",p.getFirstname()));
+			nameValuePairs.add(new BasicNameValuePair("nom",p.getName()));//p.getFirstname()
 		}else{
 			nameValuePairs.add(new BasicNameValuePair("nom",p.getName()));
 		}
@@ -79,7 +79,7 @@ public class CommercialDaoMysql implements CommercialDao{
         nameValuePairs.add(new BasicNameValuePair("latitude",p.getLatitude()+""));
         nameValuePairs.add(new BasicNameValuePair("longitude",p.getLangitude()+""));
 		
-		
+        Log.e("Send Message clt simple", nameValuePairs.toString() +"");
 		String retour = "-1";
 		
 		try {

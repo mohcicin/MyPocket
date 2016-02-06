@@ -359,41 +359,6 @@ public class HomeActivity extends Activity
 			//wakelock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "no sleep");
 			//wakelock.acquire();
 
-			//synchronisation();
-			/*
-			List<com.dolibarrmaroc.com.models.AlertDialog> alertfc22 = new ArrayList<>();
-			Intent intentfc12 = new Intent(getApplicationContext(), CmdPayActivity.class); //CatalogeActivity.class  //CmdViewActivity
-			intentfc12.putExtra("type", "0");
-			intentfc12.putExtra("user", compte);
-			com.dolibarrmaroc.com.models.AlertDialog createfc12 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc12, getString(R.string.syscl1), "invoice_see");
-
-
-			Intent intentfc22 = new Intent(getApplicationContext(), CmdPayActivity.class);
-			intentfc22.putExtra("type", "1");
-			intentfc22.putExtra("user", compte);
-			com.dolibarrmaroc.com.models.AlertDialog updatefc22 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc22, getString(R.string.syscl2), "invoice");
-
-
-			Intent intentfc32 = new Intent(getApplicationContext(), CmdPayActivity.class);
-			intentfc32.putExtra("type", "2");
-			intentfc32.putExtra("user", compte);
-			com.dolibarrmaroc.com.models.AlertDialog updatefc32 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc32, getString(R.string.syscl3), "invoice_lock");
-
-			Intent intentfc42 = new Intent(getApplicationContext(), CmdPayActivity.class);
-			intentfc42.putExtra("type", "3");
-			intentfc42.putExtra("user", compte);
-			com.dolibarrmaroc.com.models.AlertDialog updatefc24 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc42, getString(R.string.syscl4), "invoice_pay");
-
-			Intent intentfc52 = new Intent(getApplicationContext(), CmdPayActivity.class);
-			com.dolibarrmaroc.com.models.AlertDialog updatefc25 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc52, getString(R.string.syscl5), "invoice_pay");
-
-			alertfc22.add(createfc12);
-			alertfc22.add(updatefc22);
-			alertfc22.add(updatefc32);
-			alertfc22.add(updatefc24);
-			alertfc22.add(updatefc25);
-			new AlertDialogList(HomeActivity.this, alertfc22).show();
-			 */
 			Intent intentsys = new Intent(HomeActivity.this, SynchronisationHomeActivity.class);
 			intentsys.putExtra("user", compte);
 			startActivity(intentsys);
@@ -401,25 +366,26 @@ public class HomeActivity extends Activity
 			break;
 		case R.id.home_btn_statistque :
 			//startActivity (new Intent(getApplicationContext(), F3Activity.class));StatistiqueActivity
-			
-			
-			if("Administrateur magasinier".toLowerCase().equals(compte.getProfile().toLowerCase()) || "technicien".equals(compte.getProfile().toLowerCase())){
-				alertPrdClt(getString(R.string.syscl9));
-			}else{
-				List<com.dolibarrmaroc.com.models.AlertDialog> alertfc2 = new ArrayList<>();
-				Intent intentfc1 = new Intent(getApplicationContext(), StatistiqueActivity.class); //CatalogeActivity.class  //CmdViewActivity
-				intentfc1.putExtra("user", compte);
-				com.dolibarrmaroc.com.models.AlertDialog createfc1 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc1, getString(R.string.title_activity_statistique), "invoice_see");
-				alertfc2.add(createfc1);
+			int st =0;
+				List<com.dolibarrmaroc.com.models.AlertDialog> alertfc2st = new ArrayList<>();
+				Intent st1 = new Intent(getApplicationContext(), StatistiqueActivity.class); //CatalogeActivity.class  //CmdViewActivity
+				st1.putExtra("user", compte);
+				com.dolibarrmaroc.com.models.AlertDialog createfc1st = new com.dolibarrmaroc.com.models.AlertDialog(st1, getString(R.string.title_activity_statistique), "invoice_see");
+				alertfc2st.add(createfc1st);
 				
-				Intent intentfc3 = new Intent(getApplicationContext(), VentesActivity.class);
-				intentfc3.putExtra("user", compte);
-				intentfc3.putExtra("val", "1");
-				com.dolibarrmaroc.com.models.AlertDialog updatefc3 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc3, getString(R.string.stati9), "chartf");
-				alertfc2.add(updatefc3);
 				
-				if(("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) && compte.getPermissionbl() != 0) || (compte.getPermissionbl() != 0 && "vendeur".equals(compte.getProfile().toLowerCase()))){
-					
+				
+				if("vendeur".equals(compte.getProfile().toLowerCase()) || compte.getFacture() != 0){
+					Intent intentfc3 = new Intent(getApplicationContext(), VentesActivity.class);
+					intentfc3.putExtra("user", compte);
+					intentfc3.putExtra("val", "1");
+					com.dolibarrmaroc.com.models.AlertDialog updatefc3 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc3, getString(R.string.stati9), "chartf");
+					alertfc2st.add(updatefc3);
+					st++;
+				}
+				
+				//if(("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) && compte.getPermissionbl() != 0) || (compte.getPermissionbl() != 0 && "vendeur".equals(compte.getProfile().toLowerCase()))){
+				if("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) || compte.getPermissionbl() != 0){
 					
 					
 					
@@ -428,30 +394,32 @@ public class HomeActivity extends Activity
 					intentfc2.putExtra("val", "2");
 					com.dolibarrmaroc.com.models.AlertDialog updatefc2 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc2, getString(R.string.stati8), "chartf");
 					
+					alertfc2st.add(updatefc2);
+					st++;
 					
-					
+				}
+				
+				if(compte.getIstour() != 0){
 					Intent intentfc4 = new Intent(getApplicationContext(), VentesActivity.class);
 					intentfc4.putExtra("user", compte);
 					intentfc4.putExtra("val", "3");
 					com.dolibarrmaroc.com.models.AlertDialog updatefc4 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc4, getString(R.string.stati3), "charts");
-					
-					
-					alertfc2.add(updatefc2);
-					alertfc2.add(updatefc4);
+					alertfc2st.add(updatefc4);
+					st++;
 				}
 				
-
-
-				
-				
-				new AlertDialogList(HomeActivity.this, alertfc2).show();
-			}
+				if(st == 0){
+					alertPrdClt(getString(R.string.syscl9));
+				}else{
+					new AlertDialogList(HomeActivity.this, alertfc2st).show();
+				}
 			
 			break;
 		case R.id.home_btn_livraison :
 			//startActivity (new Intent(getApplicationContext(), VendeurActivity.class));)
 			if(compte.getFacture() != 0){
-				if(compte.getPermissionbl() == 0 || "vendeur".equals(compte.getProfile().toLowerCase())){
+				//if(compte.getPermissionbl() == 0 || "vendeur".equals(compte.getProfile().toLowerCase())){
+				if(compte.getPermissionbl() == 0 || "vendeur".equals(compte.getProfile().toLowerCase()) || compte.getFacture() == 1){
 					List<com.dolibarrmaroc.com.models.AlertDialog> alertfc2 = new ArrayList<>();
 					Intent intentfc1 = new Intent(getApplicationContext(), VendeurActivity.class); //CatalogeActivity.class  //CmdViewActivity
 					intentfc1.putExtra("user", compte);
@@ -482,7 +450,7 @@ public class HomeActivity extends Activity
 					new AlertDialogList(HomeActivity.this, alertfc2).show();
 
 				}else{
-					alertPrdClt(getString(R.string.syscl9));
+					alertPrdClt(getString(R.string.syscl10));
 				}
 			}else{
 				AlertMsg();
@@ -504,7 +472,7 @@ public class HomeActivity extends Activity
 			//startActivity (new Intent(getApplicationContext(), F5Activity.class));
 
 
-			if(compte.getPermission() != 0 && "vendeur".equals(compte.getProfile().toLowerCase())){
+			if(compte.getPermission() != 0 || "vendeur".equals(compte.getProfile().toLowerCase())){
 				List<com.dolibarrmaroc.com.models.AlertDialog> alerts = new ArrayList<>();
 				Intent intentX = new Intent(getApplicationContext(), CommercialActivity.class); //CatalogeActivity.class  //CmdViewActivity
 				intentX.putExtra("user", compte);
@@ -523,37 +491,43 @@ public class HomeActivity extends Activity
 
 			break;
 		case R.id.home_btn_stock :
-			
+			int stock =0;
 
-			if("technicien".equals(compte.getProfile().toLowerCase())){
-				alertPrdClt(getString(R.string.cmdtofc6));
-			}else{
+				
 				List<com.dolibarrmaroc.com.models.AlertDialog> alerts2 = new ArrayList<>();
-				if("Administrateur magasinier".toLowerCase().equals(compte.getProfile().toLowerCase())){
+				if("Administrateur magasinier".toLowerCase().equals(compte.getProfile().toLowerCase()) || compte.getExpedition() != 0){
 
 					Intent intents1 = new Intent(getApplicationContext(), TransfertstockActivity.class); //CatalogeActivity.class  //CmdViewActivity
 					intents1.putExtra("user", compte);
 					com.dolibarrmaroc.com.models.AlertDialog creates1 = new com.dolibarrmaroc.com.models.AlertDialog(intents1, getString(R.string.title_activity_transfertstock), "warehouse_worker");
 					alerts2.add(creates1);
-				}else {
+					stock++;
+				}
+
+				
+				if(compte.getFacture() != 0 || "vendeur".equals(compte.getProfile().toLowerCase())){
 					Intent intents2 = new Intent(getApplicationContext(), TransfertvirtualstockActivity.class);
 					intents2.putExtra("user", compte);
 					intents2.putExtra("cmd", "0");
 					com.dolibarrmaroc.com.models.AlertDialog updates2 = new com.dolibarrmaroc.com.models.AlertDialog(intents2, getString(R.string.title_activity_transfertvirtualstock), "warehouse_put");
 					alerts2.add(updates2);
+					stock++;
 				}
-				new AlertDialogList(HomeActivity.this, alerts2).show();
-			}
-			
-			
-
-
+				
+				if(stock == 0){
+					alertPrdClt(getString(R.string.mvm13));
+				}else{
+					new AlertDialogList(HomeActivity.this, alerts2).show();
+				}
 
 			break;
 		case R.id.home_btn_prise_cmd : 
 
-			if(("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) && compte.getPermissionbl() != 0) || (compte.getPermissionbl() != 0 && "vendeur".equals(compte.getProfile().toLowerCase()))){
-				List<com.dolibarrmaroc.com.models.AlertDialog> alertc2 = new ArrayList<>();
+			List<com.dolibarrmaroc.com.models.AlertDialog> alertc2 = new ArrayList<>();
+			int n = 0;
+			//if(("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) && compte.getPermissionbl() != 0) || (compte.getPermissionbl() != 0 && "vendeur".equals(compte.getProfile().toLowerCase())) ){
+			if(compte.getPermissionbl() != 0 || "PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase())){
+				
 				Intent intentc1 = new Intent(getApplicationContext(), CatalogeActivity.class); //CatalogeActivity.class  //CmdViewActivity
 				intentc1.putExtra("user", compte);
 				intentc1.putExtra("cmd", "1");
@@ -578,6 +552,18 @@ public class HomeActivity extends Activity
 				
 				
 				
+				
+
+				alertc2.add(createc1);
+				alertc2.add(updatec2);
+				alertc2.add(updatec3);
+				alertc2.add(updatec4);
+				n++;
+				
+			}
+			
+			if(compte.getIstour() != 0){
+
 				Intent intentfc5 = new Intent(getApplicationContext(), TourneeViewerActivity.class);
 				intentfc5.putExtra("user", compte);
 				com.dolibarrmaroc.com.models.AlertDialog updatefc5 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc5, getString(R.string.title_activity_tournee_viewer), "tour1");
@@ -586,19 +572,17 @@ public class HomeActivity extends Activity
 				intentfc6.putExtra("user", compte);
 				com.dolibarrmaroc.com.models.AlertDialog updatefc6 = new com.dolibarrmaroc.com.models.AlertDialog(intentfc6, getString(R.string.title_activity_motif_touree), "tour2");
 				
-
-				alertc2.add(createc1);
-				alertc2.add(updatec2);
-				alertc2.add(updatec3);
-				alertc2.add(updatec4);
 				alertc2.add(updatefc5);
 				alertc2.add(updatefc6);
-				new AlertDialogList(HomeActivity.this, alertc2).show();
-			}else{
-				alertPrdClt(getString(R.string.syscl8));
+				n++;
 			}
 			
-			 
+			if(n == 0){
+				alertPrdClt(getString(R.string.syscl8));
+			}else{
+				new AlertDialogList(HomeActivity.this, alertc2).show();
+			}
+			
 			break;
 		case R.id.home_btn_maps : 
 
@@ -606,44 +590,59 @@ public class HomeActivity extends Activity
 				
 				List<com.dolibarrmaroc.com.models.AlertDialog> alerts = new ArrayList<>();
 				
+				int map = 0;
 				
 				
-				
-				if(("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) && compte.getPermissionbl() != 0) || (compte.getPermissionbl() != 0 && "vendeur".equals(compte.getProfile().toLowerCase()))){
+				//if(("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) && compte.getPermissionbl() != 0) || (compte.getPermissionbl() != 0 && "vendeur".equals(compte.getProfile().toLowerCase()))){
+				if("PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) || compte.getPermissionbl() != 0){
 					Intent intentZ = new Intent(getApplicationContext(), MainActivity.class);
 					intentZ.putExtra("user", compte);
 					intentZ.putExtra("type", "3");
 					com.dolibarrmaroc.com.models.AlertDialog updateZ = new com.dolibarrmaroc.com.models.AlertDialog(intentZ,  getString(R.string.mapstitle3), "invoice_see");
 					alerts.add(updateZ);
+					map++;
 				}
 				
 				
-				if("technicien".equals(compte.getProfile().toLowerCase())){
+				if("technicien".equals(compte.getProfile().toLowerCase()) || compte.getIntervention() != 0){
 					Intent intentw = new Intent(getApplicationContext(), MainActivity.class);
 					intentw.putExtra("user", compte);
 					intentw.putExtra("type", "4");
 					com.dolibarrmaroc.com.models.AlertDialog bordereau = new com.dolibarrmaroc.com.models.AlertDialog(intentw,  "Bordereau", "invoice_see");
 					alerts.add(bordereau);
-				}else{
-					Intent intentX = new Intent(getApplicationContext(), MainActivity.class); //CatalogeActivity.class  //CmdViewActivity
-					intentX.putExtra("user", compte);
-					intentX.putExtra("type", "1");
-					com.dolibarrmaroc.com.models.AlertDialog create = new com.dolibarrmaroc.com.models.AlertDialog(intentX, getString(R.string.mapstitle2), "customers");
+					map++;
+				}
+
+				if("vendeur".equals(compte.getProfile().toLowerCase()) || compte.getFacture() != 0){
 
 					Intent intentY = new Intent(getApplicationContext(), MainActivity.class);
 					intentY.putExtra("user", compte);
 					intentY.putExtra("type", "2");
 					com.dolibarrmaroc.com.models.AlertDialog update = new com.dolibarrmaroc.com.models.AlertDialog(intentY,  getString(R.string.mapstitle1), "invoice_see");
 					
-					alerts.add(create);
 					alerts.add(update);
+					map++;
+				}
+				
+				if("vendeur".equals(compte.getProfile().toLowerCase()) || compte.getFacture() != 0 || "PRE-VENDEURS".toLowerCase().equals(compte.getProfile().toLowerCase()) || compte.getPermissionbl() != 0){
+					Intent intentX = new Intent(getApplicationContext(), MainActivity.class); //CatalogeActivity.class  //CmdViewActivity
+					intentX.putExtra("user", compte);
+					intentX.putExtra("type", "1");
+					com.dolibarrmaroc.com.models.AlertDialog create = new com.dolibarrmaroc.com.models.AlertDialog(intentX, getString(R.string.mapstitle2), "customers");
+
+					alerts.add(create);
+					map++;
 				}
 			
 				
+				if(map == 0){
+					alertPrdClt(getString(R.string.syscl9));
+				}else{
+					new AlertDialogList(HomeActivity.this, alerts).show();
+				}
 				
 				
 				
-				new AlertDialogList(HomeActivity.this, alerts).show();
 				
 			}else{
 				alertmaps();
@@ -651,15 +650,30 @@ public class HomeActivity extends Activity
 
 			break;
 		default: 
-			if("technicien".equals(compte.getProfile().toLowerCase())){
+			if("technicien".equals(compte.getProfile().toLowerCase()) || compte.getIntervention() != 0){
+				int e =0;
+				String msg = "";
+				
 				Services service = myoffline.LoadServices("");
 				if(myoffline.LoadClients("").size() == 0){
-					alertPrdClt(getString(R.string.caus27));
-				}else if(compte.getId_service() == -1){
-					alertPrdClt(getString(R.string.tecv53));
-				}else if(service.getService() == null || "".equals(service.getService())){
-					alertPrdClt(getString(R.string.tecv60));
-				}else{
+					//alertPrdClt(getString(R.string.caus27));
+					msg += getString(R.string.caus27)+"\n";
+					e++;
+				}
+
+				if(compte.getId_service() == -1){
+					//alertPrdClt(getString(R.string.tecv53));
+					msg += getString(R.string.tecv53)+"\n";
+					e++;
+				}
+
+				if(service.getService() == null || "".equals(service.getService())){
+					//alertPrdClt(getString(R.string.tecv60));
+					msg += getString(R.string.tecv60)+"\n";
+					e++;
+				}
+
+				if(e == 0){
 					
 					
 					List<com.dolibarrmaroc.com.models.AlertDialog> alerts = new ArrayList<>();
@@ -680,9 +694,11 @@ public class HomeActivity extends Activity
 					alerts.add(update);
 					
 					new AlertDialogList(HomeActivity.this, alerts).show();
+				}else{
+					alertPrdClt(msg);
 				}
 			}else{
-				alertPrdClt(getString(R.string.syscl9));
+				alertPrdClt(getString(R.string.syscl12));
 			}
 			
 			break;
@@ -824,7 +840,10 @@ public class HomeActivity extends Activity
 						if(CheckOutNet.isNetworkConnected(HomeActivity.this)){
 							HashMap<String, Integer> res = new HashMap<>();
 							
-							if(compte.getProfile().toLowerCase().equals("vendeur")){
+							
+							
+							
+							if(compte.getProfile().toLowerCase().equals("vendeur") || compte.getFacture() != 0){
 								res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 0,manager);
 
 								CheckOutSysc.RelaodClientSectInfoCommDicto(HomeActivity.this, myoffline, compte, vendeurManager, manager, 2);  //, 0);
@@ -841,7 +860,7 @@ public class HomeActivity extends Activity
 								nclt = res.get("clt");
 							}
 
-							if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase())){
+							if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase()) || compte.getPermissionbl() != 0){
 								res = CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,manager);
 								nclt = res.get("clt");
 								
@@ -854,45 +873,60 @@ public class HomeActivity extends Activity
 								
 							}
 
-							if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
-								nclt = 1;
-								nprod = 1;
-							}
+							
 
-							if(compte.getProfile().toLowerCase().equals("technicien".toLowerCase())){
-								nclt = 1;
+							if(compte.getProfile().toLowerCase().equals("technicien".toLowerCase()) || compte.getIntervention() != 0){
 								nprod = 1;
 								if(compte.getId_service() != -1){
 									CheckOutSysc.checkInServices(myoffline, CheckOutSysc.checkOutServices(auth, compte), compte);
 									CheckOutSysc.ReloadProdClt(HomeActivity.this, myoffline, compte, vendeurManager, payemn, sv, categorie, managercmd, 3,manager);
 								}
 							}
+							
+							nclt = myoffline.LoadClients("").size() +  myoffline.LoadClients("").size();
+							nprod = myoffline.LoadCategorieList("").size() + myoffline.LoadProduits("").size();
+							
+							if((compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase()) || compte.getExpedition() != 0) && (!compte.getProfile().toLowerCase().equals("technicien".toLowerCase()) && compte.getIntervention() == 0) && (!compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase()) && compte.getPermissionbl() == 0) && (!compte.getProfile().toLowerCase().equals("vendeur") && compte.getFacture() == 0)){
+								nclt = 1;
+								nprod = 1;
+							} else if((compte.getProfile().toLowerCase().equals("technicien".toLowerCase()) || compte.getIntervention() != 0) && (!compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase()) || compte.getExpedition() == 0) && (!compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase()) && compte.getPermissionbl() == 0) && (!compte.getProfile().toLowerCase().equals("vendeur") && compte.getFacture() == 0)){
+								nprod = 1;
+							}
 						
 						}
 					}else{
 						
-						if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase())){
+						if(compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase()) || compte.getPermissionbl() != 0){
 							nclt = myoffline.LoadClients("").size();
 							nprod = myoffline.LoadCategorieList("").size();
 							Log.e("in prof ","pre_vendeur");
 						}
 
-						if(compte.getProfile().toLowerCase().equals("vendeur")){
+						if(compte.getProfile().toLowerCase().equals("vendeur") || compte.getFacture() != 0){
 							nclt = myoffline.LoadClients("").size();
 							nprod = myoffline.LoadProduits("").size();
 							Log.e("in prof ","vendeur");
 						}
 
-						if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase())){
+						if(compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase()) || compte.getExpedition() != 0){
 							nclt = 1;
 							nprod = 1;
 						}
 
-						if(compte.getProfile().toLowerCase().equals("technicien".toLowerCase())){
+						if(compte.getProfile().toLowerCase().equals("technicien".toLowerCase()) || compte.getIntervention() != 0){
 							nclt = 1;
 							nprod = 1;
 						}
 						
+						nclt = myoffline.LoadClients("").size() +  myoffline.LoadClients("").size();
+						nprod = myoffline.LoadCategorieList("").size() + myoffline.LoadProduits("").size();
+						
+						if((compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase()) || compte.getExpedition() != 0) && (!compte.getProfile().toLowerCase().equals("technicien".toLowerCase()) && compte.getIntervention() == 0) && (!compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase()) && compte.getPermissionbl() == 0) && (!compte.getProfile().toLowerCase().equals("vendeur") && compte.getFacture() == 0)){
+							nclt = 1;
+							nprod = 1;
+						} else if((compte.getProfile().toLowerCase().equals("technicien".toLowerCase()) || compte.getIntervention() != 0) && (!compte.getProfile().toLowerCase().equals("Administrateur magasinier".toLowerCase()) || compte.getExpedition() == 0) && (!compte.getProfile().toLowerCase().equals("PRE-VENDEURS".toLowerCase()) && compte.getPermissionbl() == 0) && (!compte.getProfile().toLowerCase().equals("vendeur") && compte.getFacture() == 0)){
+							nprod = 1;
+						}
 					}
 					
 					if(CheckOutNet.isNetworkConnected(HomeActivity.this)){
@@ -1171,4 +1205,6 @@ public class HomeActivity extends Activity
 		alert.setCancelable(false);
 		alert.create().show();
 	}
+	
+	
 } // end class
